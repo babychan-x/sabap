@@ -1,0 +1,31 @@
+/* 色・大きさの「変数」。デザインを変えるときは、ここだけ直す。
+   学生用と管理者用で同じ色を使うため、このファイルは両方のアプリに同じ内容で置く。 */
+
+:root {
+  /* 色 */
+  --color-primary: #1e3a5f;      /* メインの色（ボタン、タイトル） */
+  --color-primary-text: #ffffff; /* メインの色の上の文字 */
+  --color-disabled: #94a3b8;     /* 押せないボタン */
+  --color-text: #1f2937;         /* 本文 */
+  --color-text-muted: #6b7280;   /* 補足の文字 */
+  --color-border: #cbd5e1;       /* 入力欄の枠線 */
+  --color-focus: #3b82f6;        /* 入力中の枠線 */
+  --color-link: #2563eb;         /* リンク */
+  --color-error: #b91c1c;        /* エラー */
+  --color-surface: #ffffff;      /* 画面の背景 */
+  --color-page-bg: #f3f4f6;      /* 画面の外側の背景（PCで見たとき） */
+
+  /* 形・大きさ */
+  --radius: 8px;
+  --input-height: 44px;
+  --button-height: 48px;
+
+  /* 文字 */
+  --font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  --font-size-base: 16px;  /* 入力欄は16px以上にする（16px未満だとスマホで拡大される） */
+  --font-size-small: 14px;
+  --font-size-title: 26px;
+
+  /* 画面幅（学生用はスマホ幅。管理者用はアプリ側で上書きする） */
+  --page-max-width: 430px;
+}

@@ -1,0 +1,26 @@
+/* 全体の最小限の設定。
+   Viteのひな形に入っていた中央寄せ・ダークモード用のCSSは、このアプリと合わないので使わない。 */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-page-bg);
+  color: var(--color-text);
+  font-family: var(--font-family);
+  font-size: var(--font-size-base);
+}
+
+/* 1画面ぶんの外枠。どの画面も、いちばん外側にこれを付ける。 */
+.page {
+  width: 100%;
+  max-width: var(--page-max-width);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 48px 24px 32px;
+  background: var(--color-surface);
+}
