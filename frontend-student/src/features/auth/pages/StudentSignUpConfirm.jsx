@@ -1,3 +1,5 @@
+import './StudentSignUpConfirm.css'
+
 // G005 情報確認画面（studentSignUpConfirm）
 // ※ 仮の画面。外部設計書 G005 の入出力項目・イベントに合わせて中身を作る。
 // API なし（G004 で入力した内容を表示する）
