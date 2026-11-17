@@ -1,0 +1,17 @@
+
+services:
+  db:
+    image: postgres:18
+    container_name: lost-item-db
+    ports:
+      - "127.0.0.1:5433:5432"
+    environment:
+      POSTGRES_DB: lost_item_db
+      POSTGRES_USER: lost_item_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+
+volumes:
+  postgres_data:
