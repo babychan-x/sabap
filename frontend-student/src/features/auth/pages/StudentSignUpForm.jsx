@@ -1,4 +1,5 @@
 import { useSearchParams } from 'react-router-dom'
+import './StudentSignUpForm.css'
 
 // G004 情報登録画面（studentSignUpForm）
 // ※ 仮の画面。外部設計書 G004 の入出力項目・イベントに合わせて中身を作る。
