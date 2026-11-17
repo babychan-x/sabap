@@ -1,2 +1,310 @@
 /* G011 投稿一覧（ホーム）画面だけの見た目（配置）。
    色・ボタンは共通CSS（src/styles/）を使う。 */
+   
+/* PC画面で中央に配置する背景ラッパー */
+.home-page-wrapper {
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
+}
+
+/* 9:16比率のスマホ枠 */
+.home-mobile-container {
+  width: 100%;
+  max-width: var(--page-max-width);
+  height: 100vh;
+  max-height: 844px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+} 
+
+@media (min-width: 450px) {
+  .home-mobile-container {
+    border: 4px solid #ffffff;
+  }
+}
+
+/* ヘッダー（上下の余白を十分に拡大） */
+.home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32px 32px 18px 32px;
+  background-color: #ffffff;
+}
+
+.home-title-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.home-title-badge {
+  font-size: 11px;
+  font-weight: 800;
+  color: #3b82f6;
+  letter-spacing: 0.1em;
+}
+
+.home-app-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.02em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+/* ベルボタンのポップなアニメーション */
+.home-notification-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.home-notification-btn:active {
+  transform: scale(0.85);
+  background-color: #f3f4f6;
+}
+
+.home-notification-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background-color: #ef4444;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: bold;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(239, 68, 68, 0.4);
+}
+
+/* 検索バー */
+.home-search-section {
+  padding: 4px 32px 16px 32px;
+}
+
+.home-search-bar {
+  display: flex;
+  align-items: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  padding: 0 16px;
+  height: 44px;
+  background-color: #f9fafb;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02), 0 2px 6px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+}
+
+.home-search-bar:focus-within {
+  border-color: #3b82f6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.home-search-icon {
+  margin-right: 10px;
+  flex-shrink: 0;
+  color: #9ca3af;
+}
+
+.home-search-bar input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 14px;
+  color: #1f2937;
+}
+
+.home-search-bar input::placeholder {
+  color: #9ca3af;
+}
+
+/* カテゴリ選択（プルダウン式） */
+.home-category-section {
+  padding: 0 32px 18px 32px;
+}
+
+.home-select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.home-category-select {
+  width: 100%;
+  height: 44px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  background-color: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 22px;
+  appearance: none;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.home-category-select:focus {
+  border-color: #3b82f6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.home-select-arrow {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px;
+  color: #6b7280;
+  pointer-events: none;
+}
+
+/* 落とし物リストエリア（上下左右の余白を十分確保） */
+.home-item-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 32px 88px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* リストカード（押したときのポップなアニメーションと影） */
+.home-item-card {
+  display: flex;
+  align-items: center;
+  background-color: #ffffff;
+  border: 1px solid #f3f4f6;
+  border-radius: 16px;
+  padding: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.home-item-card:active {
+  transform: scale(0.97);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.home-item-img {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  object-fit: cover;
+  margin-right: 14px;
+  flex-shrink: 0;
+  background-color: #f3f4f6;
+}
+
+.home-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.home-item-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.home-item-date {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0 0 2px 0;
+}
+
+.home-item-location {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.home-item-status-wrapper {
+  margin-left: 10px;
+  flex-shrink: 0;
+}
+
+/* ステータスバッジ */
+.home-status-badge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.home-status-badge.success {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.home-status-badge.info {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+/* ボトムナビゲーション */
+.home-bottom-nav {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 64px;
+  background-color: #ffffff;
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-sizing: border-box;
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.04);
+}
+
+.home-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #9ca3af;
+  font-size: 11px;
+  font-weight: 500;
+  gap: 3px;
+  transition: transform 0.15s ease;
+}
+
+.home-nav-item:active {
+  transform: scale(0.9);
+}
+
+.home-nav-item.active {
+  color: #3b82f6;
+  font-weight: 600;
+}
