@@ -1,2 +1,47 @@
-/* G005 情報確認画面だけの見た目（配置）。
-   色・ボタンは共通CSS（src/styles/）を使う。 */
+/* G005 情報確認画面だけの見た目（配置）。 */
+
+.signup-confirm__title {
+  margin: 0 0 16px;
+  font-size: var(--font-size-title);
+  text-align: center;
+  color: var(--color-primary);
+}
+
+.signup-confirm__list {
+  margin: 0;
+}
+
+.signup-confirm__row {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.signup-confirm__row dt {
+  margin-bottom: 4px;
+  font-size: var(--font-size-small);
+  color: var(--color-text-muted);
+}
+
+.signup-confirm__row dd {
+  margin: 0;
+  word-break: break-all;
+}
+
+.signup-confirm__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  font-weight: 600;
+  color: #fff;
+}
+
+.signup-confirm__submit {
+  margin-top: 24px;
+}
+
+.signup-confirm__back {
+  margin-top: 12px;
+}

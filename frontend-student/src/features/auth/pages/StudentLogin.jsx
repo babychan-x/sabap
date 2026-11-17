@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { loginStudent } from '../../../api/auth'
+// 【確認用・仮】本来の処理に戻すときは、下の行のコメントを外す
+// import { loginStudent } from '../../../api/auth'
 import './StudentLogin.css'
 
 // G001 ログイン画面（studentLogin）
@@ -9,8 +10,20 @@ export default function StudentLogin() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
-  const [loading, setLoading] = useState(false)
+  // 【確認用・仮】本来の処理に戻すときは、下の2行を消して、その下の2行のコメントを外す
+  const [errorMessage] = useState('')
+  const [loading] = useState(false)
+  // const [errorMessage, setErrorMessage] = useState('')
+  // const [loading, setLoading] = useState(false)
+
+  // 【確認用・仮】画面の確認のため、今は何を入力しても（空でも）G011 へ進む。
+  // 本来の処理に戻すときは、この handleSubmit を消して、下のコメントアウト（validate と handleSubmit）を外す。
+  function handleSubmit(e) {
+    e.preventDefault()
+    navigate('/home')
+  }
+
+  /* ---------- 本来の処理（ここから） ----------
 
   // 入力チェック。問題があればエラー文を返し、なければ空文字を返す。
   // （サーバー側でも同じチェックをする。ここは使いやすさのため）
@@ -45,6 +58,8 @@ export default function StudentLogin() {
       setLoading(false)
     }
   }
+
+  ---------- 本来の処理（ここまで） ---------- */
 
   return (
     <main className="page">

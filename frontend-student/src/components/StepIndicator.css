@@ -1,0 +1,25 @@
+/* 進行状況表示。共通部品なので、色は variables.css の変数を使う。 */
+.step-indicator {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 8px 0 24px;
+  padding: 0;
+  list-style: none;
+}
+
+.step-indicator__item {
+  min-width: 72px;
+  padding: 6px 0;
+  border-radius: 999px;
+  background: var(--color-border);
+  font-size: var(--font-size-small);
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.step-indicator__item--current {
+  background: var(--color-primary);
+  font-weight: 600;
+  color: var(--color-primary-text);
+}
