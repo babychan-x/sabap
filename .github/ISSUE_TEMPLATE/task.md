@@ -2,8 +2,8 @@
 name: タスク
 description: 新しい作業・修正内容を登録するためのテンプレート
 title: ""
-labels: []
-assignees: []
+labels: ""
+assignees: ""
 ---
 
 ## 概要
