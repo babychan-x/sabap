@@ -1,2 +1,93 @@
 /* G006 新規登録完了画面だけの見た目（配置）。
    色・ボタンは共通CSS（src/styles/）を使う。 */
+
+/* G006 新規登録完了画面 */
+
+.signup-complete {
+  display: flex;
+  flex-direction: column;
+}
+
+/* 画面タイトル */
+.signup-complete__header {
+  margin: 0 0 32px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* 登録の進行状況 */
+.signup-complete__steps {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 100%;
+}
+
+.signup-complete__step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 48px;
+  font-size: var(--font-size-small);
+  color: var(--color-text-muted);
+}
+
+.signup-complete__circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: 1px solid var(--color-primary);
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-primary);
+  font-size: 16px;
+}
+
+/* 現在のステップを強調 */
+.signup-complete__circle--active {
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+}
+
+/* ステップ間の線 */
+.signup-complete__line {
+  flex: 1;
+  height: 2px;
+  margin-top: 14px;
+  background: var(--color-primary);
+}
+
+/* 登録完了メッセージ */
+.signup-complete__message {
+  margin-top: 100px;
+  text-align: center;
+}
+
+.signup-complete__message h2 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--color-text);
+}
+
+.signup-complete__message p {
+  margin-top: 24px;
+  font-size: var(--font-size-small);
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+/* 画面下部のボタン */
+.signup-complete__footer {
+  margin-top: auto;
+  padding-top: 48px;
+}
+
+.signup-complete__footer .btn {
+  font-size: 18px;
+}
