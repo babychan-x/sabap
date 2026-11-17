@@ -1,2 +1,69 @@
-/* G004 情報登録画面だけの見た目（配置）。
-   色・ボタンは共通CSS（src/styles/）を使う。 */
+/* G004 情報登録画面だけの見た目（配置）。 */
+
+.signup-form__title {
+  margin: 0 0 8px;
+  font-size: var(--font-size-title);
+  text-align: center;
+  color: var(--color-primary);
+}
+
+.signup-form__checking {
+  margin-top: 64px;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.signup-form__icons {
+  margin: 0;
+  margin-top: 8px;
+  padding: 0;
+  border: none;
+}
+
+.signup-form__icons legend {
+  padding: 0;
+}
+
+.signup-form__icon-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.signup-form__icon {
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* ラジオボタン本体は隠して、丸い画像を選択肢に見せる（キーボード操作は残す） */
+.signup-form__icon input {
+  position: absolute;
+  opacity: 0;
+}
+
+.signup-form__icon-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border: 3px solid transparent;
+  border-radius: 50%;
+  font-weight: 600;
+  color: #fff;
+}
+
+.signup-form__icon input:checked + .signup-form__icon-image {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-surface) inset;
+}
+
+.signup-form__icon input:focus-visible + .signup-form__icon-image {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.signup-form__submit {
+  margin-top: 24px;
+}

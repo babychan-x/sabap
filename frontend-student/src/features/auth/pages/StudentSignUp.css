@@ -1,2 +1,24 @@
-/* G002 新規メールアドレス入力画面だけの見た目（配置）。
-   色・ボタンは共通CSS（src/styles/）を使う。 */
+/* G002 新規メールアドレス入力画面だけの見た目（配置）。 */
+
+.signup__back {
+  margin-left: -8px;
+}
+
+.signup__title {
+  margin: 8px 0 12px;
+  font-size: var(--font-size-title);
+  text-align: center;
+  color: var(--color-primary);
+}
+
+.signup__lead {
+  margin: 0 0 16px;
+  font-size: var(--font-size-small);
+  line-height: 1.8;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.signup__submit {
+  margin-top: 24px;
+}

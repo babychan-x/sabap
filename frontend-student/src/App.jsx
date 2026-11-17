@@ -60,6 +60,8 @@ export default function App() {
         <Route path="/login" element={<StudentLogin />} />                                   {/* G001 */}
         <Route path="/signup" element={<StudentSignUp />} />                                 {/* G002 */}
         <Route path="/signup/mail-sent" element={<StudentSignUpMailSent />} />               {/* G003 */}
+        {/* G004 は、メールのリンク（?token=）から開く画面。token が無いとリンクエラー画面（G039）へ移る。
+            確認用: ブラウザで /signup/form?token=abc を開くと表示できる（token は invalid 以外なら何でもOK・モック） */}
         <Route path="/signup/form" element={<StudentSignUpForm />} />                        {/* G004 ?token= */}
         <Route path="/signup/confirm" element={<StudentSignUpConfirm />} />                  {/* G005 */}
         <Route path="/signup/complete" element={<StudentSignUpComplete />} />                {/* G006 */}
