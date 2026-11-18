@@ -3,8 +3,6 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 // G007 既存メールアドレス入力画面（studentResetPasswordRequest）
-// ※ 仮の画面。外部設計書 G007 の入出力項目・イベントに合わせて中身を作る。
-// 主なAPI（仮）: A-5
 
 export default function StudentResetPasswordRequest() {
   const navigate = useNavigate()
@@ -17,36 +15,45 @@ export default function StudentResetPasswordRequest() {
     navigate('/login')
   }
 
+  //試運転用
   // メール送信ボタン押下時
   const sendButton = (e) => {
     e.preventDefault()
 
-    const inputEmail = email.trim()
-
-    // 未入力の場合
-    if (!inputEmail) {
-      setErrorMessage('メールアドレスを入力してください。')
-      return
-    }
-
-    // メールアドレスの形式を確認
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-    if (!emailPattern.test(inputEmail)) {
-      setErrorMessage('正しいメールアドレスを入力してください。')
-      return
-    }
-
-    // 文字数の確認
-    if (inputEmail.length > 254) {
-      setErrorMessage('メールアドレスは254文字以内で入力してください。')
-      return
-    }
-
-    // 入力内容に問題がなければG008へ遷移
-    setErrorMessage('')
+    // 入力内容に関係なくG008へ遷移
     navigate('/reset-password/mail-sent')
   }
+
+  // メール送信ボタン押下時
+  //const sendButton = (e) => {
+  //  e.preventDefault()
+
+  //  const inputEmail = email.trim()
+
+  //  // 未入力の場合
+  //  if (!inputEmail) {
+  //    setErrorMessage('メールアドレスを入力してください。')
+  //    return
+  //  }
+
+    // メールアドレスの形式を確認
+    //const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+    //if (!emailPattern.test(inputEmail)) {
+    //  setErrorMessage('正しいメールアドレスを入力してください。')
+    //  return
+    //}
+
+    // 文字数の確認
+    //if (inputEmail.length > 254) {
+    //  setErrorMessage('メールアドレスは254文字以内で入力してください。')
+    //  return
+    //}
+
+    // 入力内容に問題がなければG008へ遷移
+    //setErrorMessage('')
+    //navigate('/reset-password/mail-sent')
+    //}
 
   return (
     <div className="page reset-password-request">
