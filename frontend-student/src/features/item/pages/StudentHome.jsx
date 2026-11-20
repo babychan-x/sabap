@@ -25,7 +25,6 @@ export default function StudentHome() {
       image: 'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=200&q=80',
     },
     {
-      id: 2,
       title: 'iPhone(白)',
       date: '2026/10/13 15:00',
       location: '2号館',

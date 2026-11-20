@@ -1,2 +1,227 @@
 /* G012 通知画面だけの見た目（配置）。
    色・ボタンは共通CSS（src/styles/）を使う。 */
+
+   /* G012 通知画面だけの見た目（配置）。
+   色・ボタンは共通CSS（src/styles/）を使う。 */
+
+/* PC画面で中央に配置する背景ラッパー */
+.notification-page-wrapper {
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
+}
+
+/* 9:16比率のスマホ枠 */
+.notification-mobile-container {
+  width: 100%;
+  max-width: var(--page-max-width);
+  height: 100vh;
+  max-height: 844px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+@media (min-width: 450px) {
+  .notification-mobile-container {
+    border: 4px solid #ffffff;
+  }
+}
+
+/* ヘッダー（戻るボタン＋タイトル） */
+.notification-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 32px 18px 24px;
+  background-color: #ffffff;
+}
+
+.notification-back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.notification-back-btn:active {
+  transform: scale(0.85);
+  background-color: #f3f4f6;
+}
+
+.notification-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+/* 通知リストエリア（上下左右の余白を十分確保） */
+.notification-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 32px 88px 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+.notification-empty {
+  margin: 48px 0 0 0;
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* 通知1件分（線で区切る。押したときのポップなアニメーション） */
+.notification-item {
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.notification-item:active {
+  transform: scale(0.98);
+  background-color: #f9fafb;
+}
+
+.notification-item:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* 写真／封筒アイコンの枠（NEWマークの基準位置） */
+.notification-img-wrapper {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #f3f4f6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.notification-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.notification-envelope {
+  flex-shrink: 0;
+}
+
+/* NEWマーク（写真の左上に斜めに重ねる） */
+.notification-new-badge {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.notification-new-badge::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-style: solid;
+  border-width: 44px 44px 0 0;
+  border-color: #3b82f6 transparent transparent transparent;
+}
+
+.notification-new-badge span {
+  position: absolute;
+  top: 8px;
+  left: -4px;
+  width: 36px;
+  text-align: center;
+  font-size: 10px;
+  line-height: 12px;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+  transform: rotate(-45deg);
+}
+
+/* 通知文＋日時（文は上、日時は下に寄せる） */
+.notification-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.notification-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f2937;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.notification-date {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ボトムナビゲーション */
+.notification-bottom-nav {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 64px;
+  background-color: #ffffff;
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-sizing: border-box;
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.04);
+}
+
+.notification-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #9ca3af;
+  font-size: 11px;
+  font-weight: 500;
+  gap: 3px;
+  transition: transform 0.15s ease;
+}
+
+.notification-nav-item:active {
+  transform: scale(0.9);
+}
+
+.notification-nav-item.active {
+  color: #3b82f6;
+  font-weight: 600;
+}

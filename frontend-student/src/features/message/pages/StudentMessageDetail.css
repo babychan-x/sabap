@@ -1,2 +1,277 @@
 /* G013 メッセージ詳細画面だけの見た目（配置）。
    色・ボタンは共通CSS（src/styles/）を使う。 */
+
+   /* G013 メッセージ画面だけの見た目（配置）。
+   色・ボタンは共通CSS（src/styles/）を使う。 */
+
+/* PC画面で中央に配置する背景ラッパー */
+.message-detail-page-wrapper {
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
+}
+
+/* 9:16比率のスマホ枠（背景を少しグレーにして、白いカードを浮かせる） */
+.message-detail-mobile-container {
+  width: 100%;
+  max-width: var(--page-max-width);
+  height: 100vh;
+  max-height: 844px;
+  background-color: #f7f8fa;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+@media (min-width: 450px) {
+  .message-detail-mobile-container {
+    border: 4px solid #ffffff;
+  }
+}
+
+/* ヘッダー（戻るボタン＋タイトル） */
+.message-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 32px 18px 24px;
+}
+
+.message-detail-back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.message-detail-back-btn:active {
+  transform: scale(0.85);
+  background-color: #eceef1;
+}
+
+.message-detail-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+/* 本文エリア（上下左右の余白を十分確保。表示するときにふわっと出る） */
+.message-detail-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 32px 88px 32px;
+  animation: message-detail-fade-in 0.35s ease-out both;
+}
+
+@keyframes message-detail-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .message-detail-content {
+    animation: none;
+  }
+}
+
+/* カード（白地・角丸・やわらかい影） */
+.message-detail-card {
+  background-color: #ffffff;
+  border: 1px solid #eef0f3;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 6px 20px rgba(17, 24, 39, 0.06);
+}
+
+/* 送信者（アイコン＋ニックネーム＋日時） */
+.message-detail-sender {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.message-detail-avatar {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px #fecdd3, 0 4px 10px rgba(244, 114, 138, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.message-detail-avatar svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.message-detail-sender-info {
+  min-width: 0;
+}
+
+.message-detail-sender-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 2px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.message-detail-sent-at {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* メッセージ本文（行間を広めに。改行はそのまま表示） */
+.message-detail-body {
+  font-size: 15px;
+  line-height: 1.8;
+  color: #1f2937;
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* 「落とし物詳細」の見出し */
+.message-detail-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #4b5563;
+  margin: 24px 0 10px 4px;
+}
+
+/* 落とし物カード（写真＋情報） */
+.message-detail-item-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+}
+
+.message-detail-item-img-wrapper {
+  width: 88px;
+  height: 88px;
+  flex-shrink: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  background-color: #f3f4f6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.message-detail-item-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.message-detail-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.message-detail-item-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 8px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.message-detail-item-list {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.message-detail-item-row {
+  display: flex;
+  gap: 10px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.message-detail-item-row dt {
+  width: 52px;
+  flex-shrink: 0;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+.message-detail-item-row dd {
+  margin: 0;
+  color: #374151;
+  font-weight: 500;
+  min-width: 0;
+  word-break: break-word;
+}
+
+/* ボトムナビゲーション */
+.message-detail-bottom-nav {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 64px;
+  background-color: #ffffff;
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-sizing: border-box;
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.04);
+}
+
+.message-detail-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #9ca3af;
+  font-size: 11px;
+  font-weight: 500;
+  gap: 3px;
+  transition: transform 0.15s ease;
+}
+
+.message-detail-nav-item:active {
+  transform: scale(0.9);
+}
+
+.message-detail-nav-item.active {
+  color: #3b82f6;
+  font-weight: 600;
+}
