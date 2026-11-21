@@ -54,14 +54,14 @@ export default function StudentHome() {
       id: 5,
       title: 'マフラー',
       date: '2026/10/12 20:00',
-      location: 'S号館',
+      location: '5号館',
       status: '学生厚生到着済',
       statusType: 'success',
       image: 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?auto=format&fit=crop&w=200&q=80',
     },
   ];
 
-  const categories = ['すべて', '財布', 'スマホ', '傘', 'その他'];
+  const categories = ['すべて', 'かばん・小物入れ', '衣類', '装飾品', '文具・書籍','電子機器','生活用品','貴重品','その他'];
 
   return (
     <div className="home-page-wrapper">
