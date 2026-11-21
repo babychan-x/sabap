@@ -1,2 +1,188 @@
 /* G027 自分の投稿一覧画面だけの見た目（配置）。
    色・ボタンは共通CSS（src/styles/）を使う。 */
+
+/* PC画面で中央に配置する背景ラッパー */
+.my-post-list-page-wrapper {
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
+}
+
+/* 9:16比率のスマホ枠 */
+.my-post-list-mobile-container {
+  width: 100%;
+  max-width: var(--page-max-width);
+  height: 100vh;
+  max-height: 844px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+@media (min-width: 450px) {
+  .my-post-list-mobile-container {
+    border: 4px solid #ffffff;
+  }
+}
+
+/* ヘッダー（戻るボタン＋タイトル） */
+.my-post-list-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 32px 18px 24px;
+  background-color: #ffffff;
+}
+
+.my-post-list-back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.my-post-list-back-btn:active {
+  transform: scale(0.85);
+  background-color: #f3f4f6;
+}
+
+.my-post-list-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+/* 投稿リストエリア（上下左右の余白を十分確保） */
+.my-post-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 32px 88px 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+.my-post-list-empty {
+  margin: 48px 0 0 0;
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* 投稿1件分（線で区切る。押したときのポップなアニメーション） */
+.my-post-list-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.my-post-list-item:active {
+  transform: scale(0.98);
+  background-color: #f9fafb;
+}
+
+.my-post-list-item:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* サムネイル */
+.my-post-list-img-wrapper {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #f3f4f6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.my-post-list-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 名前＋日時 */
+.my-post-list-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.my-post-list-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 6px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.my-post-list-date {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* 右の「＞」 */
+.my-post-list-chevron {
+  flex-shrink: 0;
+  color: #9ca3af;
+}
+
+/* ボトムナビゲーション */
+.my-post-list-bottom-nav {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 64px;
+  background-color: #ffffff;
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-sizing: border-box;
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.04);
+}
+
+.my-post-list-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #9ca3af;
+  font-size: 11px;
+  font-weight: 500;
+  gap: 3px;
+  transition: transform 0.15s ease;
+}
+
+.my-post-list-nav-item:active {
+  transform: scale(0.9);
+}
+
+.my-post-list-nav-item.active {
+  color: #3b82f6;
+  font-weight: 600;
+}
