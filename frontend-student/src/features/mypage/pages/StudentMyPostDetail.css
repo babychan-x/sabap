@@ -1,2 +1,354 @@
-/* G028 自分の投稿詳細画面だけの見た目（配置）。
+/* G028 投稿詳細画面だけの見た目（配置）。
    色・ボタンは共通CSS（src/styles/）を使う。 */
+
+/* PC画面で中央に配置する背景ラッパー */
+.my-post-detail-page-wrapper {
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
+}
+
+/* 9:16比率のスマホ枠（背景を少しグレーにして、白いカードを浮かせる） */
+.my-post-detail-mobile-container {
+  width: 100%;
+  max-width: var(--page-max-width);
+  height: 100vh;
+  max-height: 844px;
+  background-color: #f7f8fa;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+@media (min-width: 450px) {
+  .my-post-detail-mobile-container {
+    border: 4px solid #ffffff;
+  }
+}
+
+/* ヘッダー（戻るボタン＋タイトル） */
+.my-post-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 32px 18px 24px;
+}
+
+.my-post-detail-back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.my-post-detail-back-btn:active {
+  transform: scale(0.85);
+  background-color: #eceef1;
+}
+
+.my-post-detail-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+/* 見つからないとき */
+.my-post-detail-empty {
+  margin: 64px 32px 0 32px;
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+/* 本文エリア（表示するときにふわっと出る） */
+.my-post-detail-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 32px 32px 32px;
+  animation: my-post-detail-fade-in 0.35s ease-out both;
+}
+
+@keyframes my-post-detail-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .my-post-detail-content {
+    animation: none;
+  }
+}
+
+/* カード（白地・角丸・やわらかい影。写真がはみ出さないよう overflow を隠す） */
+.my-post-detail-card {
+  background-color: #ffffff;
+  border: 1px solid #eef0f3;
+  border-radius: 24px;
+  box-shadow: 0 6px 20px rgba(17, 24, 39, 0.06);
+  overflow: hidden;
+}
+
+/* 写真エリア */
+.my-post-detail-photo-area {
+  background-color: #f3f4f6;
+}
+
+/* 写真スライダー（横にスワイプ。1枚ずつ止まる） */
+.my-post-detail-slider {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.my-post-detail-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.my-post-detail-slide {
+  flex: 0 0 100%;
+  height: 190px;
+  scroll-snap-align: start;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.my-post-detail-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 写真の点（今の写真だけ長く・青く） */
+.my-post-detail-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 0 0 0;
+}
+
+.my-post-detail-dot {
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border: none;
+  border-radius: 3px;
+  background-color: #d1d5db;
+  cursor: pointer;
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.my-post-detail-dot.active {
+  width: 16px;
+  background-color: #3b82f6;
+}
+
+/* 落とし物の情報エリア */
+.my-post-detail-body {
+  padding: 14px 20px 20px 20px;
+}
+
+.my-post-detail-item-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.02em;
+}
+
+.my-post-detail-list {
+  margin: 0;
+}
+
+.my-post-detail-row {
+  display: flex;
+  gap: 14px;
+  padding: 12px 0;
+  border-top: 1px solid #eef2f7;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.my-post-detail-row dt {
+  width: 64px;
+  flex-shrink: 0;
+  color: #374151;
+  font-weight: 700;
+}
+
+.my-post-detail-row dd {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  color: #4b5563;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+/* 編集・削除ボタン（横に2つ並べる） */
+.my-post-detail-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.my-post-detail-btn {
+  flex: 1;
+  height: 48px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* 編集する（青） */
+.my-post-detail-btn.edit {
+  border: none;
+  background-color: #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.28);
+}
+
+/* 削除する（白地に赤い文字） */
+.my-post-detail-btn.delete {
+  border: 1.5px solid #fca5a5;
+  background-color: #ffffff;
+  color: #dc2626;
+}
+
+.my-post-detail-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* 使えないとき（灰色にする） */
+.my-post-detail-btn.edit:disabled,
+.my-post-detail-btn.delete:disabled {
+  border: none;
+  background-color: #c4c7cc;
+  color: #ffffff;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* ボタンが使えない理由 */
+.my-post-detail-notice {
+  margin: 12px 0 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #6b7280;
+  text-align: center;
+}
+
+/* ダイアログの背景（画面全体を少し暗くする） */
+.my-post-detail-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 32px;
+  background-color: rgba(17, 24, 39, 0.45);
+  animation: my-post-detail-overlay-in 0.2s ease-out both;
+}
+
+@keyframes my-post-detail-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .my-post-detail-overlay {
+    animation: none;
+  }
+}
+
+/* ダイアログ本体 */
+.my-post-detail-dialog {
+  width: 100%;
+  max-width: 300px;
+  padding: 28px 24px 20px 24px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.my-post-detail-dialog-message {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.6;
+  color: #111827;
+}
+
+.my-post-detail-dialog-error {
+  margin: 10px 0 0 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #dc2626;
+}
+
+.my-post-detail-dialog-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.my-post-detail-dialog-btn {
+  flex: 1;
+  height: 44px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.my-post-detail-dialog-btn:active {
+  transform: scale(0.97);
+}
+
+/* 戻る（灰色） */
+.my-post-detail-dialog-btn.secondary {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
+/* 確認（赤。削除は取り消せないので目立たせる） */
+.my-post-detail-dialog-btn.danger {
+  background-color: #ef4444;
+  color: #ffffff;
+}
+
+/* 一覧に戻る（青） */
+.my-post-detail-dialog-btn.primary {
+  background-color: #3b82f6;
+  color: #ffffff;
+}
