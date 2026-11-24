@@ -202,6 +202,7 @@ export default function StudentPostItem() {
         />
 
         {/* 発見場所 */}
+        // 入力方式変更するかも
         <label htmlFor="foundPlace" className="post-item__label">
           <span className="post-item__required">必須</span>
           発見場所
@@ -232,8 +233,8 @@ export default function StudentPostItem() {
           onChange={(e) => setStorageStatus(e.target.value)}
         >
           <option value="">選択してください</option>
-          <option value="未到着">未到着</option>
-          <option value="到着済み">到着済み</option>
+          <option value="学生厚生未到着">学生厚生未到着</option>
+          <option value="学生厚生到着済み">学生厚生到着済み</option>
         </select>
 
         {/* 落とし物の情報 */}
