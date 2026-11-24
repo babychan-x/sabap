@@ -1,2 +1,218 @@
-/* G032 メッセージ一覧画面だけの見た目（配置）。
-   色・ボタンは共通CSS（src/styles/）を使う。 */
+/* G032 メッセージ一覧画面だけの見た目。
+   外枠・ヘッダー・一覧の1行・下タブは G027（StudentMyPostList）と同じ値。
+   タブ（受信／送信）は旧スライドの形（丸い枠の中で、選んだ方が白く浮く）を、G025〜G029 の色にした。 */
+
+/* PC画面で中央に配置する背景ラッパー */
+.message-list-page-wrapper {
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
+}
+
+/* スマホ枠 */
+.message-list-mobile-container {
+  width: 100%;
+  max-width: var(--page-max-width);
+  height: 100vh;
+  max-height: 844px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+@media (min-width: 450px) {
+  .message-list-mobile-container {
+    border: 4px solid #ffffff;
+  }
+}
+
+/* ヘッダー（戻るボタン＋タイトル） */
+.message-list-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 32px 14px 24px;
+  background-color: #ffffff;
+}
+
+.message-list-back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.message-list-back-btn:active {
+  transform: scale(0.85);
+  background-color: #f3f4f6;
+}
+
+.message-list-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+/* タブ（受信メッセージ／送信メッセージ） */
+.message-list-tabs {
+  display: flex;
+  gap: 4px;
+  margin: 0 32px 6px 32px;
+  padding: 4px;
+  background-color: #f3f4f6;
+  border-radius: 14px;
+}
+
+.message-list-tab {
+  flex: 1;
+  height: 40px;
+  border: none;
+  border-radius: 11px;
+  background: none;
+  color: #6b7280;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.15s ease;
+}
+
+.message-list-tab:active {
+  transform: scale(0.97);
+}
+
+.message-list-tab:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* 選んでいるタブ（白く浮かせて、青い文字） */
+.message-list-tab.active {
+  background-color: #ffffff;
+  color: #3b82f6;
+  box-shadow: 0 2px 8px rgba(17, 24, 39, 0.08);
+}
+
+/* 一覧エリア（ここだけスクロールする。下タブの分だけ下を空ける） */
+.message-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 32px 88px 32px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 読み込み中・0件・読み込めないとき */
+.message-list-message {
+  margin: 48px 0 0 0;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #6b7280;
+}
+
+.message-list-message.error {
+  color: #dc2626;
+}
+
+/* メッセージ1件分（線で区切る。押すと少し縮む。G027 と同じ） */
+.message-list-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 14px 0;
+  border: none;
+  border-bottom: 1px solid #e5e7eb;
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.message-list-item:active {
+  transform: scale(0.98);
+  background-color: #f9fafb;
+}
+
+.message-list-item:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* サムネイル（送信者のアイコン／落とし物の写真。G027 と同じ 64px） */
+.message-list-thumb {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #f3f4f6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* 送信者のアイコンは、人の写真に見えるよう少し丸くする */
+.message-list-thumb.avatar {
+  border-radius: 18px;
+}
+
+.message-list-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 名前＋本文の冒頭＋日時 */
+.message-list-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.message-list-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0 0 4px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 本文は1行だけ表示して、はみ出した分は「…」にする（改行も1行にまとまる） */
+.message-list-body {
+  font-size: 13px;
+  color: #4b5563;
+  margin: 0 0 6px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.message-list-date {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* 右の「＞」 */
+.message-list-chevron {
+  flex-shrink: 0;
+  color: #9ca3af;
+}

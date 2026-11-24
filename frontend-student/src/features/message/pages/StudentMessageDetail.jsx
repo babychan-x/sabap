@@ -10,17 +10,9 @@ import './StudentMessageDetail.css'
 // 置き場所: src/features/message/pages/StudentMessageDetail.jsx（App.jsx: /messages/:id）
 
 import React, { useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import BottomNav from '../../../components/BottomNav';
 import './StudentMessageDetail.css';
-
-// ---------------------------------------------------------------
-// 遷移先のパス（App.jsx のルーティングと同じ）
-// ---------------------------------------------------------------
-const ROUTES = {
-  home: '/home', // G011 投稿一覧
-  post: '/post', // G021 落とし物投稿
-  mypage: '/mypage', // G024 マイページ
-};
 
 // 送信者のアイコン（アイコン画像が決まるまでの仮。ニックネームの横に表示する）
 function AvatarIcon() {
@@ -150,27 +142,7 @@ export default function StudentMessageDetail() {
         </div>
 
         {/* ボトムナビゲーション（フッター） */}
-        <nav className="message-detail-bottom-nav">
-          <Link to={ROUTES.home} className="message-detail-nav-item">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-            </svg>
-            <span>ホーム</span>
-          </Link>
-          <Link to={ROUTES.post} className="message-detail-nav-item">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-              <circle cx="12" cy="13" r="3"></circle>
-            </svg>
-            <span>投稿</span>
-          </Link>
-          <Link to={ROUTES.mypage} className="message-detail-nav-item active">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-            </svg>
-            <span>マイページ</span>
-          </Link>
-        </nav>
+        <BottomNav active="mypage" />
       </div>
     </div>
   );
