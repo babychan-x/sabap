@@ -75,9 +75,8 @@ export default function App() {
         {/* ---------- item ---------- */}
         <Route path="/home" element={<StudentHome />} />                                     {/* G011 */}
         <Route path="/search" element={<StudentSearchResult />} />                           {/* G016 ?keyword= */}
-        {/* G015 申請結果詳細は、設計書でファイル名が G017 と同じ（studentItemDetail）。
-            設計書の確認が済むまでは作らない（第12章 5）。 */}
-        <Route path="/items/:id" element={<StudentItemDetail />} />                          {/* G017 */}
+        {/* G015 申請結果詳細と G017 落とし物詳細は、同じ画面（studentItemDetail）。2026/11/24 確定（第12章 5） */}
+        <Route path="/items/:id" element={<StudentItemDetail />} />                          {/* G015・G017 */}
         <Route path="/items/:id/apply" element={<StudentApply />} />                         {/* G018 */}
         <Route path="/items/:id/apply/confirm" element={<StudentApplyConfirm />} />          {/* G019 */}
         <Route path="/items/:id/apply/complete" element={<StudentApplyComplete />} />        {/* G020 */}

@@ -1,2 +1,303 @@
-/* G017 落とし物詳細画面だけの見た目（配置）。
-   色・ボタンは共通CSS（src/styles/）を使う。 */
+/* G015・G017 落とし物詳細画面だけの見た目。
+   色・形は G028（StudentMyPostDetail）に合わせている。ボタンは G025 と同じ形。 */
+
+/* PC画面で中央に配置する背景ラッパー */
+.item-detail-page-wrapper {
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
+}
+
+/* スマホ枠（背景を少しグレーにして、白いカードを浮かせる。G028 と同じ） */
+.item-detail-mobile-container {
+  width: 100%;
+  max-width: var(--page-max-width);
+  height: 100vh;
+  max-height: 844px;
+  background-color: #f7f8fa;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+@media (min-width: 450px) {
+  .item-detail-mobile-container {
+    border: 4px solid #ffffff;
+  }
+}
+
+/* ヘッダー（戻るボタン＋タイトル） */
+.item-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 32px 18px 24px;
+}
+
+.item-detail-back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.item-detail-back-btn:active {
+  transform: scale(0.85);
+  background-color: #eceef1;
+}
+
+.item-detail-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+/* 読み込み中・見つからないとき */
+.item-detail-message {
+  margin: 64px 32px 0 32px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #6b7280;
+}
+
+.item-detail-message.error {
+  color: #dc2626;
+}
+
+/* 本文エリア（表示するときにふわっと出る） */
+.item-detail-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 32px 24px 32px;
+  animation: item-detail-fade-in 0.35s ease-out both;
+}
+
+@keyframes item-detail-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item-detail-content {
+    animation: none;
+  }
+}
+
+/* カード（白地・角丸・やわらかい影） */
+.item-detail-card {
+  background-color: #ffffff;
+  border: 1px solid #eef0f3;
+  border-radius: 24px;
+  box-shadow: 0 6px 20px rgba(17, 24, 39, 0.06);
+  overflow: hidden;
+}
+
+/* 写真エリア */
+.item-detail-photo-area {
+  position: relative;
+  background-color: #f3f4f6;
+}
+
+/* 写真スライダー（横にスワイプ。1枚ずつ止まる） */
+.item-detail-slider {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.item-detail-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.item-detail-slide {
+  flex: 0 0 100%;
+  height: 190px;
+  scroll-snap-align: start;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.item-detail-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 「1 / 3」の表示（写真の右上） */
+.item-detail-photo-count {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background-color: rgba(17, 24, 39, 0.55);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+/* 写真の点（今の写真だけ長く・青く） */
+.item-detail-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 12px 0 0 0;
+  background-color: #ffffff;
+}
+
+.item-detail-dot {
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border: none;
+  border-radius: 3px;
+  background-color: #d1d5db;
+  cursor: pointer;
+  transition: width 0.2s ease, background-color 0.2s ease;
+}
+
+.item-detail-dot.active {
+  width: 16px;
+  background-color: #3b82f6;
+}
+
+/* 落とし物の情報エリア */
+.item-detail-body {
+  padding: 14px 20px 8px 20px;
+}
+
+.item-detail-item-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.02em;
+}
+
+.item-detail-list {
+  margin: 0;
+}
+
+.item-detail-row {
+  display: flex;
+  gap: 14px;
+  padding: 12px 0;
+  border-top: 1px solid #eef2f7;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.item-detail-row dt {
+  width: 72px;
+  flex-shrink: 0;
+  color: #374151;
+  font-weight: 700;
+}
+
+.item-detail-row dd {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  color: #4b5563;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+/* 保管場所ステータスのバッジ（色は G016 と同じ） */
+.item-detail-status {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.item-detail-status.not_arrived {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.item-detail-status.arrived {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.item-detail-status.returned,
+.item-detail-status.disposed {
+  background-color: #e5e7eb;
+  color: #4b5563;
+}
+
+/* 保管場所の補足（バッジの下に出す） */
+.item-detail-note {
+  display: block;
+  margin-top: 6px;
+}
+
+/* 保管期限が30日以内のとき（赤・太字） */
+.item-detail-row dd.item-detail-deadline-soon {
+  color: #dc2626;
+  font-weight: 800;
+}
+
+/* 「受け取り申請する」を出さない理由 */
+.item-detail-notice {
+  margin: 16px 0 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #6b7280;
+  text-align: center;
+}
+
+/* ボタンエリア（下に固定） */
+.item-detail-footer {
+  padding: 12px 32px 40px 32px;
+}
+
+/* 受け取り申請する（G025 のメインボタンと同じ形） */
+.item-detail-apply-btn {
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: 14px;
+  background-color: #3b82f6;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.28);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.item-detail-apply-btn:active {
+  transform: scale(0.98);
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.22);
+}
+
+.item-detail-apply-btn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 3px;
+}

@@ -1,2 +1,283 @@
-/* G016 検索結果一覧画面だけの見た目（配置）。
-   色・ボタンは共通CSS（src/styles/）を使う。 */
+/* G016 検索結果一覧画面だけの見た目。
+   色・形は G025〜G029（デザイン担当の画面）と、同じ一覧の形の G011 に合わせている。 */
+
+/* PC画面で中央に配置する背景ラッパー */
+.search-result-page-wrapper {
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
+}
+
+/* スマホ枠 */
+.search-result-mobile-container {
+  width: 100%;
+  max-width: var(--page-max-width);
+  height: 100vh;
+  max-height: 844px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+@media (min-width: 450px) {
+  .search-result-mobile-container {
+    border: 4px solid #ffffff;
+  }
+}
+
+/* ヘッダー（戻るボタン＋タイトル） */
+.search-result-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 32px 18px 24px;
+}
+
+.search-result-back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.search-result-back-btn:active {
+  transform: scale(0.85);
+  background-color: #f3f4f6;
+}
+
+.search-result-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+/* 検索バー（G011 と同じ形） */
+.search-result-search-section {
+  padding: 0 32px 12px 32px;
+}
+
+.search-result-search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 24px;
+  background-color: #f9fafb;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02), 0 2px 6px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+}
+
+.search-result-search-bar:focus-within {
+  border-color: #3b82f6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.search-result-search-icon {
+  flex-shrink: 0;
+  color: #9ca3af;
+}
+
+.search-result-search-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  /* 16px未満だと、iPhone で入力するときに画面が拡大されるので 16px にする */
+  font-size: 16px;
+  color: #1f2937;
+}
+
+.search-result-search-input::placeholder {
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+/* ブラウザが自動で付ける「×」ボタンを消す（見た目をそろえるため） */
+.search-result-search-input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+/* 落とし物リスト（ここだけスクロールする。下タブに隠れないよう下を空ける） */
+.search-result-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 32px 88px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 該当件数 */
+.search-result-count {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #4b5563;
+}
+
+/* 検索中・0件・エラーの文 */
+.search-result-message {
+  margin: 48px 0 0 0;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #6b7280;
+}
+
+.search-result-message.error {
+  color: #dc2626;
+}
+
+/* 落とし物カード（G011 と同じ形。押すと少し縮む） */
+.search-result-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #f3f4f6;
+  border-radius: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  font-family: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.search-result-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.search-result-card:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* 写真 */
+.search-result-img-wrapper {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #f3f4f6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.search-result-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 名前・日時・場所 */
+.search-result-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-result-name {
+  margin: 0 0 6px 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1f2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-result-date,
+.search-result-place {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #6b7280;
+}
+
+/* 保管場所ステータスのバッジ（カードの右上） */
+.search-result-status {
+  align-self: flex-start;
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* 学生厚生未到着（黄） */
+.search-result-status.not_arrived {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+/* 学生厚生到着済み（緑。G011 と同じ色） */
+.search-result-status.arrived {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+/* 受け渡し済み・処分済み（灰） */
+.search-result-status.returned,
+.search-result-status.disposed {
+  background-color: #e5e7eb;
+  color: #4b5563;
+}
+
+/* ボトムナビゲーション（G027 と同じ形） */
+.search-result-bottom-nav {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 64px;
+  background-color: #ffffff;
+  border-top: 1px solid #f3f4f6;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  box-sizing: border-box;
+  box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.04);
+}
+
+.search-result-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  color: #9ca3af;
+  font-size: 11px;
+  font-weight: 500;
+  gap: 3px;
+  transition: transform 0.15s ease;
+}
+
+.search-result-nav-item:active {
+  transform: scale(0.9);
+}
+
+.search-result-nav-item.active {
+  color: #3b82f6;
+  font-weight: 600;
+}

@@ -1,65 +1,43 @@
-import { useParams } from 'react-router-dom'
-
 // G011 投稿一覧（ホーム）画面（studentHome）
 // ※ 仮の画面。外部設計書 G011 の入出力項目・イベントに合わせて中身を作る。
 // 主なAPI（仮）: B-1
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { getItems } from '../../../api/items';
+import { formatDateTime } from '../../../utils/date';
+import { STORAGE_STATUS_LABELS } from '../../../utils/labels';
 import './StudentHome.css';
+
+// 保管場所ステータス → バッジの色のクラス
+const STATUS_TYPES = {
+  NOT_ARRIVED: 'warn',
+  ARRIVED: 'success',
+  RETURNED: 'closed',
+  DISPOSED: 'closed',
+};
 
 export default function StudentHome() {
   const navigate = useNavigate();
   const [activeCategory, setActiveCategory] = useState('すべて');
   const [searchKeyword, setSearchKeyword] = useState('');
 
-  // 写真つきの仮データ
-  const dummyItems = [
-    {
-      id: 1,
-      title: '黒い折り畳み財布',
-      date: '2026/10/13 16:00',
-      location: '1号館',
-      status: '学生厚生到着済',
-      statusType: 'success',
-      image: 'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=200&q=80',
-    },
-    {
-      title: 'iPhone(白)',
-      date: '2026/10/13 15:00',
-      location: '2号館',
-      status: '教員預かり',
-      statusType: 'info',
-      image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=200&q=80',
-    },
-    {
-      id: 3,
-      title: '青の水筒',
-      date: '2026/10/13 14:00',
-      location: '体育館',
-      status: '学生厚生到着済',
-      statusType: 'success',
-      image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=200&q=80',
-    },
-    {
-      id: 4,
-      title: 'ピンクポーチ',
-      date: '2026/10/13 13:00',
-      location: '食堂',
-      status: '学生厚生到着済',
-      statusType: 'success',
-      image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=200&q=80',
-    },
-    {
-      id: 5,
-      title: 'マフラー',
-      date: '2026/10/12 20:00',
-      location: '5号館',
-      status: '学生厚生到着済',
-      statusType: 'success',
-      image: 'https://images.unsplash.com/photo-1601924994987-69e26d50dc26?auto=format&fit=crop&w=200&q=80',
-    },
-  ];
+  // 落とし物の一覧（仮データは src/mock/items.js。G016・G017 と同じデータを使う。
+  // 以前はこの画面の中に別の仮データがあり、詳細画面（G017）と ID がずれて、押したものと違う詳細が開いていた）
+  const [items, setItems] = useState([]);
+  useEffect(() => {
+    let ignore = false;
+    getItems()
+      .then((list) => {
+        if (!ignore) setItems(list);
+      })
+      .catch(() => {
+        // 読み込み失敗時の表示は設計書に記載なし（仮。いまは何も表示しない）
+      });
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   const categories = ['すべて', 'かばん・小物入れ', '衣類', '装飾品', '文具・書籍','電子機器','生活用品','貴重品','その他'];
 
@@ -127,21 +105,26 @@ export default function StudentHome() {
 
         {/* 落とし物リスト */}
         <div className="home-item-list">
-          {dummyItems.map((item) => (
+          {items.map((item) => (
             <div
               key={item.id}
               className="home-item-card"
               onClick={() => navigate(`/items/${item.id}`)}
             >
-              <img src={item.image} alt={item.title} className="home-item-img" />
+              {/* 写真がないときは、同じ大きさの灰色の枠だけ出す */}
+              {item.images[0] ? (
+                <img src={item.images[0]} alt={item.name} className="home-item-img" />
+              ) : (
+                <div className="home-item-img" aria-hidden="true" />
+              )}
               <div className="home-item-info">
-                <h2 className="home-item-name">{item.title}</h2>
-                <p className="home-item-date">{item.date}</p>
-                <p className="home-item-location">{item.location}</p>
+                <h2 className="home-item-name">{item.name}</h2>
+                <p className="home-item-date">{formatDateTime(item.foundAt)}</p>
+                <p className="home-item-location">{item.foundPlace}</p>
               </div>
               <div className="home-item-status-wrapper">
-                <span className={`home-status-badge ${item.statusType}`}>
-                  {item.status}
+                <span className={`home-status-badge ${STATUS_TYPES[item.storageStatus]}`}>
+                  {STORAGE_STATUS_LABELS[item.storageStatus]}
                 </span>
               </div>
             </div>

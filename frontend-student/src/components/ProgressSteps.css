@@ -1,0 +1,74 @@
+/* 進行状況（入力 → 確認 → 完了）。値は G029 の .my-post-edit-steps と同じ。 */
+.progress-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0 40px 12px 40px;
+  display: flex;
+  align-items: flex-start;
+}
+
+.progress-steps-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 24px;
+}
+
+.progress-steps-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.progress-steps-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+/* 今の位置だけ強調 */
+.progress-steps-step.current .progress-steps-circle {
+  border-color: #3b82f6;
+  background-color: #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+.progress-steps-step.current .progress-steps-label {
+  color: #3b82f6;
+  font-weight: 700;
+}
+
+/* ステップをつなぐ線（真ん中に小さな丸） */
+.progress-steps-line {
+  flex: 1;
+  height: 2px;
+  margin: 11px 6px 0 6px;
+  background-color: #e5e7eb;
+  position: relative;
+}
+
+.progress-steps-line::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid #cbd5e1;
+  background-color: #ffffff;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+}

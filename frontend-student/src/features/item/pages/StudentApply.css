@@ -1,2 +1,281 @@
-/* G018 受け取り申請（入力）画面だけの見た目（配置）。
-   色・ボタンは共通CSS（src/styles/）を使う。 */
+/* G018 受け取り申請画面だけの見た目。
+   入力欄・写真・バッジは G029（StudentMyPostEdit）、ボタンは G025 と同じ値。 */
+
+/* PC画面で中央に配置する背景ラッパー */
+.apply-page-wrapper {
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
+}
+
+/* スマホ枠 */
+.apply-mobile-container {
+  width: 100%;
+  max-width: var(--page-max-width);
+  height: 100vh;
+  max-height: 844px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+@media (min-width: 450px) {
+  .apply-mobile-container {
+    border: 4px solid #ffffff;
+  }
+}
+
+/* ヘッダー（戻るボタン＋タイトル） */
+.apply-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 32px 14px 24px;
+}
+
+.apply-back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.apply-back-btn:active {
+  transform: scale(0.85);
+  background-color: #f3f4f6;
+}
+
+.apply-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+/* フォーム全体（入力エリアが伸びて、ボタンが下に残る） */
+.apply-form {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 入力エリア（ここだけスクロールする） */
+.apply-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 32px 16px 32px;
+}
+
+/* 入力欄1つ分 */
+.apply-field {
+  margin-bottom: 22px;
+}
+
+.apply-label-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.apply-badge {
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.apply-badge.required {
+  color: #e11d48;
+  background-color: #ffe4e6;
+}
+
+.apply-badge.optional {
+  color: #6b7280;
+  background-color: #e5e7eb;
+}
+
+.apply-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #374151;
+}
+
+.apply-counter {
+  margin-left: auto;
+  font-size: 11px;
+  color: #9ca3af;
+  white-space: nowrap;
+}
+
+/* 複数行の入力欄 */
+.apply-input-wrapper {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background-color: #f9fafb;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02), 0 2px 6px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s ease;
+}
+
+.apply-input-wrapper:focus-within {
+  border-color: #3b82f6;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+/* エラーのときは赤い枠 */
+.apply-input-wrapper.has-error {
+  border-color: #ef4444;
+  background-color: #fff7f7;
+}
+
+.apply-input-wrapper.has-error:focus-within {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15);
+}
+
+.apply-textarea {
+  width: 100%;
+  min-height: 160px;
+  border: none;
+  outline: none;
+  resize: none;
+  background: transparent;
+  font-family: inherit;
+  /* 16px未満だと、iPhone で入力するときに画面が拡大されるので 16px にする */
+  font-size: 16px;
+  line-height: 1.6;
+  color: #1f2937;
+}
+
+.apply-textarea::placeholder {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+/* エラーメッセージ */
+.apply-error {
+  font-size: 12px;
+  line-height: 1.5;
+  color: #dc2626;
+  margin: 6px 0 0 4px;
+}
+
+/* 写真（サムネイル＋追加ボタン） */
+.apply-photos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.apply-photo {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #f3f4f6;
+}
+
+.apply-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* 写真を外す「×」 */
+.apply-photo-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: rgba(17, 24, 39, 0.65);
+  color: #ffffff;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* 写真を追加する（点線の枠） */
+.apply-add-photo {
+  flex: 1 1 150px;
+  min-width: 150px;
+  height: 72px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  border: 1.5px dashed #93c5fd;
+  border-radius: 12px;
+  background-color: #eff6ff;
+  color: #3b82f6;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.apply-add-photo:active {
+  transform: scale(0.98);
+  background-color: #dbeafe;
+}
+
+.apply-file-input {
+  display: none;
+}
+
+/* ボタンエリア（下に固定） */
+.apply-footer {
+  padding: 8px 32px 40px 32px;
+}
+
+/* 確認画面へ（G025 のメインボタンと同じ形） */
+.apply-submit-btn {
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: 14px;
+  background-color: #3b82f6;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.28);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.apply-submit-btn:active {
+  transform: scale(0.98);
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.22);
+}
+
+.apply-submit-btn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 3px;
+}
