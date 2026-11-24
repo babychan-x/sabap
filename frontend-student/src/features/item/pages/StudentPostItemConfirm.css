@@ -1,2 +1,203 @@
-/* G022 投稿確認画面だけの見た目（配置）。
-   色・ボタンは共通CSS（src/styles/）を使う。 */
+/* G022 投稿確認画面 */
+
+.post-confirm {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* 戻るボタン */
+.post-confirm__back {
+  align-self: flex-start;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* 進行状況 */
+.post-confirm__steps {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  flex-shrink: 0;
+  margin: 32px 0 24px;
+}
+
+.post-confirm__step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 48px;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.post-confirm__circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--color-primary);
+  border-radius: 50%;
+  color: var(--color-primary);
+  background: var(--color-surface);
+  font-size: 14px;
+}
+
+.post-confirm__circle--active {
+  color: var(--color-primary-text);
+  background: var(--color-primary);
+}
+
+.post-confirm__line {
+  flex: 1;
+  height: 2px;
+  margin-top: 13px;
+  background: var(--color-primary);
+}
+
+/* スクロール可能な投稿内容 */
+.post-confirm__content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* 投稿内容のカード */
+.post-confirm__card {
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+/* 画像表示エリア */
+.post-confirm__image-area {
+  padding: 16px 16px 0;
+}
+
+.post-confirm__image-wrapper {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--color-page-bg);
+  touch-action: pan-y;
+}
+
+.post-confirm__image-wrapper img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+}
+
+/* 画像がない場合 */
+.post-confirm__no-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 4 / 3;
+  background: var(--color-page-bg);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+/* 画像インジケーター */
+.post-confirm__dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 8px 0;
+}
+
+.post-confirm__dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.post-confirm__dot::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--color-primary);
+  border-radius: 50%;
+  background: transparent;
+}
+
+.post-confirm__dot--active::after {
+  background: var(--color-primary);
+}
+
+/* 落とし物のタイトル */
+.post-confirm__item-name {
+  margin: 0;
+  padding: 8px 16px 16px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+/* 投稿情報 */
+.post-confirm__details {
+  margin: 0;
+}
+
+.post-confirm__detail-row {
+  display: grid;
+  grid-template-columns: 90px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  padding: 14px 12px;
+  border-top: 1px solid var(--color-border);
+  font-size: var(--font-size-small);
+}
+
+/* 項目名 */
+.post-confirm__detail-row dt {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* 項目の内容 */
+.post-confirm__detail-row dd {
+  min-width: 0;
+  margin: 0;
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+/* 投稿ボタン */
+.post-confirm__footer {
+  flex-shrink: 0;
+  padding-top: 20px;
+  padding-bottom: 16px;
+}
+
+.post-confirm__footer .btn {
+  font-size: 18px;
+}
