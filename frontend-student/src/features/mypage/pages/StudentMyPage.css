@@ -1,2 +1,138 @@
-/* G024 マイページ画面だけの見た目（配置）。
-   色・ボタンは共通CSS（src/styles/）を使う。 */
+/* G024 マイページ */
+
+.mypage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  padding: 0;
+  overflow: hidden;
+}
+
+/* スクロール可能なコンテンツ部分 */
+.mypage__content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 48px 24px 88px;
+}
+
+/* 画面タイトル */
+.mypage__header {
+  margin: 0 0 24px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* ユーザー情報 */
+.mypage__profile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+/* ユーザーアイコン */
+.mypage__user-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 88px;
+  height: 88px;
+  border: 1px solid var(--color-border);
+  border-radius: 24px;
+  background: var(--color-page-bg);
+  color: var(--color-text-muted);
+  overflow: hidden;
+}
+
+.mypage__user-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ニックネーム */
+.mypage__nickname {
+  min-width: 0;
+  margin: 0;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* メニュー一覧 */
+.mypage__menu {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* メニューボタン */
+.mypage__menu-button {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 68px;
+  padding: 16px 12px;
+
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  text-align: left;
+
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+/* ボタン押下時 */
+.mypage__menu-button:active {
+  background: var(--color-page-bg);
+}
+
+/* キーボード操作時 */
+.mypage__menu-button:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+/* メニュー左側のアイコン */
+.mypage__menu-icon {
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  color: var(--color-text-muted);
+}
+
+/* メニュー名 */
+.mypage__menu-label {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* 新着件数 */
+.mypage__new-count {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+/* 右側の矢印 */
+.mypage__arrow {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: var(--color-text-muted);
+}
