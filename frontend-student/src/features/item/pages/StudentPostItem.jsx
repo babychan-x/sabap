@@ -3,21 +3,47 @@ import './StudentPostItem.css'
 // G021 落とし物投稿（入力）画面（studentPostItem）
 
 import { useState, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Camera, X } from 'lucide-react'
 
 export default function StudentPostItem() {
-  const navigate = useNavigate()
-  const fileInputRef = useRef(null)
+  
+const navigate = useNavigate()
+const location = useLocation()
+const fileInputRef = useRef(null)
 
-  // 入力内容
-  const [category, setCategory] = useState('')
-  const [foundDateTime, setFoundDateTime] = useState('')
-  const [foundPlace, setFoundPlace] = useState('')
-  const [storageStatus, setStorageStatus] = useState('')
-  const [itemName, setItemName] = useState('')
-  const [feature, setFeature] = useState('')
-  const [images, setImages] = useState([])
+// G022から戻ってきた場合の入力内容
+const previousData = location.state || {}
+
+// 入力内容
+const [category, setCategory] = useState(
+  previousData.category || ''
+)
+
+const [foundDateTime, setFoundDateTime] = useState(
+  previousData.foundDateTime || ''
+)
+
+const [foundPlace, setFoundPlace] = useState(
+  previousData.foundPlace || ''
+)
+
+const [storageStatus, setStorageStatus] = useState(
+  previousData.storageStatus || ''
+)
+
+const [itemName, setItemName] = useState(
+  previousData.itemName || ''
+)
+
+const [feature, setFeature] = useState(
+  previousData.feature || ''
+)
+
+const [images, setImages] = useState(
+  previousData.images || []
+)
+
 
   // エラーメッセージ
   const [errorMessage, setErrorMessage] = useState('')
