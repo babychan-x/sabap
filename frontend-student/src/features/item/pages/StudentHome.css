@@ -272,6 +272,18 @@
   color: #0369a1;
 }
 
+/* 学生厚生未到着（黄。G016・G017 と同じ色） */
+.home-status-badge.warn {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+/* 受け渡し済み・処分済み（灰。G016・G017 と同じ色） */
+.home-status-badge.closed {
+  background-color: #e5e7eb;
+  color: #4b5563;
+}
+
 /* ボトムナビゲーション */
 .home-bottom-nav {
   position: absolute;
