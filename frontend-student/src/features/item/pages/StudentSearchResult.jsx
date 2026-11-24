@@ -4,10 +4,11 @@
 // 見た目は G011（StudentHome）・G027（StudentMyPostList）に合わせている。
 
 import { useEffect, useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { getItems } from '../../../api/items'
 import { formatDateTime } from '../../../utils/date'
 import { STORAGE_STATUS_LABELS } from '../../../utils/labels'
+import BottomNav from '../../../components/BottomNav'
 import './StudentSearchResult.css'
 
 // ---------------------------------------------------------------
@@ -172,31 +173,8 @@ export default function StudentSearchResult() {
           )}
         </div>
 
-        {/* ボトムナビゲーション（入出力項目6〜8。G027 と同じ形。この画面はホームから来るので「ホーム」を選択中にする） */}
-        <nav className="search-result-bottom-nav">
-          {/* イベント4: ホームタブ押下 → G011 */}
-          <Link to={ROUTES.home} className="search-result-nav-item active">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-            </svg>
-            <span>ホーム</span>
-          </Link>
-          {/* イベント5: 投稿タブ押下 → G021 */}
-          <Link to={ROUTES.post} className="search-result-nav-item">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-              <circle cx="12" cy="13" r="3"></circle>
-            </svg>
-            <span>投稿</span>
-          </Link>
-          {/* イベント6: マイページタブ押下 → G024 */}
-          <Link to={ROUTES.mypage} className="search-result-nav-item">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-            </svg>
-            <span>マイページ</span>
-          </Link>
-        </nav>
+        {/* 入出力項目6〜8: 下タブ（共通部品 BottomNav。イベント4〜6: ホーム→G011、投稿→G021、マイページ→G024）。ホームから来る画面なので「ホーム」を選択中にする */}
+        <BottomNav active="home" />
       </div>
     </div>
   )

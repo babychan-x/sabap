@@ -13,7 +13,8 @@ import './StudentNotification.css'
 // 主なAPI（仮）: 通知一覧の取得・既読の更新（API一覧表の番号に合わせて書き換える）
 
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import BottomNav from '../../../components/BottomNav';
 import './StudentNotification.css';
 
 // ---------------------------------------------------------------
@@ -261,27 +262,7 @@ export default function StudentNotification() {
         </div>
 
         {/* ボトムナビゲーション（フッター） */}
-        <nav className="notification-bottom-nav">
-          <Link to={ROUTES.home} className="notification-nav-item active">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z" />
-            </svg>
-            <span>ホーム</span>
-          </Link>
-          <Link to={ROUTES.post} className="notification-nav-item">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-              <circle cx="12" cy="13" r="3"></circle>
-            </svg>
-            <span>投稿</span>
-          </Link>
-          <Link to={ROUTES.mypage} className="notification-nav-item">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-            </svg>
-            <span>マイページ</span>
-          </Link>
-        </nav>
+        <BottomNav active="home" />
       </div>
     </div>
   );

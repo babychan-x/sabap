@@ -1,11 +1,50 @@
 // 受け取り申請まわりのAPI。画面からは、この中の関数だけを呼ぶ（fetchを画面に直接書かない）。
 // USE_MOCK = true の間は、サーバーに繋がず、ダミーの返事を返す。
 // バックエンドが出来たら false にする（パスとJSONの形は、バックエンドと合わせて直す）。
+import { mockApplications } from '../mock/applications'
 import { mockItems } from '../mock/items'
 
 const USE_MOCK = true
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
+// E-1 受け取り申請一覧（G033）
+// GET /api/student/applications（パスは内部設計書 第7章の仮）
+// 返す値: 自分の申請の配列（新着順）。申請した落とし物の名前・写真（item）を付ける（仮の形）
+export async function getApplications() {
+  if (USE_MOCK) {
+    await wait(300)
+    return mockApplications
+      .map((application) => {
+        const item = mockItems.find((it) => it.id === application.itemId)
+        return {
+          ...application,
+          item: item ? { id: item.id, name: item.name, image: item.images[0] ?? null } : null,
+        }
+      })
+      .sort((a, b) => b.appliedAt.localeCompare(a.appliedAt)) // 新着順（設計書 G033）
+  }
+
+  const res = await fetch('/api/student/applications', { credentials: 'include' })
+  if (!res.ok) throw new Error('FETCH_FAILED')
+  return res.json()
+}
+
+// 申請の結果を「確認した（既読）」にする（G033 イベント2。NEW マークを消す）
+// PATCH /api/student/applications/{id}/read（※ 内部設計書 第7章に、このAPIは無い。仮のパス）
+export async function markApplicationRead(applicationId) {
+  if (USE_MOCK) {
+    const application = mockApplications.find((a) => String(a.id) === String(applicationId))
+    if (application) application.resultRead = true
+    return
+  }
+
+  const res = await fetch(`/api/student/applications/${encodeURIComponent(applicationId)}/read`, {
+    method: 'PATCH',
+    credentials: 'include',
+  })
+  if (!res.ok) throw new Error('FETCH_FAILED')
+}
 
 // E-3 受け取り申請（G019 → G020）
 // POST /api/student/items/{id}/applications（multipart。パスは内部設計書 第7章の仮）
@@ -21,7 +60,18 @@ export async function createApplication(itemId, { reason, photos }) {
     if (item.alreadyApplied) throw new Error('ALREADY_APPLIED')
     // モック: 申請済みにする（ページを再読み込みすると元に戻る）。G017 でボタンが消えることを確認できる
     item.alreadyApplied = true
-    return { status: 'PENDING' }
+    // モック: G033（受け取り申請一覧）に「承認待ち」で出るように、申請の仮データにも足す
+    const id = Math.max(0, ...mockApplications.map((a) => a.id)) + 1
+    mockApplications.push({
+      id,
+      itemId: item.id,
+      status: 'PENDING',
+      handedOver: false,
+      resultRead: false,
+      messageSent: false,
+      appliedAt: new Date().toISOString(),
+    })
+    return { id, status: 'PENDING' }
   }
 
   const body = new FormData()
