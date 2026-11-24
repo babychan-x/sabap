@@ -1,19 +1,157 @@
-import { useParams } from 'react-router-dom'
+// G019 申請確認画面（studentApplyConfirm）
+// 主なAPI（仮）: B-2 落とし物詳細（画像・名前の表示）、E-3 受け取り申請（「受け取り申請する」で実行）
+// 置き場所: src/features/item/pages/StudentApplyConfirm.jsx（App.jsx: /items/:id/apply/confirm）
+// 見た目は G028（StudentMyPostDetail）のカードに合わせている。
+//
+// 【G018 との受け渡し】
+//   G018 から router の state で form = { reason, photos } を受け取る。
+//   「戻る」では、同じ form を state で G018 に返す（replace: true。G018 の説明を参照）。
+
+import { useEffect, useState } from 'react'
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { createApplication } from '../../../api/applications'
+import { getItem } from '../../../api/items'
+import PhotoSlider from '../../../components/PhotoSlider'
+import ProgressSteps from '../../../components/ProgressSteps'
 import './StudentApplyConfirm.css'
 
-// G019 申請確認画面（studentApplyConfirm）
-// ※ 仮の画面。外部設計書 G019 の入出力項目・イベントに合わせて中身を作る。
-// 主なAPI（仮）: E-3（「受け取り申請する」で実行）
+// ---------------------------------------------------------------
+// 遷移先のパス（App.jsx のルーティングと同じ）
+// ---------------------------------------------------------------
+const ROUTES = {
+  apply: (itemId) => `/items/${itemId}/apply`, // G018 受け取り申請
+  complete: (itemId) => `/items/${itemId}/apply/complete`, // G020 申請完了
+}
+
+// 申請APIのエラー → 画面に出す文（文言は設計書に記載なし。仮）
+const SUBMIT_ERRORS = {
+  ALREADY_APPLIED: 'この落とし物には、すでに受け取り申請をしています。',
+  NOT_APPLICABLE: 'この落とし物は、受け渡し済みまたは処分済みのため、申請できません。',
+  NOT_FOUND: 'この落とし物は見つかりませんでした。削除された可能性があります。',
+}
+const DEFAULT_SUBMIT_ERROR = '申請できませんでした。時間をおいて、もう一度お試しください。'
+
 export default function StudentApplyConfirm() {
-  // URL の :id の部分を読み取る（例: /items/3/apply/confirm → "3"）
-  const { id } = useParams()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { id } = useParams() // /items/:id/apply/confirm の落とし物ID
+  const form = location.state?.form // G018 で入力した内容
+
+  // 落とし物（画像・名前）の取得結果。「どのIDの結果か」と一緒に持つ
+  const [itemResult, setItemResult] = useState({ id: null, item: null, error: '' })
+  const itemLoading = itemResult.id !== id
+
+  const [submitting, setSubmitting] = useState(false) // 申請中は二重に押せないようにする
+  const [submitError, setSubmitError] = useState('')
+
+  useEffect(() => {
+    if (!form) return // 入力内容がないときは、下の <Navigate> で G018 に戻すので取得しない
+    let ignore = false
+
+    getItem(id)
+      .then((item) => {
+        if (!ignore) setItemResult({ id, item, error: '' })
+      })
+      .catch((err) => {
+        if (!ignore) setItemResult({ id, item: null, error: SUBMIT_ERRORS[err.message] ?? DEFAULT_SUBMIT_ERROR })
+      })
+
+    return () => {
+      ignore = true
+    }
+  }, [id, form])
+
+  // G018 を通らずに、この画面の URL を直接開いたとき（入力内容がない）は、G018 に戻す
+  if (!form) {
+    return <Navigate to={ROUTES.apply(id)} replace />
+  }
+
+  // イベント1: 戻るボタン押下 → 入力した内容を保持したまま G018 に戻る
+  const handleBack = () => {
+    navigate(ROUTES.apply(id), { state: { form }, replace: true })
+  }
+
+  // イベント2: 受け取り申請ボタン押下 → 申請を登録（承認待ち）して G020 へ
+  const handleSubmit = async () => {
+    setSubmitting(true)
+    setSubmitError('')
+    try {
+      await createApplication(id, form)
+      // replace: 申請完了のあとに「戻る」で、この確認画面（もう一度申請できる画面）に戻らないようにする
+      navigate(ROUTES.complete(id), { replace: true })
+    } catch (err) {
+      setSubmitError(SUBMIT_ERRORS[err.message] ?? DEFAULT_SUBMIT_ERROR)
+      setSubmitting(false)
+    }
+  }
+
+  const item = itemLoading ? null : itemResult.item
 
   return (
-    <main className="page">
-      <h1>申請確認（G019・仮）</h1>
-      <p>この画面はこれから作ります。</p>
-      {/* ルーティング確認用の表示。中身を作るときに消す */}
-      <p>id: {id}</p>
-    </main>
+    <div className="apply-confirm-page-wrapper">
+      {/* スマホ枠 */}
+      <div className="apply-confirm-mobile-container">
+        {/* ヘッダー */}
+        <header className="apply-confirm-header">
+          <button className="apply-confirm-back-btn" onClick={handleBack} disabled={submitting} aria-label="戻る">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          {/* タイトルは設計書に記載なし（旧スライドの文言） */}
+          <h1 className="apply-confirm-title">申請内容の確認</h1>
+        </header>
+
+        {/* 入出力項目2: 進行状況表示（この画面では「確認」を強調） */}
+        <ProgressSteps current={1} label="申請の手順" />
+
+        {/* 本文エリア（ここだけスクロールする） */}
+        <div className="apply-confirm-content">
+          {itemLoading && <p className="apply-confirm-message">読み込み中…</p>}
+
+          {!itemLoading && itemResult.error && (
+            <p className="apply-confirm-message error" role="alert">{itemResult.error}</p>
+          )}
+
+          {item && (
+            <section className="apply-confirm-card">
+              {/* 入出力項目3: 画像（複数枚なら位置表示つき） */}
+              <PhotoSlider key={item.id} images={item.images} alt={item.name} />
+
+              <div className="apply-confirm-body">
+                {/* 入出力項目4: 落とし物名 */}
+                <h2 className="apply-confirm-item-name">{item.name}</h2>
+
+                <dl className="apply-confirm-list">
+                  {/* 入出力項目5: 申請理由（G018 で入力した理由。改行もそのまま表示） */}
+                  <div className="apply-confirm-row">
+                    <dt>理由</dt>
+                    <dd className="apply-confirm-reason">{form.reason}</dd>
+                  </div>
+                </dl>
+              </div>
+            </section>
+          )}
+        </div>
+
+        {/* 入出力項目6: 受け取り申請する（下に固定） */}
+        <div className="apply-confirm-footer">
+          {submitError && (
+            <p className="apply-confirm-submit-error" role="alert">
+              {submitError}
+            </p>
+          )}
+          <button
+            type="button"
+            className="apply-confirm-submit-btn"
+            onClick={handleSubmit}
+            // 落とし物を読み込めていないときと、申請中は押せない
+            disabled={!item || submitting}
+          >
+            {submitting ? '申請中…' : '受け取り申請する'}
+          </button>
+        </div>
+      </div>
+    </div>
   )
 }
