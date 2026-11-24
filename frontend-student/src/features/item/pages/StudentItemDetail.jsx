@@ -3,9 +3,10 @@
 // 置き場所: src/features/item/pages/StudentItemDetail.jsx（App.jsx: /items/:id）
 // 見た目は G028（StudentMyPostDetail）に合わせている。
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { getItem } from '../../../api/items'
+import PhotoSlider from '../../../components/PhotoSlider'
 import { daysUntil, formatDateTime } from '../../../utils/date'
 import { STORAGE_STATUS_LABELS } from '../../../utils/labels'
 import './StudentItemDetail.css'
@@ -20,82 +21,6 @@ const ROUTES = {
 
 // 保管期限を強調する日数（入出力項目10: 期限まで30日以内）
 const DEADLINE_WARNING_DAYS = 30
-
-// 写真がないとき／読み込めないときの表示（G028 と同じ）
-function ImagePlaceholder() {
-  return (
-    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-      <circle cx="8.5" cy="8.5" r="1.5"></circle>
-      <polyline points="21 15 16 10 5 21"></polyline>
-    </svg>
-  )
-}
-
-// 入出力項目2・3: 写真（スワイプで切り替え）と、画像位置表示
-function PhotoSlider({ images, alt }) {
-  const sliderRef = useRef(null)
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [failedImages, setFailedImages] = useState([]) // 読み込みに失敗した写真の番号
-
-  // 写真が0枚のときも、灰色の枠を1つ出す
-  const slides = images.length > 0 ? images : [null]
-
-  // イベント2: 画像スワイプ → 何枚目かを調べて、画像位置表示を更新する
-  const handleScroll = () => {
-    const slider = sliderRef.current
-    if (!slider) return
-    setActiveIndex(Math.round(slider.scrollLeft / slider.clientWidth))
-  }
-
-  // 点を押したとき、その写真まで動かす（スワイプできないPCのため）
-  const handleDotClick = (index) => {
-    const slider = sliderRef.current
-    if (!slider) return
-    slider.scrollTo({ left: index * slider.clientWidth, behavior: 'smooth' })
-  }
-
-  return (
-    <div className="item-detail-photo-area">
-      <div className="item-detail-slider" ref={sliderRef} onScroll={handleScroll}>
-        {slides.map((src, index) => (
-          <div className="item-detail-slide" key={index}>
-            {src && !failedImages.includes(index) ? (
-              <img
-                src={src}
-                alt={`${alt}の写真${index + 1}`}
-                className="item-detail-img"
-                onError={() => setFailedImages((prev) => [...prev, index])}
-              />
-            ) : (
-              <ImagePlaceholder />
-            )}
-          </div>
-        ))}
-      </div>
-
-      {/* 画像位置表示: 写真が2枚以上のときだけ、「1 / 3」と点を出す */}
-      {slides.length > 1 && (
-        <>
-          <span className="item-detail-photo-count" aria-live="polite">
-            {activeIndex + 1} / {slides.length}
-          </span>
-          <div className="item-detail-dots">
-            {slides.map((_, index) => (
-              <button
-                key={index}
-                type="button"
-                className={`item-detail-dot ${index === activeIndex ? 'active' : ''}`}
-                onClick={() => handleDotClick(index)}
-                aria-label={`${index + 1}枚目の写真を表示`}
-              />
-            ))}
-          </div>
-        </>
-      )}
-    </div>
-  )
-}
 
 export default function StudentItemDetail() {
   const navigate = useNavigate()
