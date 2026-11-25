@@ -1,2 +1,65 @@
-/* G037 メッセージ送信完了画面だけの見た目（配置）。
-   色・ボタンは共通CSS（src/styles/）を使う。 */
+
+/* G037 メッセージ送信完了画面 */
+
+.message-complete {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  box-sizing: border-box;
+}
+
+/* ヘッダー */
+.message-complete__header {
+  flex-shrink: 0;
+}
+
+/* 画面タイトル */
+.message-complete__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* 進行状況表示の配置 */
+.message-complete__steps {
+  flex-shrink: 0;
+  margin: 24px 0 32px;
+}
+
+/* 完了メッセージの配置 */
+.message-complete__content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px 0;
+}
+
+/* 完了メッセージ */
+.message-complete__heading {
+  margin: 0 0 24px;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.4;
+  color: var(--color-primary);
+}
+
+/* 説明文 */
+.message-complete__description {
+  margin: 0;
+  font-size: var(--font-size-base);
+  line-height: 1.7;
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+}
+
+/* ボタンの配置 */
+.message-complete__footer {
+  flex-shrink: 0;
+  padding-top: 24px;
+  padding-bottom: 16px;
+}
