@@ -1,2 +1,49 @@
-/* G039 リンクエラー画面だけの見た目（配置）。
-   色・ボタンは共通CSS（src/styles/）を使う。 */
+
+/* G039 リンクエラー画面 */
+
+.link-error {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  box-sizing: border-box;
+}
+
+/* エラーメッセージ全体の配置 */
+.link-error__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: clamp(80px, 22vh, 200px);
+}
+
+/* エラーアイコン */
+.link-error__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+  margin-bottom: 56px;
+}
+
+/* エラータイトル */
+.link-error__heading {
+  margin: 0 0 20px;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--color-primary);
+  overflow-wrap: anywhere;
+}
+
+/* エラーの説明文 */
+.link-error__description {
+  font-size: var(--font-size-base);
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
+
+.link-error__description p {
+  margin: 0;
+}
