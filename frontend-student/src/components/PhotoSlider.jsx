@@ -4,6 +4,8 @@ import './PhotoSlider.css'
 // 写真のスライダー（左右にスワイプで切り替え）と、画像位置表示（右上の「1 / 3」と、下の点）。
 // 見た目は G028（StudentMyPostDetail）の写真に合わせている。G017・G019 で使う。
 // 使い方: <PhotoSlider key={item.id} images={item.images} alt={item.name} />
+//   写真の上に何か重ねたいとき（G034 のスタンプなど）は、中に書く: <PhotoSlider ...><span>…</span></PhotoSlider>
+//   ※ 重ねた物は、押せない（スワイプの邪魔をしない）。
 //   ※ key を付けると、別の落とし物を表示したときに1枚目に戻る。
 //   ※ 写真が0枚のときは灰色の枠を1つ出す。写真が1枚以下のときは位置表示を出さない。
 
@@ -18,7 +20,7 @@ function ImagePlaceholder() {
   )
 }
 
-export default function PhotoSlider({ images, alt }) {
+export default function PhotoSlider({ images, alt, children }) {
   const sliderRef = useRef(null)
   const [activeIndex, setActiveIndex] = useState(0)
   const [failedImages, setFailedImages] = useState([]) // 読み込みに失敗した写真の番号
@@ -57,6 +59,9 @@ export default function PhotoSlider({ images, alt }) {
           </div>
         ))}
       </div>
+
+      {/* 写真の上に重ねる物（スタンプなど） */}
+      {children && <div className="photo-slider-overlay">{children}</div>}
 
       {slides.length > 1 && (
         <>
