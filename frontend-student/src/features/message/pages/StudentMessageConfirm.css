@@ -1,2 +1,177 @@
-/* G036 メッセージ確認画面だけの見た目（配置）。
-   色・ボタンは共通CSS（src/styles/）を使う。 */
+
+/* G036 感謝メッセージ確認画面 */
+
+.message-confirm {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ヘッダー */
+.message-confirm__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* 戻るボタン */
+.message-confirm__back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+/* 画面タイトル */
+.message-confirm__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* 進行状況表示の配置 */
+.message-confirm__steps {
+  flex-shrink: 0;
+  margin: 24px 0 32px;
+}
+
+/* スクロール可能なコンテンツ */
+.message-confirm__content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* 確認内容のカード */
+.message-confirm__card {
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+  overflow: hidden;
+}
+
+/* 画像表示エリア */
+.message-confirm__image-area {
+  padding: 20px 16px 0;
+}
+
+/* 画像 */
+.message-confirm__image-wrapper {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.message-confirm__image-wrapper img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  user-select: none;
+}
+
+/* 画像がない場合 */
+.message-confirm__no-image {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  aspect-ratio: 4 / 3;
+  background: var(--color-page-bg);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+/* 画像インジケーター */
+.message-confirm__dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 8px 0;
+}
+
+.message-confirm__dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.message-confirm__dot::after {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border: 1px solid var(--color-primary);
+  border-radius: 50%;
+}
+
+.message-confirm__dot--active::after {
+  background: var(--color-primary);
+}
+
+/* 落とし物名 */
+.message-confirm__item-name {
+  margin: 0;
+  padding: 16px 20px;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+/* メッセージ内容 */
+.message-confirm__details {
+  margin: 0;
+}
+
+.message-confirm__detail-row {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  align-items: start;
+  gap: 12px;
+  padding: 20px;
+  border-top: 1px solid var(--color-border);
+  font-size: var(--font-size-base);
+  line-height: 1.6;
+}
+
+/* 項目名 */
+.message-confirm__detail-row dt {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+/* メッセージ本文 */
+.message-confirm__detail-row dd {
+  min-width: 0;
+  margin: 0;
+  color: var(--color-text-muted);
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+/* 送信ボタンの配置 */
+.message-confirm__footer {
+  flex-shrink: 0;
+  padding-top: 24px;
+  padding-bottom: 16px;
+}
+
