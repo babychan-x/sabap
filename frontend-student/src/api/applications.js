@@ -30,6 +30,25 @@ export async function getApplications() {
   return res.json()
 }
 
+// E-2 申請の詳細（G014, G034）
+// GET /api/student/applications/{id}（パスは内部設計書 第7章の仮）
+// 返す値: 申請（申請状況・申請理由など）に、申請した落とし物の詳細（item）を付けたもの（仮の形）
+// 失敗時の code（仮）: NOT_FOUND（申請がない）
+export async function getApplication(applicationId) {
+  if (USE_MOCK) {
+    await wait(300)
+    const application = mockApplications.find((a) => String(a.id) === String(applicationId))
+    if (!application) throw new Error('NOT_FOUND')
+    const item = mockItems.find((it) => it.id === application.itemId) ?? null
+    return { ...application, item }
+  }
+
+  const res = await fetch(`/api/student/applications/${encodeURIComponent(applicationId)}`, { credentials: 'include' })
+  if (res.status === 404) throw new Error('NOT_FOUND')
+  if (!res.ok) throw new Error('FETCH_FAILED')
+  return res.json()
+}
+
 // 申請の結果を「確認した（既読）」にする（G033 イベント2。NEW マークを消す）
 // PATCH /api/student/applications/{id}/read（※ 内部設計書 第7章に、このAPIは無い。仮のパス）
 export async function markApplicationRead(applicationId) {
@@ -70,6 +89,7 @@ export async function createApplication(itemId, { reason, photos }) {
       resultRead: false,
       messageSent: false,
       appliedAt: new Date().toISOString(),
+      reason,
     })
     return { id, status: 'PENDING' }
   }
