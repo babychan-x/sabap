@@ -1,2 +1,200 @@
-/* G030 編集確認画面だけの見た目（配置）。
-   色・ボタンは共通CSS（src/styles/）を使う。 */
+/* G030 編集確認画面だけの見た目。
+   値は G019（StudentApplyConfirm）の確認画面と同じ（カードは G028、ボタンは G025）。写真は共通部品 PhotoSlider。 */
+
+/* PC画面で中央に配置する背景ラッパー */
+.my-post-edit-confirm-page-wrapper {
+  min-height: 100vh;
+  background-color: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
+}
+
+/* スマホ枠（背景を少しグレーにして、白いカードを浮かせる。G028 と同じ） */
+.my-post-edit-confirm-mobile-container {
+  width: 100%;
+  max-width: var(--page-max-width);
+  height: 100vh;
+  max-height: 844px;
+  background-color: #f7f8fa;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+@media (min-width: 450px) {
+  .my-post-edit-confirm-mobile-container {
+    border: 4px solid #ffffff;
+  }
+}
+
+/* ヘッダー（戻るボタン＋タイトル） */
+.my-post-edit-confirm-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 32px 14px 24px;
+}
+
+.my-post-edit-confirm-back-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 50%;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.my-post-edit-confirm-back-btn:active:not(:disabled) {
+  transform: scale(0.85);
+  background-color: #eceef1;
+}
+
+.my-post-edit-confirm-back-btn:disabled {
+  color: #c4c7cc;
+  cursor: not-allowed;
+}
+
+.my-post-edit-confirm-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+/* 本文エリア（表示するときにふわっと出る） */
+.my-post-edit-confirm-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 32px 16px 32px;
+  animation: my-post-edit-confirm-fade-in 0.35s ease-out both;
+}
+
+@keyframes my-post-edit-confirm-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .my-post-edit-confirm-content {
+    animation: none;
+  }
+}
+
+/* カード（白地・角丸・やわらかい影） */
+.my-post-edit-confirm-card {
+  background-color: #ffffff;
+  border: 1px solid #eef0f3;
+  border-radius: 24px;
+  box-shadow: 0 6px 20px rgba(17, 24, 39, 0.06);
+  overflow: hidden;
+}
+
+.my-post-edit-confirm-body {
+  padding: 14px 20px 8px 20px;
+}
+
+.my-post-edit-confirm-item-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.02em;
+}
+
+.my-post-edit-confirm-list {
+  margin: 0;
+}
+
+.my-post-edit-confirm-row {
+  display: flex;
+  gap: 14px;
+  padding: 12px 0;
+  border-top: 1px solid #eef2f7;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.my-post-edit-confirm-row dt {
+  width: 72px;
+  flex-shrink: 0;
+  color: #374151;
+  font-weight: 700;
+}
+
+.my-post-edit-confirm-row dd {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  color: #4b5563;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+/* 特徴（入力した改行をそのまま表示する） */
+.my-post-edit-confirm-feature {
+  white-space: pre-wrap;
+}
+
+/* ボタンエリア（下に固定） */
+.my-post-edit-confirm-footer {
+  padding: 8px 32px 40px 32px;
+}
+
+/* 保存に失敗したときの文 */
+.my-post-edit-confirm-submit-error {
+  margin: 0 0 10px 0;
+  padding: 10px 14px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #b91c1c;
+  background-color: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+}
+
+/* 編集完了する（G025 のメインボタンと同じ形） */
+.my-post-edit-confirm-submit-btn {
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: 14px;
+  background-color: #3b82f6;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.28);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.my-post-edit-confirm-submit-btn:active:not(:disabled) {
+  transform: scale(0.98);
+  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.22);
+}
+
+.my-post-edit-confirm-submit-btn:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 3px;
+}
+
+/* 押せないとき（灰色にする。G028 と同じ色） */
+.my-post-edit-confirm-submit-btn:disabled {
+  background-color: #c4c7cc;
+  box-shadow: none;
+  cursor: not-allowed;
+}
