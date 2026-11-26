@@ -1,1 +1,667 @@
-/* Admin shared component styles */
+/* 管理者用の「共通のクラス」。どの画面でも、className に書くだけで同じ見た目になる。
+   値は、学生用のデザイン担当の画面 G025〜G029 と同じ（色などは variables.css）。
+   クラス名は「admin-部品名」。状態は別のクラスで足す（例: admin-btn admin-btn-primary、admin-input-wrapper has-error）。
+
+   目次
+     1. 画面の骨組み（admin-page / admin-main / admin-container / admin-container-narrow）
+     2. ボタン（admin-btn）
+     3. 入力欄（admin-field / admin-input-wrapper / admin-input / admin-select / admin-textarea）
+     4. カード・詳細（admin-card / admin-detail-list）
+     5. 一覧（admin-grid / admin-list-card / admin-thumb）
+     6. バッジ（admin-status）
+     7. 読み込み中・0件・エラーの文（admin-message / admin-error-summary）
+     8. 完了画面（admin-complete）
+     9. その他（admin-visually-hidden）
+   ※ ヘッダー・進行状況・ダイアログは、src/components/ の部品（AdminHeader / ProgressSteps / AdminDialog）を使う。 */
+
+
+/* =================================================================
+   1. 画面の骨組み
+   ================================================================= */
+
+/* 1画面ぶんの外枠（いちばん外側に付ける）。上に AdminHeader、下に admin-main を置く */
+.admin-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-content-bg);
+}
+
+/* ヘッダーの下の中身（表示するときに、ふわっと出る） */
+.admin-main {
+  flex: 1;
+  width: 100%;
+  padding: 32px var(--page-padding-x) 48px var(--page-padding-x);
+  animation: admin-fade-in 0.35s ease-out both;
+}
+
+/* 中身を真ん中に置く（一覧・詳細など、ふつうの幅） */
+.admin-container {
+  width: 100%;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+}
+
+/* 中身を真ん中に置く（ログイン・入力フォーム・完了画面など、細い幅） */
+.admin-container-narrow {
+  width: 100%;
+  max-width: var(--narrow-max-width);
+  margin: 0 auto;
+}
+
+/* 見出し（ヘッダーとは別に、中身の中で使う） */
+.admin-section-title {
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--color-heading);
+  letter-spacing: -0.02em;
+}
+
+/* 中身の上の説明文 */
+.admin-lead {
+  margin: 0 0 24px 0;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--color-text-muted);
+}
+
+@keyframes admin-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* =================================================================
+   2. ボタン
+   使い方: <button className="admin-btn admin-btn-primary">登録する</button>
+     色:   admin-btn-primary（青）/ admin-btn-secondary（白地に灰色の文字）/
+           admin-btn-danger（白地に赤い文字）/ admin-btn-danger-fill（赤）/ admin-btn-muted（灰色。ダイアログの「戻る」）
+     大きさ: admin-btn-large（高さ 52px。画面のいちばん大事なボタン）/ admin-btn-block（横いっぱい）
+     2つ並べる: <div className="admin-btn-row">…</div>
+   ================================================================= */
+
+.admin-btn {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  height: var(--control-height);
+  padding: 0 24px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-control);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+/* 押したときに少し縮む */
+.admin-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.admin-btn:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+.admin-btn-large {
+  height: var(--button-height-large);
+  font-size: 16px;
+}
+
+.admin-btn-block {
+  display: flex;
+  width: 100%;
+}
+
+/* 青（メインの操作） */
+.admin-btn-primary {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow: var(--shadow-primary);
+}
+
+.admin-btn-primary:active:not(:disabled) {
+  box-shadow: var(--shadow-primary-pressed);
+}
+
+/* 白地に灰色の文字（戻る・キャンセルなど） */
+.admin-btn-secondary {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+  color: var(--color-label);
+}
+
+.admin-btn-secondary:hover:not(:disabled) {
+  background-color: var(--color-input-bg);
+}
+
+/* 白地に赤い文字（却下・非表示・削除など。G028 の「削除」と同じ） */
+.admin-btn-danger {
+  background-color: var(--color-surface);
+  border-color: var(--color-danger-soft-border);
+  color: var(--color-error);
+}
+
+.admin-btn-danger:hover:not(:disabled) {
+  background-color: var(--color-error-bg);
+}
+
+/* 赤（ダイアログで、取り消せない操作を実行するとき） */
+.admin-btn-danger-fill {
+  background-color: var(--color-danger);
+  color: var(--color-on-primary);
+}
+
+/* 灰色（ダイアログの「戻る」） */
+.admin-btn-muted {
+  background-color: var(--color-muted-bg);
+  color: var(--color-text-sub);
+}
+
+/* 押せないとき（どの色でも灰色にする） */
+.admin-btn:disabled {
+  background-color: var(--color-disabled);
+  border-color: transparent;
+  color: var(--color-on-primary);
+  box-shadow: none;
+}
+
+/* ボタンを横に並べる（同じ幅で並ぶ） */
+.admin-btn-row {
+  display: flex;
+  gap: 12px;
+}
+
+.admin-btn-row > .admin-btn {
+  flex: 1;
+}
+
+
+/* =================================================================
+   3. 入力欄
+   使い方（1つ分）:
+     <div className="admin-field">
+       <div className="admin-label-row">
+         <span className="admin-badge-required">必須</span>
+         <label className="admin-label" htmlFor="xxx">メールアドレス</label>
+         <span className="admin-counter">0/50</span>          ← 文字数があるときだけ
+       </div>
+       <div className="admin-input-wrapper has-error">        ← エラーのときだけ has-error
+         <input id="xxx" className="admin-input" />
+       </div>
+       <p className="admin-field-error" role="alert">…</p>    ← エラーのときだけ
+     </div>
+   ================================================================= */
+
+.admin-field {
+  margin-bottom: 20px;
+}
+
+.admin-label-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.admin-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-label);
+}
+
+/* 必須・任意のバッジ（G029 と同じ） */
+.admin-badge-required,
+.admin-badge-optional {
+  flex-shrink: 0;
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.admin-badge-required {
+  color: var(--color-required);
+  background-color: var(--color-required-bg);
+}
+
+.admin-badge-optional {
+  color: var(--color-text-muted);
+  background-color: var(--color-border);
+}
+
+/* 文字数カウンター（ラベルの右端） */
+.admin-counter {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--color-text-faint);
+}
+
+/* 入力欄の枠（入力中は青い枠＋白い背景＋薄い青い影） */
+.admin-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--control-height);
+  padding: 0 14px;
+  background-color: var(--color-input-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.admin-input-wrapper:focus-within {
+  border-color: var(--color-primary);
+  background-color: var(--color-surface);
+  box-shadow: var(--focus-ring);
+}
+
+/* エラーのときは赤い枠 */
+.admin-input-wrapper.has-error {
+  border-color: var(--color-error-border);
+  background-color: var(--color-error-input-bg);
+}
+
+.admin-input-wrapper.has-error:focus-within {
+  box-shadow: var(--focus-ring-error);
+}
+
+/* 1行の入力欄・プルダウン・複数行の入力欄（枠は admin-input-wrapper が担当） */
+.admin-input,
+.admin-select,
+.admin-textarea {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 15px;
+  color: var(--color-text);
+}
+
+.admin-input {
+  height: calc(var(--control-height) - 2px);
+}
+
+.admin-select {
+  height: calc(var(--control-height) - 2px);
+  cursor: pointer;
+}
+
+/* 複数行（高さは最小 108px） */
+.admin-textarea {
+  min-height: 108px;
+  padding: 12px 0;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.admin-input::placeholder,
+.admin-textarea::placeholder {
+  font-size: 13px;
+  color: var(--color-text-faint);
+}
+
+/* 入力欄の下に出すエラー */
+.admin-field-error {
+  margin: 6px 0 0 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-error);
+}
+
+/* 入力欄の下の補足（例: 8文字以上で入力してください） */
+.admin-field-help {
+  margin: 6px 0 0 4px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+
+/* =================================================================
+   4. カード・詳細
+   使い方:
+     <section className="admin-card"> … </section>
+     <dl className="admin-detail-list">
+       <div className="admin-detail-row"><dt>カテゴリー</dt><dd>財布</dd></div>
+     </dl>
+   ================================================================= */
+
+/* 白地・角丸・やわらかい影（G028 と同じ） */
+.admin-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-card);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+}
+
+/* 項目名と値を並べる一覧（詳細画面） */
+.admin-detail-list {
+  margin: 0;
+}
+
+.admin-detail-row {
+  display: flex;
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid #eef2f7;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.admin-detail-row:first-child {
+  border-top: none;
+}
+
+.admin-detail-row dt {
+  width: 96px;
+  flex-shrink: 0;
+  color: var(--color-label);
+  font-weight: 700;
+}
+
+.admin-detail-row dd {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  color: var(--color-text-sub);
+  word-break: break-word;
+}
+
+/* 改行をそのまま表示する（申請理由・メッセージなど） */
+.admin-pre-wrap {
+  white-space: pre-wrap;
+}
+
+
+/* =================================================================
+   5. 一覧
+   使い方:
+     <div className="admin-grid">                               ← 2列。admin-grid-3 で3列
+       <button type="button" className="admin-list-card">
+         <div className="admin-thumb"><img … /></div>
+         <div className="admin-list-card-body">
+           <p className="admin-list-card-title">黒い折り畳み財布</p>
+           <p className="admin-list-card-meta">財布 / 2026/10/13 16:00</p>
+         </div>
+         <svg className="admin-chevron" …>（右向きの「>」）</svg>
+       </button>
+     </div>
+   ================================================================= */
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.admin-grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+/* 画面がせまいときは列を減らす */
+@media (max-width: 960px) {
+  .admin-grid-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .admin-grid,
+  .admin-grid-3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* 一覧のカード1件分（押すと詳細へ。押すと少し縮む） */
+.admin-list-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 16px 18px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border-card);
+  border-radius: var(--radius-list-card);
+  box-shadow: var(--shadow-card);
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.admin-list-card:hover {
+  border-color: #dbe3ee;
+}
+
+.admin-list-card:active {
+  transform: scale(0.99);
+}
+
+.admin-list-card:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* 灰色のカード（非表示の投稿・受け渡し済みなど、目立たせないもの） */
+.admin-list-card.is-muted {
+  background-color: var(--color-muted-bg);
+  box-shadow: none;
+}
+
+.admin-list-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-list-card-title {
+  margin: 0 0 4px 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-list-card-meta {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+}
+
+/* 写真（小さい版。写真がないときは灰色の枠に画像アイコン） */
+.admin-thumb {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  border-radius: var(--radius-thumb);
+  overflow: hidden;
+  background-color: var(--color-muted-bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-text-faint);
+}
+
+.admin-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 右の「>」 */
+.admin-chevron {
+  flex-shrink: 0;
+  color: var(--color-text-faint);
+}
+
+
+/* =================================================================
+   6. バッジ（状態を表す、丸い小さなラベル）
+   使い方: <span className="admin-status admin-status-pending">承認待ち</span>
+     色: admin-status-pending（黄）/ admin-status-approved（青）/ admin-status-done（緑）/
+         admin-status-rejected（灰）/ admin-status-danger（赤）
+   ※ どの状態にどの色を使うかは、設計書に書いていない（仮）。学生用 G033 のバッジに合わせた。
+   ================================================================= */
+
+.admin-status {
+  display: inline-block;
+  flex-shrink: 0;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.admin-status-pending {
+  background-color: #fef3c7;
+  color: #b45309;
+}
+
+.admin-status-approved {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.admin-status-done {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.admin-status-rejected {
+  background-color: var(--color-border);
+  color: var(--color-text-sub);
+}
+
+.admin-status-danger {
+  background-color: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+
+/* =================================================================
+   7. 読み込み中・0件・エラーの文
+   ================================================================= */
+
+/* 読み込み中・0件など（真ん中に出す。エラーのときは admin-message error） */
+.admin-message {
+  margin: 48px 0;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--color-text-muted);
+}
+
+.admin-message.error {
+  color: var(--color-error);
+}
+
+/* エラーをまとめて出す（フォームの上、ボタンの上など） */
+.admin-error-summary {
+  margin: 0 0 16px 0;
+  padding: 12px 16px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #b91c1c;
+  background-color: var(--color-error-bg);
+  border: 1px solid var(--color-error-bg-border);
+  border-radius: 12px;
+}
+
+
+/* =================================================================
+   8. 完了画面（G026 の完了画面と同じ）
+   使い方:
+     <div className="admin-complete">
+       <div className="admin-complete-icon">（チェックの svg）</div>
+       <h2 className="admin-complete-heading">登録が完了しました</h2>
+       <p className="admin-complete-text">…</p>
+     </div>
+   ================================================================= */
+
+.admin-complete {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 48px 0 32px 0;
+  text-align: center;
+}
+
+/* 丸いチェックマーク（表示するときに一度だけ、ぽんと出る） */
+.admin-complete-icon {
+  width: 72px;
+  height: 72px;
+  margin-bottom: 24px;
+  border-radius: 50%;
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.18);
+  animation: admin-pop 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.3) both;
+}
+
+@keyframes admin-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.admin-complete-heading {
+  margin: 0 0 16px 0;
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--color-heading);
+  letter-spacing: -0.02em;
+}
+
+.admin-complete-text {
+  margin: 0 0 32px 0;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--color-text-muted);
+}
+
+
+/* =================================================================
+   9. その他
+   ================================================================= */
+
+/* 画面には見えないが、読み上げソフトには読まれる文字 */
+.admin-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
