@@ -1,12 +1,9 @@
 // 受け取り申請まわりのAPI。画面からは、この中の関数だけを呼ぶ（fetchを画面に直接書かない）。
-// USE_MOCK = true の間は、サーバーに繋がず、ダミーの返事を返す。
-// バックエンドが出来たら false にする（パスとJSONの形は、バックエンドと合わせて直す）。
+// USE_MOCK = true の間は、サーバーに繋がず、ダミーの返事を返す（切り替えは api/client.js）。
+// バックエンドが出来たら、パスとJSONの形を、バックエンドと合わせて直す。
+import { apiFetch, USE_MOCK, wait } from './client'
 import { mockApplications } from '../mock/applications'
 import { mockItems } from '../mock/items'
-
-const USE_MOCK = true
-
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 // E-1 受け取り申請一覧（G033）
 // GET /api/student/applications（パスは内部設計書 第7章の仮）
@@ -25,9 +22,7 @@ export async function getApplications() {
       .sort((a, b) => b.appliedAt.localeCompare(a.appliedAt)) // 新着順（設計書 G033）
   }
 
-  const res = await fetch('/api/student/applications', { credentials: 'include' })
-  if (!res.ok) throw new Error('FETCH_FAILED')
-  return res.json()
+  return apiFetch('/api/student/applications')
 }
 
 // E-2 申請の詳細（G014, G034）
@@ -43,10 +38,7 @@ export async function getApplication(applicationId) {
     return { ...application, item }
   }
 
-  const res = await fetch(`/api/student/applications/${encodeURIComponent(applicationId)}`, { credentials: 'include' })
-  if (res.status === 404) throw new Error('NOT_FOUND')
-  if (!res.ok) throw new Error('FETCH_FAILED')
-  return res.json()
+  return apiFetch(`/api/student/applications/${encodeURIComponent(applicationId)}`)
 }
 
 // 申請の結果を「確認した（既読）」にする（G033 イベント2。NEW マークを消す）
@@ -58,11 +50,7 @@ export async function markApplicationRead(applicationId) {
     return
   }
 
-  const res = await fetch(`/api/student/applications/${encodeURIComponent(applicationId)}/read`, {
-    method: 'PATCH',
-    credentials: 'include',
-  })
-  if (!res.ok) throw new Error('FETCH_FAILED')
+  await apiFetch(`/api/student/applications/${encodeURIComponent(applicationId)}/read`, { method: 'PATCH' })
 }
 
 // E-3 受け取り申請（G019 → G020）
@@ -97,14 +85,5 @@ export async function createApplication(itemId, { reason, photos }) {
   const body = new FormData()
   body.append('reason', reason)
   photos.forEach((photo) => body.append('photos', photo.file))
-  const res = await fetch(`/api/student/items/${encodeURIComponent(itemId)}/applications`, {
-    method: 'POST',
-    credentials: 'include', // cookie認証にする場合に必要（認証方式は未定）
-    body, // FormData のときは Content-Type を書かない（ブラウザが自動で付ける）
-  })
-  if (!res.ok) {
-    const data = await res.json().catch(() => ({}))
-    throw new Error(data.code ?? 'UNKNOWN')
-  }
-  return res.json()
+  return apiFetch(`/api/student/items/${encodeURIComponent(itemId)}/applications`, { method: 'POST', body })
 }
