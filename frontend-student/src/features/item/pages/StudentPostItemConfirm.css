@@ -24,48 +24,10 @@
   cursor: pointer;
 }
 
-/* 進行状況 */
+/* 進行状況の配置（見た目は共通部品 ProgressSteps） */
 .post-confirm__steps {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
   flex-shrink: 0;
   margin: 32px 0 24px;
-}
-
-.post-confirm__step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  min-width: 48px;
-  font-size: 12px;
-  color: var(--color-text-muted);
-}
-
-.post-confirm__circle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  border: 1px solid var(--color-primary);
-  border-radius: 50%;
-  color: var(--color-primary);
-  background: var(--color-surface);
-  font-size: 14px;
-}
-
-.post-confirm__circle--active {
-  color: var(--color-primary-text);
-  background: var(--color-primary);
-}
-
-.post-confirm__line {
-  flex: 1;
-  height: 2px;
-  margin-top: 13px;
-  background: var(--color-primary);
 }
 
 /* スクロール可能な投稿内容 */

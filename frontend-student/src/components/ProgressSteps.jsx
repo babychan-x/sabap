@@ -4,7 +4,7 @@ import './ProgressSteps.css'
 // 進行状況の表示（入力 → 確認 → 完了）。今の位置だけ青く強調する。
 // 見た目は G029（StudentMyPostEdit）の進行状況と同じ（デザイン担当の画面に合わせた）。
 // 使い方: <ProgressSteps current={0} />  （0=入力、1=確認、2=完了）
-// ※ 共通部品 StepIndicator（古い紺色の見た目）とは別物。
+// 入力→確認→完了の流れがある画面は、すべてこの部品を使う（古い StepIndicator は削除した）。
 const DEFAULT_STEPS = ['入力', '確認', '完了']
 
 export default function ProgressSteps({ current, steps = DEFAULT_STEPS, label = '手順' }) {

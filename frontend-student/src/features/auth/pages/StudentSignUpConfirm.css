@@ -1,5 +1,10 @@
 /* G005 情報確認画面だけの見た目（配置）。 */
 
+/* 進行状況の配置（見た目は共通部品 ProgressSteps） */
+.signup-confirm__steps {
+  margin: 8px 0 24px;
+}
+
 .signup-confirm__title {
   margin: 0 0 16px;
   font-size: var(--font-size-title);

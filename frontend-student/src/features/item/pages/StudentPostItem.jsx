@@ -5,6 +5,7 @@ import './StudentPostItem.css'
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Camera, X } from 'lucide-react'
+import ProgressSteps from '../../../components/ProgressSteps'
 
 // 仮の階数設定。実際の階数が決まったら号館ごとに変更する。
 const buildingFloors = {
@@ -187,28 +188,9 @@ const [images, setImages] = useState(
         ＜ 落とし物を投稿する
       </button>
 
-      {/* 進行状況 */}
+      {/* 進行状況（見た目は G029 と同じ共通部品 ProgressSteps） */}
       <div className="post-item__steps">
-        <div className="post-item__step">
-          <span className="post-item__circle post-item__circle--active">
-            1
-          </span>
-          <span>入力</span>
-        </div>
-
-        <div className="post-item__line" />
-
-        <div className="post-item__step">
-          <span className="post-item__circle">2</span>
-          <span>確認</span>
-        </div>
-
-        <div className="post-item__line" />
-
-        <div className="post-item__step">
-          <span className="post-item__circle">3</span>
-          <span>完了</span>
-        </div>
+        <ProgressSteps current={0} label="投稿の手順" />
       </div>
 
       <form className="post-item__form" onSubmit={confirm} noValidate>

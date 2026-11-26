@@ -21,67 +21,9 @@
   font-weight: bold;
 }
 
-/* 進行状況表示 */
+/* 進行状況表示の配置（見た目は共通部品 ProgressSteps） */
 .post-complete__steps {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  margin: 0 20px;
-}
-
-.post-complete__step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
   flex-shrink: 0;
-  font-size: 14px;
-  white-space: nowrap;
-}
-
-/* ステップ番号 */
-.post-complete__step-number {
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border: 1.5px solid #4a90d9;
-  border-radius: 50%;
-  background-color: #ffffff;
-  color: #4a90d9;
-  font-size: 18px;
-}
-
-/* 現在のステップ */
-.post-complete__step--active
-.post-complete__step-number {
-  background-color: #4a90d9;
-  color: #ffffff;
-}
-
-/* ステップ間の線 */
-.post-complete__step-line {
-  position: relative;
-  flex: 1;
-  height: 2px;
-  margin-top: 14px;
-  background-color: #4a90d9;
-}
-
-/* 線の中央にある丸 */
-.post-complete__step-line::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 8px;
-  height: 8px;
-  border: 1.5px solid #4a90d9;
-  border-radius: 50%;
-  background-color: #ffffff;
-  transform: translate(-50%, -50%);
 }
 
 /* 投稿完了メッセージ */

@@ -6,6 +6,7 @@ import './StudentPostItemConfirm.css'
 
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import ProgressSteps from '../../../components/ProgressSteps'
 
 export default function StudentPostItemConfirm() {
   const navigate = useNavigate()
@@ -149,34 +150,12 @@ export default function StudentPostItemConfirm() {
         ＜ 投稿内容の確認
       </button>
 
-      {/* 進行状況 */}
+      {/* 進行状況（見た目は G029 と同じ共通部品 ProgressSteps） */}
       <div
         id="stepIndicator"
         className="post-confirm__steps"
       >
-        <div className="post-confirm__step">
-          <span className="post-confirm__circle">1</span>
-          <span>入力</span>
-        </div>
-
-        <div className="post-confirm__line" />
-
-        <div
-          className="post-confirm__step"
-          aria-current="step"
-        >
-          <span className="post-confirm__circle post-confirm__circle--active">
-            2
-          </span>
-          <span>確認</span>
-        </div>
-
-        <div className="post-confirm__line" />
-
-        <div className="post-confirm__step">
-          <span className="post-confirm__circle">3</span>
-          <span>完了</span>
-        </div>
+        <ProgressSteps current={1} label="投稿の手順" />
       </div>
 
       {/* スクロール可能な投稿内容 */}
