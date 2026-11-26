@@ -1,11 +1,8 @@
 // 落とし物まわりのAPI。画面からは、この中の関数だけを呼ぶ（fetchを画面に直接書かない）。
-// USE_MOCK = true の間は、サーバーに繋がず、mock/items.js のダミーデータを返す。
-// バックエンドが出来たら false にする（パスとJSONの形は、バックエンドと合わせて直す）。
+// USE_MOCK = true の間は、サーバーに繋がず、mock/items.js のダミーデータを返す（切り替えは api/client.js）。
+// バックエンドが出来たら、パスとJSONの形を、バックエンドと合わせて直す。
+import { apiFetch, USE_MOCK, wait } from './client'
 import { mockItems } from '../mock/items'
-
-const USE_MOCK = true
-
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
 // B-1 落とし物一覧・検索（G011, G016）
 // GET /api/student/items?category=&keyword=（パスは内部設計書 第7章の仮）
@@ -26,14 +23,8 @@ export async function getItems({ keyword = '', category = '' } = {}) {
       .sort((a, b) => b.foundAt.localeCompare(a.foundAt)) // 新着順（内部設計書 第9章）
   }
 
-  const params = new URLSearchParams()
-  if (keyword) params.set('keyword', keyword)
-  if (category) params.set('category', category)
-  const res = await fetch(`/api/student/items?${params}`, {
-    credentials: 'include', // cookie認証にする場合に必要（認証方式は未定）
-  })
-  if (!res.ok) throw new Error('UNKNOWN')
-  return res.json()
+  // 空の keyword・category は、URL に付けない（api/client.js がやる）
+  return apiFetch('/api/student/items', { query: { keyword, category } })
 }
 
 // B-2 落とし物詳細（G015, G017）
@@ -47,10 +38,5 @@ export async function getItem(id) {
     return item
   }
 
-  const res = await fetch(`/api/student/items/${encodeURIComponent(id)}`, {
-    credentials: 'include', // cookie認証にする場合に必要（認証方式は未定）
-  })
-  if (res.status === 404) throw new Error('NOT_FOUND')
-  if (!res.ok) throw new Error('UNKNOWN')
-  return res.json()
+  return apiFetch(`/api/student/items/${encodeURIComponent(id)}`)
 }

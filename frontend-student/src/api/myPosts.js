@@ -1,12 +1,9 @@
 // 自分の投稿（自分が投稿した落とし物）まわりのAPI。画面からは、この中の関数だけを呼ぶ（fetchを画面に直接書かない）。
-// USE_MOCK = true の間は、サーバーに繋がず、ダミーの返事を返す。
-// バックエンドが出来たら false にする（パスとJSONの形は、バックエンドと合わせて直す）。
+// USE_MOCK = true の間は、サーバーに繋がず、ダミーの返事を返す（切り替えは api/client.js）。
+// バックエンドが出来たら、パスとJSONの形を、バックエンドと合わせて直す。
 //
 // ※ G027〜G029（他のメンバーの画面）は、画面の中に仮データを書いていて、まだこのファイルを使っていない。
-
-const USE_MOCK = true
-
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+import { apiFetch, USE_MOCK, wait } from './client'
 
 // G-3 投稿の編集（G030 → G031）
 // PUT /api/student/my-items/{id}（multipart。パスは内部設計書 第7章の仮）
@@ -34,14 +31,5 @@ export async function updateMyPost(postId, form) {
       body.append('keepPhotoUrls', photo.src) // そのまま残す写真（項目名は仮）
     }
   })
-  const res = await fetch(`/api/student/my-items/${encodeURIComponent(postId)}`, {
-    method: 'PUT',
-    credentials: 'include', // cookie認証にする場合に必要（認証方式は未定）
-    body, // FormData のときは Content-Type を書かない（ブラウザが自動で付ける）
-  })
-  if (!res.ok) {
-    const data = await res.json().catch(() => ({}))
-    throw new Error(data.code ?? 'UNKNOWN')
-  }
-  return res.json()
+  return apiFetch(`/api/student/my-items/${encodeURIComponent(postId)}`, { method: 'PUT', body })
 }
