@@ -6,6 +6,18 @@ import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { Camera, X } from 'lucide-react'
 
+// 仮の階数設定。実際の階数が決まったら号館ごとに変更する。
+const buildingFloors = {
+  '1号館': ['1階', '2階', '3階', '4階', '5階'],
+  '2号館': ['1階', '2階', '3階', '4階', '5階'],
+  '3号館': ['1階', '2階', '3階', '4階', '5階'],
+  '4号館': ['1階', '2階', '3階', '4階', '5階'],
+  '5号館': ['1階', '2階', '3階', '4階', '5階'],
+  'その他': ['屋外', 'その他'],
+}
+
+const foundPlaceDetailMaxLength = 100
+
 export default function StudentPostItem() {
   
 const navigate = useNavigate()
@@ -24,9 +36,13 @@ const [foundDateTime, setFoundDateTime] = useState(
   previousData.foundDateTime || ''
 )
 
-const [foundPlace, setFoundPlace] = useState(
-  previousData.foundPlace || ''
-)
+const [foundBuilding, setFoundBuilding] = useState(previousData.foundBuilding ?? '')
+const [foundFloor, setFoundFloor] = useState(previousData.foundFloor ?? '')
+const [foundPlaceDetail, setFoundPlaceDetail] = useState(previousData.foundPlaceDetail ?? '')
+
+const floorOptions = Object.hasOwn(buildingFloors, foundBuilding)
+  ? buildingFloors[foundBuilding]
+  : []
 
 const [storageStatus, setStorageStatus] = useState(
   previousData.storageStatus || ''
@@ -103,7 +119,8 @@ const [images, setImages] = useState(
     if (
       !category ||
       !foundDateTime ||
-      !foundPlace ||
+      !foundBuilding ||
+      !foundFloor ||
       !storageStatus ||
       !itemName.trim() ||
       images.length === 0
@@ -113,7 +130,19 @@ const [images, setImages] = useState(
       return
     }
 
+    if (!floorOptions.includes(foundFloor)) {
+      setErrorMessage('選択した号館に対応する階数を選択してください。')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+
     // 文字数チェック
+    if (foundPlaceDetail.length > foundPlaceDetailMaxLength) {
+      setErrorMessage(`発見場所の詳細は${foundPlaceDetailMaxLength}文字以内で入力してください。`)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+
     if (itemName.length > 50) {
       setErrorMessage('タイトルは50文字以内で入力してください。')
       window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -133,7 +162,10 @@ const [images, setImages] = useState(
       state: {
         category,
         foundDateTime,
-        foundPlace,
+        foundPlace: `${foundBuilding}　${foundFloor}`,
+        foundBuilding,
+        foundFloor,
+        foundPlaceDetail,
         storageStatus,
         itemName,
         feature,
@@ -228,24 +260,65 @@ const [images, setImages] = useState(
         />
 
         {/* 発見場所 */}
-        // 入力方式変更するかも
-        <label htmlFor="foundPlace" className="post-item__label">
+        <label htmlFor="foundBuilding" className="post-item__label">
           <span className="post-item__required">必須</span>
-          発見場所
+          発見場所（号館）
         </label>
         <select
-          id="foundPlace"
+          id="foundBuilding"
           className="form-input post-item__select"
-          value={foundPlace}
-          onChange={(e) => setFoundPlace(e.target.value)}
+          required
+          value={foundBuilding}
+          onChange={(e) => {
+            setFoundBuilding(e.target.value)
+            setFoundFloor('')
+          }}
         >
           <option value="">選択してください</option>
-          <option value="教室">教室</option>
-          <option value="図書館">図書館</option>
-          <option value="食堂">食堂</option>
-          <option value="廊下">廊下</option>
-          <option value="その他">その他</option>
+          {Object.keys(buildingFloors).map((building) => (
+            <option key={building} value={building}>{building}</option>
+          ))}
         </select>
+
+        <label htmlFor="foundFloor" className="post-item__label">
+          <span className="post-item__required">必須</span>
+          発見場所（階数）
+        </label>
+        <select
+          id="foundFloor"
+          className="form-input post-item__select"
+          required
+          disabled={floorOptions.length === 0}
+          value={foundFloor}
+          onChange={(e) => setFoundFloor(e.target.value)}
+        >
+          <option value="">
+            {floorOptions.length > 0 ? '選択してください' : '先に号館を選択してください'}
+          </option>
+          {floorOptions.map((floor) => (
+            <option key={floor} value={floor}>{floor}</option>
+          ))}
+        </select>
+
+        <label htmlFor="foundPlaceDetail" className="post-item__label">
+          <span className="post-item__optional">任意</span>
+          発見場所の詳細
+        </label>
+        <textarea
+          id="foundPlaceDetail"
+          className="post-item__textarea post-item__place-detail"
+          placeholder="例：1304教室の窓側の机の下"
+          value={foundPlaceDetail}
+          maxLength={foundPlaceDetailMaxLength}
+          aria-describedby="foundPlaceDetailCount foundPlaceDetailNote"
+          onChange={(e) => setFoundPlaceDetail(e.target.value)}
+        />
+        <p id="foundPlaceDetailCount" className="post-item__place-detail-count">
+          {foundPlaceDetail.length} / {foundPlaceDetailMaxLength}文字
+        </p>
+        <p id="foundPlaceDetailNote" className="post-item__place-detail-note">
+          発見場所の詳細は他の学生には公開されません。管理者が受け取り申請の確認に使用します。
+        </p>
 
         {/* 現在の保管場所 */}
         <label htmlFor="storageStatus" className="post-item__label">

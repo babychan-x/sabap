@@ -133,6 +133,10 @@
   cursor: pointer;
 }
 
+.post-item__select:disabled {
+  cursor: not-allowed;
+}
+
 /* 特徴の説明 */
 .post-item__textarea {
   width: 100%;
@@ -149,6 +153,27 @@
 .post-item__textarea:focus {
   outline: 2px solid var(--color-focus);
   border-color: var(--color-focus);
+}
+
+.post-item__place-detail {
+  min-height: 100px;
+  margin-bottom: 4px;
+  font-size: var(--font-size-base);
+}
+
+.post-item__place-detail-count,
+.post-item__place-detail-note {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-small);
+}
+
+.post-item__place-detail-count {
+  margin: 0 0 8px;
+  text-align: right;
+}
+
+.post-item__place-detail-note {
+  margin: 0 0 20px;
 }
 
 /* ファイル入力欄 */
