@@ -1,1 +1,71 @@
-/* Admin design tokens */
+/* 管理者用の色・大きさの「変数」（デザインの値）。
+   値は、学生用のデザイン担当の画面 G025〜G029 と同じ（学生用と管理者用で見た目をそろえるため）。
+   使い方: CSS の中で var(--color-primary) のように書く。デザインを変えるときは、ここだけ直す。
+
+   ※ 学生用の src/styles/variables.css も、2026/11/26 に同じ色に直した（前は紺色 #1e3a5f）。
+     ただし学生用は、変数の名前がこのファイルと違う（前からの名前のまま）。 */
+
+:root {
+  /* ---------- 色 ---------- */
+  --color-primary: #3b82f6;          /* メインの色（ボタン、選択中、入力中の枠） */
+  --color-primary-dark: #2563eb;     /* メインの色の濃い版（リンク、押したとき） */
+  --color-primary-soft: #e8f1ff;     /* メインの色の薄い版（アイコンの背景など） */
+  --color-on-primary: #ffffff;       /* メインの色の上の文字 */
+
+  --color-page-bg: #f0f2f5;          /* 画面の外側・いちばん下の背景 */
+  --color-content-bg: #f7f8fa;       /* カードを浮かせる画面の背景 */
+  --color-surface: #ffffff;          /* カード・ヘッダー・入力中の入力欄 */
+  --color-input-bg: #f9fafb;         /* 入力欄の背景 */
+  --color-muted-bg: #f3f4f6;         /* 写真がないときの枠、灰色のボタン */
+
+  --color-heading: #111827;          /* タイトル・見出し */
+  --color-label: #374151;            /* ラベル */
+  --color-text: #1f2937;             /* 本文 */
+  --color-text-sub: #4b5563;         /* 本文（少し薄い） */
+  --color-text-muted: #6b7280;       /* 補足 */
+  --color-text-faint: #9ca3af;       /* 薄い文字、プレースホルダー */
+
+  --color-border: #e5e7eb;           /* 区切り線・入力欄の枠 */
+  --color-border-card: #eef0f3;      /* カードの枠 */
+  --color-disabled: #c4c7cc;         /* 押せないボタン */
+
+  --color-error: #dc2626;            /* エラーの文字 */
+  --color-error-border: #ef4444;     /* エラーの入力欄の枠 */
+  --color-error-input-bg: #fff7f7;   /* エラーの入力欄の背景 */
+  --color-error-bg: #fef2f2;         /* まとめて出すエラーの背景 */
+  --color-error-bg-border: #fecaca;  /* まとめて出すエラーの枠 */
+  --color-danger: #ef4444;           /* 削除など、取り消せない操作のボタン */
+  --color-danger-soft-border: #fca5a5; /* 白地に赤文字のボタンの枠 */
+
+  --color-required: #e11d48;         /* 「必須」バッジの文字 */
+  --color-required-bg: #ffe4e6;      /* 「必須」バッジの背景 */
+
+  --color-overlay: rgba(17, 24, 39, 0.45); /* ダイアログの後ろの暗い幕 */
+
+  /* ---------- 形 ---------- */
+  --radius-control: 14px;            /* ボタン・入力欄の角丸 */
+  --radius-thumb: 12px;              /* サムネイル（小さい写真）の角丸 */
+  --radius-card: 24px;               /* カードの角丸 */
+  --radius-list-card: 20px;          /* 一覧のカードの角丸 */
+  --radius-dialog: 20px;             /* ダイアログの角丸 */
+
+  --control-height: 48px;            /* 入力欄・ふつうのボタンの高さ */
+  --button-height-large: 52px;       /* メインのボタンの高さ */
+
+  /* ---------- 影 ---------- */
+  --shadow-card: 0 6px 20px rgba(17, 24, 39, 0.06);
+  --shadow-primary: 0 6px 16px rgba(59, 130, 246, 0.28);
+  --shadow-primary-pressed: 0 3px 8px rgba(59, 130, 246, 0.22);
+  --shadow-dialog: 0 12px 32px rgba(0, 0, 0, 0.2);
+  --focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.15);   /* 入力中の青い薄い影 */
+  --focus-ring-error: 0 0 0 3px rgba(239, 68, 68, 0.15);
+
+  /* ---------- 文字 ---------- */
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
+
+  /* ---------- 画面の幅（管理者用は PC 幅） ---------- */
+  --header-height: 72px;             /* 上のヘッダーの高さ */
+  --content-max-width: 1120px;       /* 一覧・詳細など、ふつうの画面の中身の最大幅 */
+  --narrow-max-width: 480px;         /* ログイン・入力フォーム・完了画面など、細い画面の最大幅 */
+  --page-padding-x: 32px;            /* 左右の余白 */
+}

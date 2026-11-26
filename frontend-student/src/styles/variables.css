@@ -1,19 +1,21 @@
 /* 色・大きさの「変数」。デザインを変えるときは、ここだけ直す。
-   学生用と管理者用で同じ色を使うため、このファイルは両方のアプリに同じ内容で置く。 */
+   色は、デザイン担当の画面 G025〜G029 と同じ値にした（2026/11/26。前は紺色 #1e3a5f の仮の色だった）。
+   管理者用（frontend-admin/src/styles/variables.css）も同じ色を使う。
+   ※ 変数の名前と、形・大きさ・文字の大きさの値は、前のまま（使っている画面のレイアウトを崩さないため）。 */
 
 :root {
   /* 色 */
-  --color-primary: #1e3a5f;      /* メインの色（ボタン、タイトル） */
+  --color-primary: #3b82f6;      /* メインの色（ボタン、選択中） */
   --color-primary-text: #ffffff; /* メインの色の上の文字 */
-  --color-disabled: #94a3b8;     /* 押せないボタン */
+  --color-disabled: #c4c7cc;     /* 押せないボタン */
   --color-text: #1f2937;         /* 本文 */
   --color-text-muted: #6b7280;   /* 補足の文字 */
-  --color-border: #cbd5e1;       /* 入力欄の枠線 */
+  --color-border: #e5e7eb;       /* 区切り線・入力欄の枠線 */
   --color-focus: #3b82f6;        /* 入力中の枠線 */
   --color-link: #2563eb;         /* リンク */
-  --color-error: #b91c1c;        /* エラー */
+  --color-error: #dc2626;        /* エラー */
   --color-surface: #ffffff;      /* 画面の背景 */
-  --color-page-bg: #f3f4f6;      /* 画面の外側の背景（PCで見たとき） */
+  --color-page-bg: #f0f2f5;      /* 画面の外側の背景（PCで見たとき） */
 
   /* 形・大きさ */
   --radius: 8px;
@@ -21,7 +23,7 @@
   --button-height: 48px;
 
   /* 文字 */
-  --font-family: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
   --font-size-base: 16px;  /* 入力欄は16px以上にする（16px未満だとスマホで拡大される） */
   --font-size-small: 14px;
   --font-size-title: 26px;
