@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { verifySignUpToken } from '../../../api/auth'
-import StepIndicator from '../../../components/StepIndicator'
+import ProgressSteps from '../../../components/ProgressSteps'
 import './StudentSignUpForm.css'
 
 // アイコンの選択肢（仮）。
@@ -89,7 +89,10 @@ export default function StudentSignUpForm() {
 
   return (
     <main className="page">
-      <StepIndicator current={0} />
+      {/* 進行状況（見た目は G029 と同じ共通部品 ProgressSteps） */}
+      <div className="signup-form__steps">
+        <ProgressSteps current={0} label="登録の手順" />
+      </div>
       <h1 className="signup-form__title">情報登録</h1>
 
       <form onSubmit={handleSubmit} noValidate>

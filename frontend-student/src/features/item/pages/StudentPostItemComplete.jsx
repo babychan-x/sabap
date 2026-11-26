@@ -3,6 +3,7 @@ import './StudentPostItemComplete.css'
 // G023 投稿完了画面（studentPostItemComplete）
 
 import { useNavigate } from "react-router-dom";
+import ProgressSteps from "../../../components/ProgressSteps";
 
 function StudentPostItemComplete() {
   const navigate = useNavigate();
@@ -16,38 +17,12 @@ function StudentPostItemComplete() {
     <main className="post-complete">
       <h1 className="post-complete__title">投稿完了</h1>
 
-      {/* 進行状況表示 */}
+      {/* 進行状況表示（見た目は G029 と同じ共通部品 ProgressSteps） */}
       <div
         id="stepIndicator"
         className="post-complete__steps"
       >
-        <div className="post-complete__step">
-          <span className="post-complete__step-number">
-            1
-          </span>
-          <span>入力</span>
-        </div>
-
-        <div className="post-complete__step-line"></div>
-
-        <div className="post-complete__step">
-          <span className="post-complete__step-number">
-            2
-          </span>
-          <span>確認</span>
-        </div>
-
-        <div className="post-complete__step-line"></div>
-
-        <div
-          className="post-complete__step post-complete__step--active"
-          aria-current="step"
-        >
-          <span className="post-complete__step-number">
-            3
-          </span>
-          <span>完了</span>
-        </div>
+        <ProgressSteps current={2} label="投稿の手順" />
       </div>
 
       {/* 投稿完了メッセージ */}

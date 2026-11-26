@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { registerStudent } from '../../../api/auth'
-import StepIndicator from '../../../components/StepIndicator'
+import ProgressSteps from '../../../components/ProgressSteps'
 import './StudentSignUpConfirm.css'
 
 // 学籍番号の取り出し（仮）。
@@ -54,7 +54,10 @@ export default function StudentSignUpConfirm() {
 
   return (
     <main className="page">
-      <StepIndicator current={1} />
+      {/* 進行状況（見た目は G029 と同じ共通部品 ProgressSteps） */}
+      <div className="signup-confirm__steps">
+        <ProgressSteps current={1} label="登録の手順" />
+      </div>
       <h1 className="signup-confirm__title">入力内容の確認</h1>
 
       <dl className="signup-confirm__list">

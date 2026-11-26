@@ -1,6 +1,7 @@
 import './StudentSignUpComplete.css'
 
 import { useNavigate } from 'react-router-dom'
+import ProgressSteps from '../../../components/ProgressSteps'
 
 export default function StudentSignUpComplete() {
   const navigate = useNavigate()
@@ -16,28 +17,9 @@ export default function StudentSignUpComplete() {
         新規登録完了
       </h1>
 
-      {/* 登録の進行状況 */}
+      {/* 登録の進行状況（見た目は G029 と同じ共通部品 ProgressSteps） */}
       <div className="signup-complete__steps">
-        <div className="signup-complete__step">
-          <span className="signup-complete__circle">1</span>
-          <span>入力</span>
-        </div>
-
-        <div className="signup-complete__line" />
-
-        <div className="signup-complete__step">
-          <span className="signup-complete__circle">2</span>
-          <span>確認</span>
-        </div>
-
-        <div className="signup-complete__line" />
-
-        <div className="signup-complete__step">
-          <span className="signup-complete__circle signup-complete__circle--active">
-            3
-          </span>
-          <span>完了</span>
-        </div>
+        <ProgressSteps current={2} label="登録の手順" />
       </div>
 
       {/* 登録完了メッセージ */}
