@@ -27,7 +27,7 @@ const ROUTES = {
 //   外部設計書は文字数「未定」。DB設計書の「1〜140文字」に合わせた（2026/11/25 ユーザーが決定。第12章 10）
 const MAX_BODY = 140
 
-const EMPTY_FORM = { body: '' }
+const EMPTY_FORM = { messageBody: '' }
 
 export default function StudentMessageWrite() {
   const navigate = useNavigate()
@@ -40,7 +40,7 @@ export default function StudentMessageWrite() {
 
   // メッセージを書き換えたとき（エラー表示を消す）
   const handleBodyChange = (e) => {
-    setForm((prev) => ({ ...prev, body: e.target.value }))
+    setForm((prev) => ({ ...prev, messageBody: e.target.value }))
     setErrorMessage('')
   }
 
@@ -57,7 +57,7 @@ export default function StudentMessageWrite() {
   // イベント2: 確認画面へ → 未入力ならエラーを出してとどまる。問題なければ G036 へ
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (form.body.trim() === '') {
+    if (form.messageBody.trim() === '') {
       // 文言は設計書に記載なし（仮）
       setErrorMessage('メッセージを入力してください。')
       return
@@ -94,7 +94,7 @@ export default function StudentMessageWrite() {
                   メッセージ内容
                 </label>
                 <span className="message-write-counter">
-                  {form.body.length}/{MAX_BODY}
+                  {form.messageBody.length}/{MAX_BODY}
                 </span>
               </div>
               <div className={`message-write-input-wrapper ${errorMessage ? 'has-error' : ''}`}>
@@ -104,7 +104,7 @@ export default function StudentMessageWrite() {
                   // 案内の文は設計書に記載なし（仮）
                   placeholder="落とし物を届けてくれた方へ、感謝の気持ちを書きましょう"
                   maxLength={MAX_BODY}
-                  value={form.body}
+                  value={form.messageBody}
                   onChange={handleBodyChange}
                   aria-invalid={errorMessage ? true : undefined}
                   aria-describedby={errorMessage ? 'message-write-error' : undefined}

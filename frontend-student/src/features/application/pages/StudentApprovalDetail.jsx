@@ -2,12 +2,14 @@ import './StudentApprovalDetail.css'
 
 // G014 承認詳細画面（studentApprovalDetail）
 // ※ 仮の画面。外部設計書 G014 の入出力項目・イベントに合わせて中身を作る。
-// 主なAPI（仮）: E-2
+// 主なAPI（仮）: E-2 申請の詳細（api/applications.js の getApplication。仮データは mock/applications.js と mock/items.js）
 
 // 置き場所: src/features/application/pages/StudentApprovalDetail.jsx（App.jsx: /applications/:id/approval）
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { getApplication } from '../../../api/applications';
+import { formatDateTime } from '../../../utils/date';
 import './StudentApprovalDetail.css';
 
 // ---------------------------------------------------------------
@@ -38,52 +40,37 @@ export default function StudentApprovalDetail() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [failedImages, setFailedImages] = useState([]); // 読み込みに失敗した写真の番号
 
-  // 写真つきの仮データ（G012 の仮データの申請ID 101 / 102 / 103 に対応）
-  // 写真は本来、投稿された画像（1〜4枚）。財布の仮データでは同じ写真を3枚並べている。
-  // TODO: API で申請結果を取得する（見つからないときの表示は仕様に記載なし）
-  const walletImage = 'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=600&q=80';
-  const dummyApplications = {
-    101: {
-      status: 'APPROVED',
-      itemName: '黒い折り畳み財布',
-      category: '財布',
-      foundAt: '2026/10/13 16:00',
-      place: '1号館',
-      feature: '',
-      reason: '今日の15:30頃に、1号館のFI科演習室で講義を受けていました。そして、休憩時間に財布を出し入れしたので、置きっぱなしで演習室を出てしまった可能性があるから。\n中に学生証と〇〇神社のおみくじが入っていると思います。',
-      images: [walletImage, walletImage, walletImage],
-      deadline: '2026/10/27 16:00',
-      pickupPlace: '学生厚生',
-    },
-    102: {
-      status: 'REJECTED',
-      itemName: 'iPhone(白)',
-      category: 'スマホ',
-      foundAt: '2026/10/13 15:00',
-      place: '2号館',
-      feature: '',
-      reason: '2号館の教室で、白いケースのiPhoneを置き忘れたかもしれません。',
-      images: ['https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=600&q=80'],
-      deadline: '',
-      pickupPlace: '',
-    },
-    103: {
-      status: 'APPROVED',
-      itemName: 'ピンクポーチ',
-      category: 'その他',
-      foundAt: '2026/10/13 13:00',
-      place: '食堂',
-      feature: 'ファスナーに白いクマのキーホルダーが付いている',
-      reason: '昼休みに食堂で友達と話していて、テーブルに置いたまま教室へ戻ってしまいました。\n中にリップと目薬が入っています。',
-      images: ['https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=600&q=80'],
-      deadline: '2026/10/27 13:00',
-      pickupPlace: '学生厚生',
-    },
-  };
-  const application = dummyApplications[id];
+  // 取得した申請（どの ID の結果かも一緒に持つ。ID が変わったら「読み込み中」に戻る）
+  //   application: 申請（applicationStatus・applicationReason・pickupDeadline・pickupLocation など）
+  //   application.post: 申請した落とし物（itemName・itemCategory など。mock/items.js の形）
+  //   項目名と DB の列の対応は mock/applications.js・mock/items.js の先頭に書いてある
+  const [result, setResult] = useState(null); // { applicationId, application, error }
 
-  // 仮データにないIDのときは、別の落とし物を代わりに出さず「見つかりません」を表示する
-  if (!application) {
+  // 画面を開いたとき（ID が変わったとき）に、申請を取得する
+  useEffect(() => {
+    let ignore = false; // 画面を離れたあとに届いた結果は使わない
+    getApplication(id)
+      .then((application) => {
+        if (!ignore) setResult({ applicationId: id, application, error: '' });
+      })
+      .catch((err) => {
+        // 文言は設計書に記載なし（仮）
+        const error = err.message === 'NOT_FOUND'
+          ? '申請結果が見つかりませんでした'
+          : '読み込めませんでした。時間をおいて、もう一度お試しください。';
+        if (!ignore) setResult({ applicationId: id, application: null, error });
+      });
+    return () => {
+      ignore = true;
+    };
+  }, [id]);
+
+  const loading = result?.applicationId !== id;
+  const application = loading ? null : result.application;
+  const post = application?.post;
+
+  // 読み込み中・見つからないときは、別の落とし物を代わりに出さず、文言だけを表示する
+  if (!application || !post) {
     return (
       <div className="approval-detail-page-wrapper">
         <div className="approval-detail-mobile-container">
@@ -99,13 +86,18 @@ export default function StudentApprovalDetail() {
             </button>
             <h1 className="approval-detail-title">申請結果の詳細</h1>
           </header>
-          <p className="approval-detail-empty">申請結果が見つかりませんでした</p>
+          <p className="approval-detail-empty" role={loading ? undefined : 'alert'}>
+            {loading ? '読み込み中…' : result.error || '申請結果が見つかりませんでした'}
+          </p>
         </div>
       </div>
     );
   }
 
-  const stamp = STAMPS[application.status];
+  const stamp = STAMPS[application.applicationStatus];
+
+  // 写真がない落とし物は、灰色の枠を1枚出す（G028 と同じ）
+  const images = post.postImageUrls.length > 0 ? post.postImageUrls : [null];
 
   // 写真をスワイプしたとき、何枚目かを調べて「●○○」の点を切り替える
   const handleScroll = () => {
@@ -149,14 +141,14 @@ export default function StudentApprovalDetail() {
                 ref={sliderRef}
                 onScroll={handleScroll}
               >
-                {application.images.map((src, index) => (
+                {images.map((src, index) => (
                   <div className="approval-detail-slide" key={index}>
-                    {failedImages.includes(index) ? (
+                    {!src || failedImages.includes(index) ? (
                       <ImagePlaceholder />
                     ) : (
                       <img
                         src={src}
-                        alt={`${application.itemName}の写真${index + 1}`}
+                        alt={`${post.itemName}の写真${index + 1}`}
                         className="approval-detail-img"
                         onError={() => setFailedImages((prev) => [...prev, index])}
                       />
@@ -172,9 +164,9 @@ export default function StudentApprovalDetail() {
             </div>
 
             {/* 写真が2枚以上のときだけ点を表示 */}
-            {application.images.length > 1 && (
+            {images.length > 1 && (
               <div className="approval-detail-dots">
-                {application.images.map((_, index) => (
+                {images.map((_, index) => (
                   <button
                     key={index}
                     className={`approval-detail-dot ${index === activeIndex ? 'active' : ''}`}
@@ -186,41 +178,43 @@ export default function StudentApprovalDetail() {
             )}
 
             <div className="approval-detail-body">
-              <h2 className="approval-detail-item-name">{application.itemName}</h2>
+              <h2 className="approval-detail-item-name">{post.itemName}</h2>
 
               <dl className="approval-detail-list">
                 <div className="approval-detail-row">
                   <dt>カテゴリー</dt>
-                  <dd>{application.category}</dd>
+                  <dd>{post.itemCategory}</dd>
                 </div>
                 <div className="approval-detail-row">
                   <dt>発見日時</dt>
-                  <dd>{application.foundAt}</dd>
+                  <dd>{formatDateTime(post.foundAt)}</dd>
                 </div>
                 <div className="approval-detail-row">
                   <dt>発見場所</dt>
-                  <dd>{application.place}</dd>
+                  <dd>{post.foundLocation}</dd>
                 </div>
                 <div className="approval-detail-row">
                   <dt>特徴</dt>
-                  <dd>{application.feature || '特になし'}</dd>
+                  <dd>{post.itemDescription || '特になし'}</dd>
                 </div>
                 <div className="approval-detail-row">
                   <dt>申請理由</dt>
-                  <dd className="approval-detail-reason">{application.reason}</dd>
+                  <dd className="approval-detail-reason">{application.applicationReason}</dd>
                 </div>
               </dl>
 
               {/* 承認されたときだけ、受け取りの期限と場所を表示（却下のときは出さない：要確認） */}
-              {application.status === 'APPROVED' && (
+              {application.applicationStatus === 'APPROVED' && (
                 <div className="approval-detail-pickup">
                   <div className="approval-detail-pickup-row">
                     <span className="approval-detail-pickup-label">期限</span>
-                    <span className="approval-detail-pickup-value">{application.deadline}</span>
+                    <span className="approval-detail-pickup-value">
+                      {application.pickupDeadline ? formatDateTime(application.pickupDeadline) : ''}
+                    </span>
                   </div>
                   <div className="approval-detail-pickup-row">
                     <span className="approval-detail-pickup-label">受取場所</span>
-                    <span className="approval-detail-pickup-value">{application.pickupPlace}</span>
+                    <span className="approval-detail-pickup-value">{application.pickupLocation}</span>
                   </div>
                 </div>
               )}

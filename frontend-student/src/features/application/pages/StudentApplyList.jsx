@@ -31,25 +31,25 @@ const BADGES = {
 }
 
 // バッジの種類を決める（受け渡し済みなら「済」、それ以外は申請状況のまま）
-const badgeKey = (application) => (application.handedOver ? 'HANDED_OVER' : application.status)
+const badgeKey = (application) => (application.isHandedOver ? 'HANDED_OVER' : application.applicationStatus)
 
 // 結果（承認・却下）が出ていて、まだ確認していない申請に NEW マークを付ける
 const isNew = (application) =>
-  !application.resultRead && (application.status === 'APPROVED' || application.status === 'REJECTED')
+  !application.isResultRead && (application.applicationStatus === 'APPROVED' || application.applicationStatus === 'REJECTED')
 
 // 案内文（文言は設計書に記載なし。旧スライドの文言）
 const guideText = (application) => {
-  if (application.handedOver) {
-    return application.messageSent ? '' : '感謝メッセージを送信しましょう'
+  if (application.isHandedOver) {
+    return application.isMessageSent ? '' : '感謝メッセージを送信しましょう'
   }
-  if (application.status === 'APPROVED') return '受け取り期限を確認してください'
+  if (application.applicationStatus === 'APPROVED') return '受け取り期限を確認してください'
   return ''
 }
 
 // イベント2の遷移先: 受け渡し済み → G034、それ以外（承認済み・却下済み・承認待ち・取り下げ済み） → G014
 //   承認待ちは設計書に記載なし。2026/11/24 ユーザーが G014 に決定（仮）。取り下げ済みも G014（仮）
 const detailPath = (application) =>
-  application.handedOver ? ROUTES.handedOverDetail(application.id) : ROUTES.approvalDetail(application.id)
+  application.isHandedOver ? ROUTES.handedOverDetail(application.applicationId) : ROUTES.approvalDetail(application.applicationId)
 
 // 落とし物の写真（写真がないとき／読み込めないときは、灰色の枠にアイコン。G027 と同じ）
 function Thumbnail({ src, alt }) {
@@ -94,7 +94,7 @@ export default function StudentApplyList() {
   const handleSelect = (application) => {
     if (isNew(application)) {
       // 既読にできなくても、詳細画面は開く（失敗しても画面は止めない。仮）
-      markApplicationRead(application.id).catch(() => {})
+      markApplicationRead(application.applicationId).catch(() => {})
     }
     navigate(detailPath(application))
   }
@@ -134,18 +134,18 @@ export default function StudentApplyList() {
             applications.map((application) => {
               const badge = BADGES[badgeKey(application)]
               const guide = guideText(application)
-              const name = application.item?.name ?? ''
+              const name = application.post?.itemName ?? ''
               return (
                 // 入出力項目3: 申請カード（イベント2）
                 <button
-                  key={application.id}
+                  key={application.applicationId}
                   type="button"
                   className="apply-list-item"
                   onClick={() => handleSelect(application)}
                 >
                   {/* 落とし物の画像（結果を未確認なら、左上に NEW マーク） */}
                   <div className="apply-list-img-wrapper">
-                    <Thumbnail src={application.item?.image} alt={name} />
+                    <Thumbnail src={application.post?.postImageUrls[0]} alt={name} />
                     {isNew(application) && <span className="apply-list-new">NEW</span>}
                   </div>
 
