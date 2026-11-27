@@ -2,12 +2,14 @@ import './StudentMyPostList.css'
 
 // G027 自分の投稿一覧画面（studentMyPostList）
 // ※ 仮の画面。外部設計書 G027 の入出力項目・イベントに合わせて中身を作る。
-// 主なAPI（仮）: 自分が投稿した落とし物の一覧取得（API一覧表の番号に合わせて書き換える）
+// 主なAPI（仮）: G-1 自分の投稿一覧（api/myPosts.js の getMyPosts。仮データは mock/myPosts.js）
 // 置き場所: src/features/mypage/pages/StudentMyPostList.jsx（App.jsx: /mypage/posts）
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getMyPosts } from '../../../api/myPosts';
 import BottomNav from '../../../components/BottomNav';
+import { formatDateTime } from '../../../utils/date';
 import './StudentMyPostList.css';
 
 // ---------------------------------------------------------------
@@ -47,21 +49,25 @@ function Thumbnail({ src, alt }) {
 export default function StudentMyPostList() {
   const navigate = useNavigate();
 
-  // 写真つきの仮データ（画像の並びのまま。日時の意味（発見日時／投稿日時）は設計書で要確認）
-  // image が null のものは、写真のURLを入れると表示される。
-  const dummyPosts = [
-    {
-      id: 1,
-      title: '眼鏡',
-      date: '2026/10/12 18:00',
-      image: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=200&q=80',
-    },
-    { id: 2, title: 'ボールペン三本', date: '2026/10/12 15:00', image: null },
-    { id: 3, title: '折りたたみ傘(白)', date: '2026/09/12 13:00', image: null },
-    { id: 4, title: '水筒ボトル(透明)', date: '2026/06/12 13:00', image: null },
-    { id: 5, title: 'キーホルダーと鍵', date: '2026/03/11 13:00', image: null },
-    { id: 6, title: '充電ケーブル', date: '2026/06/12 13:00', image: null },
-  ];
+  // 自分の投稿の一覧（null = 読み込み中）。仮データは mock/myPosts.js（G028・G029 と同じデータ）
+  const [myPosts, setMyPosts] = useState(null);
+  const [loadError, setLoadError] = useState('');
+
+  // 画面を開いたときに、一覧を取得する
+  useEffect(() => {
+    let ignore = false; // 画面を離れたあとに届いた結果は使わない
+    getMyPosts()
+      .then((posts) => {
+        if (!ignore) setMyPosts(posts);
+      })
+      .catch(() => {
+        // 文言は設計書に記載なし（仮）
+        if (!ignore) setLoadError('読み込めませんでした。時間をおいて、もう一度お試しください。');
+      });
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   return (
     <div className="my-post-list-page-wrapper">
@@ -83,25 +89,33 @@ export default function StudentMyPostList() {
 
         {/* 投稿リスト */}
         <div className="my-post-list">
-          {dummyPosts.length === 0 && (
+          {loadError && (
+            <p className="my-post-list-empty" role="alert">{loadError}</p>
+          )}
+          {!loadError && myPosts === null && (
+            <p className="my-post-list-empty">読み込み中…</p>
+          )}
+          {myPosts?.length === 0 && (
             <p className="my-post-list-empty">投稿した落とし物はありません</p>
           )}
 
-          {dummyPosts.map((post) => (
+          {myPosts?.map((post) => (
             <div
-              key={post.id}
+              key={post.postId}
               className="my-post-list-item"
               role="button"
               tabIndex={0}
-              onClick={() => navigate(ROUTES.myPostDetail(post.id))}
+              onClick={() => navigate(ROUTES.myPostDetail(post.postId))}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') navigate(ROUTES.myPostDetail(post.id));
+                if (e.key === 'Enter') navigate(ROUTES.myPostDetail(post.postId));
               }}
             >
-              <Thumbnail src={post.image} alt={post.title} />
+              {/* 写真は1枚目をサムネイルにする */}
+              <Thumbnail src={post.postImageUrls[0] ?? null} alt={post.itemName} />
               <div className="my-post-list-info">
-                <h2 className="my-post-list-name">{post.title}</h2>
-                <p className="my-post-list-date">{post.date}</p>
+                <h2 className="my-post-list-name">{post.itemName}</h2>
+                {/* 投稿日時（設計書 G027 入出力項目4: 投稿が登録された日時） */}
+                <p className="my-post-list-date">{formatDateTime(post.postedAt)}</p>
               </div>
               <svg className="my-post-list-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <polyline points="9 6 15 12 9 18"></polyline>

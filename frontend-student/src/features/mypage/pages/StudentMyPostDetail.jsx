@@ -2,12 +2,14 @@ import './StudentMyPostDetail.css'
 
 // G028 投稿詳細画面（studentMyPostDetail）
 // ※ 仮の画面。外部設計書 G028 の入出力項目・イベントに合わせて中身を作る。
-// 主なAPI（仮）: 自分の投稿の詳細取得・投稿の削除（API一覧表の番号に合わせて書き換える）
+// 主なAPI（仮）: G-2 自分の投稿の詳細（getMyPost）・G-4 投稿の削除（deleteMyPost）。api/myPosts.js。仮データは mock/myPosts.js
 // 置き場所: src/features/mypage/pages/StudentMyPostDetail.jsx（App.jsx: /mypage/posts/:id）
 // 削除の確認（D001）と完了（D002）のダイアログは、この画面の中で表示する。
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { deleteMyPost, getMyPost } from '../../../api/myPosts';
+import { formatDateTime } from '../../../utils/date';
 import './StudentMyPostDetail.css';
 
 // ---------------------------------------------------------------
@@ -45,84 +47,35 @@ export default function StudentMyPostDetail() {
   const [failedImages, setFailedImages] = useState([]); // 読み込みに失敗した写真の番号
   const [dialog, setDialog] = useState(null); // null / 'confirm'（D001）/ 'complete'（D002）
   const [deleteError, setDeleteError] = useState('');
+  const [deleting, setDeleting] = useState(false); // 削除中は「確認」を二重に押せないようにする
 
-  // 写真つきの仮データ（G027 の仮データの投稿ID 1〜6 に対応）
-  // status        : 保管場所ステータス
-  // hasApplication: 受け取り申請があるか
-  // images が空のものは、写真のURLを入れると表示される。
-  // TODO: API で投稿を取得する（見つからないときの表示は仕様に記載なし）
-  const glassesImage = 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=600&q=80';
-  const dummyPosts = {
-    1: {
-      title: '眼鏡',
-      category: 'メガネ',
-      foundAt: '2026/10/12 18:00',
-      place: '4号館',
-      status: 'NOT_ARRIVED',
-      hasApplication: true,
-      feature: '',
-      deadline: '2027/10/12 23:59',
-      images: [glassesImage, glassesImage, glassesImage],
-    },
-    2: {
-      title: 'ボールペン三本',
-      category: 'その他',
-      foundAt: '2026/10/12 15:00',
-      place: '2号館',
-      status: 'NOT_ARRIVED',
-      hasApplication: false,
-      feature: 'ピンク・水色・黄色のペンが1本ずつ',
-      deadline: '2027/10/12 23:59',
-      images: [],
-    },
-    3: {
-      title: '折りたたみ傘(白)',
-      category: '傘',
-      foundAt: '2026/09/12 13:00',
-      place: '体育館',
-      status: 'ARRIVED',
-      hasApplication: false,
-      feature: '',
-      deadline: '2027/09/12 23:59',
-      images: [],
-    },
-    4: {
-      title: '水筒ボトル(透明)',
-      category: 'その他',
-      foundAt: '2026/06/12 13:00',
-      place: '体育館',
-      status: 'RETURNED',
-      hasApplication: true,
-      feature: '蓋にコルクが付いている',
-      deadline: '2027/06/12 23:59',
-      images: [],
-    },
-    5: {
-      title: 'キーホルダーと鍵',
-      category: 'その他',
-      foundAt: '2026/03/11 13:00',
-      place: '1号館',
-      status: 'ARRIVED',
-      hasApplication: true,
-      feature: 'クマのキーホルダーと鍵2本',
-      deadline: '2027/03/11 23:59',
-      images: [],
-    },
-    6: {
-      title: '充電ケーブル',
-      category: 'その他',
-      foundAt: '2026/06/12 13:00',
-      place: '食堂',
-      status: 'NOT_ARRIVED',
-      hasApplication: false,
-      feature: 'ケーブルは白色',
-      deadline: '2027/06/12 23:59',
-      images: [],
-    },
-  };
-  const post = dummyPosts[id];
+  // 取得した投稿（どの ID の結果かも一緒に持つ。ID が変わったら「読み込み中」に戻る）
+  // 項目名と DB の列の対応は mock/myPosts.js の先頭に書いてある
+  const [result, setResult] = useState(null); // { postId, post, error }
 
-  // 仮データにないIDのときは、別の投稿を代わりに出さず「見つかりません」を表示する
+  // 画面を開いたとき（ID が変わったとき）に、投稿を取得する
+  useEffect(() => {
+    let ignore = false; // 画面を離れたあとに届いた結果は使わない
+    getMyPost(id)
+      .then((post) => {
+        if (!ignore) setResult({ postId: id, post, error: '' });
+      })
+      .catch((err) => {
+        // 文言は設計書に記載なし（仮）
+        const error = err.message === 'NOT_FOUND'
+          ? '投稿が見つかりませんでした'
+          : '読み込めませんでした。時間をおいて、もう一度お試しください。';
+        if (!ignore) setResult({ postId: id, post: null, error });
+      });
+    return () => {
+      ignore = true;
+    };
+  }, [id]);
+
+  const loading = result?.postId !== id;
+  const post = loading ? null : result.post;
+
+  // 読み込み中・見つからないときは、別の投稿を代わりに出さず、文言だけを表示する
   if (!post) {
     return (
       <div className="my-post-detail-page-wrapper">
@@ -139,7 +92,9 @@ export default function StudentMyPostDetail() {
             </button>
             <h1 className="my-post-detail-title">投稿の詳細</h1>
           </header>
-          <p className="my-post-detail-empty">投稿が見つかりませんでした</p>
+          <p className="my-post-detail-empty" role={loading ? undefined : 'alert'}>
+            {loading ? '読み込み中…' : result.error}
+          </p>
         </div>
       </div>
     );
@@ -148,8 +103,8 @@ export default function StudentMyPostDetail() {
   // 編集・削除ができる条件（要件定義書 4.1 より。要確認）
   //   編集：保管場所ステータスが「学生厚生未到着」のときだけ
   //   削除：「学生厚生未到着」で、受け取り申請がないときだけ
-  const canEdit = post.status === 'NOT_ARRIVED';
-  const canDelete = post.status === 'NOT_ARRIVED' && !post.hasApplication;
+  const canEdit = post.itemStatus === 'NOT_ARRIVED';
+  const canDelete = post.itemStatus === 'NOT_ARRIVED' && !post.hasApplication;
 
   // ボタンが使えない理由（仕様に文言の記載なし。仮）
   let notice = '';
@@ -159,7 +114,7 @@ export default function StudentMyPostDetail() {
     notice = '受け取り申請があるため、削除はできません。';
   }
 
-  const images = post.images.length > 0 ? post.images : [null];
+  const images = post.postImageUrls.length > 0 ? post.postImageUrls : [null];
 
   // 写真をスワイプしたとき、何枚目かを調べて「●○○」の点を切り替える
   const handleScroll = () => {
@@ -182,12 +137,22 @@ export default function StudentMyPostDetail() {
   };
 
   // D001「確認」：投稿を削除して、削除完了ダイアログ（D002）を表示する
-  const handleConfirmDelete = () => {
-    // TODO: API（投稿の削除）を呼ぶ
-    //   すでに削除されているときは、次のようにエラーを出して、削除しない
-    //   setDeleteError('この投稿はすでに削除されています');
-    //   return;
-    setDialog('complete');
+  // 削除できなかったときの文言（設計書に記載なし。仮）
+  const DELETE_ERRORS = {
+    NOT_FOUND: 'この投稿はすでに削除されています',
+    NOT_DELETABLE: 'この投稿は、到着済みか受け取り申請があるため削除できません',
+  };
+  const handleConfirmDelete = async () => {
+    setDeleting(true);
+    setDeleteError('');
+    try {
+      await deleteMyPost(id);
+      setDialog('complete');
+    } catch (err) {
+      setDeleteError(DELETE_ERRORS[err.message] ?? '削除できませんでした。時間をおいて、もう一度お試しください。');
+    } finally {
+      setDeleting(false);
+    }
   };
 
   // D001「戻る」：ダイアログを閉じて、自分の投稿一覧に戻る（設計書どおり。投稿は削除しない）
@@ -235,7 +200,7 @@ export default function StudentMyPostDetail() {
                     {src && !failedImages.includes(index) ? (
                       <img
                         src={src}
-                        alt={`${post.title}の写真${index + 1}`}
+                        alt={`${post.itemName}の写真${index + 1}`}
                         className="my-post-detail-img"
                         onError={() => setFailedImages((prev) => [...prev, index])}
                       />
@@ -262,32 +227,32 @@ export default function StudentMyPostDetail() {
             )}
 
             <div className="my-post-detail-body">
-              <h2 className="my-post-detail-item-name">{post.title}</h2>
+              <h2 className="my-post-detail-item-name">{post.itemName}</h2>
 
               <dl className="my-post-detail-list">
                 <div className="my-post-detail-row">
                   <dt>カテゴリー</dt>
-                  <dd>{post.category}</dd>
+                  <dd>{post.itemCategory}</dd>
                 </div>
                 <div className="my-post-detail-row">
                   <dt>発見日時</dt>
-                  <dd>{post.foundAt}</dd>
+                  <dd>{formatDateTime(post.foundAt)}</dd>
                 </div>
                 <div className="my-post-detail-row">
                   <dt>発見場所</dt>
-                  <dd>{post.place}</dd>
+                  <dd>{post.foundLocation}</dd>
                 </div>
                 <div className="my-post-detail-row">
                   <dt>保管場所</dt>
-                  <dd>{STORAGE_LABELS[post.status]}</dd>
+                  <dd>{STORAGE_LABELS[post.itemStatus]}</dd>
                 </div>
                 <div className="my-post-detail-row">
                   <dt>特徴</dt>
-                  <dd>{post.feature || '特になし'}</dd>
+                  <dd>{post.itemDescription || '特になし'}</dd>
                 </div>
                 <div className="my-post-detail-row">
                   <dt>保管期限</dt>
-                  <dd>{post.deadline} まで</dd>
+                  <dd>{formatDateTime(post.storageDeadline)} まで</dd>
                 </div>
               </dl>
             </div>
@@ -336,14 +301,16 @@ export default function StudentMyPostDetail() {
                     <button
                       className="my-post-detail-dialog-btn secondary"
                       onClick={handleCancelDelete}
+                      disabled={deleting}
                     >
                       戻る
                     </button>
                     <button
                       className="my-post-detail-dialog-btn danger"
                       onClick={handleConfirmDelete}
+                      disabled={deleting}
                     >
-                      確認
+                      {deleting ? '削除中…' : '確認'}
                     </button>
                   </div>
                 </>
