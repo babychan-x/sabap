@@ -19,7 +19,7 @@ const ROUTES = {
   post: '/post', // G021 落とし物投稿
   mypage: '/mypage', // G024 マイページ
   // イベント3の遷移先「G015（申請結果詳細）」は、G017（落とし物詳細）と同じ画面（2026/11/24 確定）
-  itemDetail: (itemId) => `/items/${itemId}`, // G015・G017 studentItemDetail
+  itemDetail: (postId) => `/items/${postId}`, // G015・G017 studentItemDetail
 }
 
 // キーワードの最大文字数（入出力項目2: 50以下）
@@ -149,23 +149,23 @@ export default function StudentSearchResult() {
               {/* 入出力項目4・5: 落とし物一覧・落とし物カード */}
               {result.items.map((item) => (
                 <button
-                  key={item.id}
+                  key={item.postId}
                   type="button"
                   className="search-result-card"
                   // イベント3: 落とし物カード選択 → 落とし物詳細画面
-                  onClick={() => navigate(ROUTES.itemDetail(item.id))}
+                  onClick={() => navigate(ROUTES.itemDetail(item.postId))}
                 >
-                  <Thumbnail src={item.images[0]} alt={item.name} />
+                  <Thumbnail src={item.postImageUrls[0]} alt={item.itemName} />
                   <div className="search-result-info">
                     {/* button の中には見出し（h2）を入れられない決まりなので p にしている */}
-                    <p className="search-result-name">{item.name}</p>
+                    <p className="search-result-name">{item.itemName}</p>
                     {/* 拾得日時・拾得場所 */}
                     <p className="search-result-date">{formatDateTime(item.foundAt)}</p>
-                    <p className="search-result-place">{item.foundPlace}</p>
+                    <p className="search-result-place">{item.foundLocation}</p>
                   </div>
                   {/* 保管場所ステータス */}
-                  <span className={`search-result-status ${item.storageStatus.toLowerCase()}`}>
-                    {STORAGE_STATUS_LABELS[item.storageStatus]}
+                  <span className={`search-result-status ${item.itemStatus.toLowerCase()}`}>
+                    {STORAGE_STATUS_LABELS[item.itemStatus]}
                   </span>
                 </button>
               ))}

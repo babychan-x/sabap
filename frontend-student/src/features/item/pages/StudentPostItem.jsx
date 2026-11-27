@@ -26,15 +26,19 @@ const location = useLocation()
 const fileInputRef = useRef(null)
 
 // G022から戻ってきた場合の入力内容
+// 渡す項目名は、DB の列が分かる名前にそろえた（11/27。mock/items.js と同じ名前）:
+//   itemCategory（category）・foundAt（found_at）・foundLocation（location）・itemStatus（item_status）
+//   itemName（item_name）・itemDescription（description）・postImageFiles（post_images に入れる写真のファイル）
+//   foundBuilding・foundFloor・foundPlaceDetail は、拾得場所を選ぶための入力欄（DB には foundLocation として入る想定）
 const previousData = location.state || {}
 
 // 入力内容
 const [category, setCategory] = useState(
-  previousData.category || ''
+  previousData.itemCategory || ''
 )
 
 const [foundDateTime, setFoundDateTime] = useState(
-  previousData.foundDateTime || ''
+  previousData.foundAt || ''
 )
 
 const [foundBuilding, setFoundBuilding] = useState(previousData.foundBuilding ?? '')
@@ -46,7 +50,7 @@ const floorOptions = Object.hasOwn(buildingFloors, foundBuilding)
   : []
 
 const [storageStatus, setStorageStatus] = useState(
-  previousData.storageStatus || ''
+  previousData.itemStatus || ''
 )
 
 const [itemName, setItemName] = useState(
@@ -54,11 +58,11 @@ const [itemName, setItemName] = useState(
 )
 
 const [feature, setFeature] = useState(
-  previousData.feature || ''
+  previousData.itemDescription || ''
 )
 
 const [images, setImages] = useState(
-  previousData.images || []
+  previousData.postImageFiles || []
 )
 
 
@@ -161,17 +165,17 @@ const [images, setImages] = useState(
     // G022で入力内容を表示するために渡す
     navigate('/post/confirm', {
       state: {
-        category,
-        foundDateTime,
-        foundPlace: `${foundBuilding}　${foundFloor}`,
+        itemCategory: category,
+        foundAt: foundDateTime,
+        foundLocation: `${foundBuilding}　${foundFloor}`,
         foundBuilding,
         foundFloor,
         foundPlaceDetail,
-        storageStatus,
+        itemStatus: storageStatus,
         itemName,
-        feature,
+        itemDescription: feature,
         // Fileは画面遷移時に渡す（リロードで消える）
-        images,
+        postImageFiles: images,
       },
     })
   }

@@ -40,7 +40,7 @@ export default function StudentHandedOverDetail() {
       .then((application) => {
         if (ignore) return
         // 受け渡し済みでない申請を、URL を直接入力して開いたとき（仮）
-        if (!application.handedOver) {
+        if (!application.isHandedOver) {
           setResult({ id, application: null, error: LOAD_ERRORS.NOT_HANDED_OVER })
           return
         }
@@ -56,7 +56,7 @@ export default function StudentHandedOverDetail() {
   }, [id])
 
   const application = loading ? null : result.application
-  const item = application?.item
+  const item = application?.post // 申請した落とし物（mock/items.js の形）
 
   return (
     <div className="handed-over-page-wrapper">
@@ -85,20 +85,20 @@ export default function StudentHandedOverDetail() {
           {application && (
             <section className="handed-over-card">
               {/* 入出力項目2・3: 画像（スワイプで切り替え。イベント2）と画像位置表示 */}
-              <PhotoSlider key={application.id} images={item?.images ?? []} alt={item?.name ?? ''}>
+              <PhotoSlider key={application.applicationId} images={item?.postImageUrls ?? []} alt={item?.itemName ?? ''}>
                 {/* 入出力項目4: 申請結果スタンプ（「受け渡し済」） */}
                 <span className="handed-over-stamp">受け渡し済</span>
               </PhotoSlider>
 
               <div className="handed-over-body">
                 {/* 入出力項目5: 落とし物名 */}
-                <h2 className="handed-over-item-name">{item?.name}</h2>
+                <h2 className="handed-over-item-name">{item?.itemName}</h2>
 
                 <dl className="handed-over-list">
                   {/* 入出力項目6: カテゴリー */}
                   <div className="handed-over-row">
                     <dt>カテゴリー</dt>
-                    <dd>{item?.category}</dd>
+                    <dd>{item?.itemCategory}</dd>
                   </div>
                   {/* 入出力項目7: 拾得日時 */}
                   <div className="handed-over-row">
@@ -108,17 +108,17 @@ export default function StudentHandedOverDetail() {
                   {/* 入出力項目8: 拾得場所 */}
                   <div className="handed-over-row">
                     <dt>拾得場所</dt>
-                    <dd>{item?.foundPlace}</dd>
+                    <dd>{item?.foundLocation}</dd>
                   </div>
                   {/* 入出力項目9: 特徴（未入力なら「特になし」） */}
                   <div className="handed-over-row">
                     <dt>特徴</dt>
-                    <dd>{item?.features || '特になし'}</dd>
+                    <dd>{item?.itemDescription || '特になし'}</dd>
                   </div>
                   {/* 入出力項目10: 申請理由（申請時に入力した内容。改行もそのまま表示） */}
                   <div className="handed-over-row">
                     <dt>申請理由</dt>
-                    <dd className="handed-over-reason">{application.reason}</dd>
+                    <dd className="handed-over-reason">{application.applicationReason}</dd>
                   </div>
                 </dl>
               </div>
@@ -132,11 +132,11 @@ export default function StudentHandedOverDetail() {
             <button
               type="button"
               className="handed-over-message-btn"
-              onClick={() => navigate(ROUTES.messageWrite(application.id))}
+              onClick={() => navigate(ROUTES.messageWrite(application.applicationId))}
               // 感謝メッセージを送信済みなら押せない（設計書に記載なし。仮）
-              disabled={application.messageSent}
+              disabled={application.isMessageSent}
             >
-              {application.messageSent ? '感謝メッセージは送信済みです' : '感謝メッセージを書く'}
+              {application.isMessageSent ? '感謝メッセージは送信済みです' : '感謝メッセージを書く'}
             </button>
           </div>
         )}

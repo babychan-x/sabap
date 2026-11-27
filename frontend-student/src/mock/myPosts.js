@@ -1,5 +1,6 @@
 // 自分の投稿（ログイン中の学生が投稿した落とし物）の仮データ（バックエンドが出来るまでの仮）。
 // G027（一覧）・G028（詳細）・G029（編集）・G030（編集確認）が、api/myPosts.js を通して、この1つのデータを使う。
+// 受け取ったメッセージ（G032・G013）の落とし物も、ここからつなぐ（api/messages.js）。
 // 前は3つの画面が別々に仮データを持っていた（2026/11/27 にここへ集めた。中身は G028 の仮データと同じ）。
 //
 // 項目名は、DB の列（database/schema.sql）が分かる名前にそろえた（名前は仮。API の JSON はバックエンドと合わせる）:
@@ -99,5 +100,46 @@ export const mockMyPosts = [
     hasApplication: false,
     postImageUrls: [],
     postedAt: '2026-06-12T13:00:00',
+  },
+  // ---- 7〜9: 受け取ったメッセージ（mock/messages.js の 202〜204）の落とし物（11/27 に足した。受け渡し済み） ----
+  // 7 は前の G013 の仮データ（202）の落とし物と同じ内容。8・9 は、メッセージの本文に合わせて作った仮の内容
+  {
+    postId: 7,
+    itemName: '英単語ターゲット1900',
+    itemCategory: 'その他',
+    foundAt: '2026-10-10T16:30:00',
+    foundLocation: '図書館',
+    itemStatus: 'RETURNED',
+    itemDescription: '表紙に付箋がたくさん貼ってある',
+    storageDeadline: '2027-10-10T23:59:00',
+    hasApplication: true,
+    postImageUrls: [],
+    postedAt: '2026-10-10T16:30:00',
+  },
+  {
+    postId: 8,
+    itemName: 'ワイヤレスイヤホン（白）',
+    itemCategory: 'その他',
+    foundAt: '2026-09-08T12:00:00',
+    foundLocation: '5号館',
+    itemStatus: 'RETURNED',
+    itemDescription: '充電ケースに入っている',
+    storageDeadline: '2027-09-08T23:59:00',
+    hasApplication: true,
+    postImageUrls: [],
+    postedAt: '2026-09-08T12:00:00',
+  },
+  {
+    postId: 9,
+    itemName: 'クマのぬいぐるみ',
+    itemCategory: 'その他',
+    foundAt: '2026-06-05T17:00:00',
+    foundLocation: '体育館',
+    itemStatus: 'RETURNED',
+    itemDescription: '手のひらくらいの大きさ',
+    storageDeadline: '2027-06-05T23:59:00',
+    hasApplication: true,
+    postImageUrls: [],
+    postedAt: '2026-06-05T17:00:00',
   },
 ]

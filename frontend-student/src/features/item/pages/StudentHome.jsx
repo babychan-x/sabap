@@ -108,24 +108,24 @@ export default function StudentHome() {
         <div className="home-item-list">
           {items.map((item) => (
             <div
-              key={item.id}
+              key={item.postId}
               className="home-item-card"
-              onClick={() => navigate(`/items/${item.id}`)}
+              onClick={() => navigate(`/items/${item.postId}`)}
             >
               {/* 写真がないときは、同じ大きさの灰色の枠だけ出す */}
-              {item.images[0] ? (
-                <img src={item.images[0]} alt={item.name} className="home-item-img" />
+              {item.postImageUrls[0] ? (
+                <img src={item.postImageUrls[0]} alt={item.itemName} className="home-item-img" />
               ) : (
                 <div className="home-item-img" aria-hidden="true" />
               )}
               <div className="home-item-info">
-                <h2 className="home-item-name">{item.name}</h2>
+                <h2 className="home-item-name">{item.itemName}</h2>
                 <p className="home-item-date">{formatDateTime(item.foundAt)}</p>
-                <p className="home-item-location">{item.foundPlace}</p>
+                <p className="home-item-location">{item.foundLocation}</p>
               </div>
               <div className="home-item-status-wrapper">
-                <span className={`home-status-badge ${STATUS_TYPES[item.storageStatus]}`}>
-                  {STORAGE_STATUS_LABELS[item.storageStatus]}
+                <span className={`home-status-badge ${STATUS_TYPES[item.itemStatus]}`}>
+                  {STORAGE_STATUS_LABELS[item.itemStatus]}
                 </span>
               </div>
             </div>

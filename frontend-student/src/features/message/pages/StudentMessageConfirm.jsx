@@ -93,7 +93,7 @@ export default function StudentMessageConfirm() {
     /*
     【バックエンド連携後の処理】
 
-    1. 申請IDとメッセージ内容（form.body）を
+    1. 申請IDとメッセージ内容（form.messageBody）を
        サーバーへ送信する。
 
     2. 感謝メッセージをDBに登録する。
@@ -118,7 +118,7 @@ export default function StudentMessageConfirm() {
   }
 
   // G035を経由せずにアクセスした場合
-  if (!form || typeof form.body !== 'string') {
+  if (!form || typeof form.messageBody !== 'string') {
     return (
       <Navigate
         to={ROUTES.write(id)}
@@ -224,7 +224,7 @@ export default function StudentMessageConfirm() {
               <dt>内容</dt>
 
               <dd id="messageBody">
-                {form.body}
+                {form.messageBody}
               </dd>
             </div>
           </dl>

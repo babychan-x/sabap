@@ -16,7 +16,7 @@ import './StudentItemDetail.css'
 // ---------------------------------------------------------------
 const ROUTES = {
   home: '/home', // G011 投稿一覧
-  apply: (itemId) => `/items/${itemId}/apply`, // G018 受け取り申請
+  apply: (postId) => `/items/${postId}/apply`, // G018 受け取り申請
 }
 
 // 保管期限を強調する日数（入出力項目10: 期限まで30日以内）
@@ -68,9 +68,9 @@ export default function StudentItemDetail() {
   // イベント3の非表示条件: 受け渡し済み・処分済み・申請済みのときは「受け取り申請する」を出さない
   let hideReason = ''
   if (item) {
-    if (item.storageStatus === 'RETURNED') hideReason = 'この落とし物は、すでに受け渡し済みです。'
-    else if (item.storageStatus === 'DISPOSED') hideReason = 'この落とし物は、すでに処分済みです。'
-    else if (item.alreadyApplied) hideReason = 'この落とし物には、すでに受け取り申請をしています。'
+    if (item.itemStatus === 'RETURNED') hideReason = 'この落とし物は、すでに受け渡し済みです。'
+    else if (item.itemStatus === 'DISPOSED') hideReason = 'この落とし物は、すでに処分済みです。'
+    else if (item.hasMyApplication) hideReason = 'この落とし物には、すでに受け取り申請をしています。'
   }
 
   // 入出力項目10: 期限まで30日以内なら強調する（期限を過ぎていても強調）
@@ -104,17 +104,17 @@ export default function StudentItemDetail() {
             <div className="item-detail-content">
               <section className="item-detail-card">
                 {/* key を付けて、別の落とし物を開いたときに写真の位置を1枚目に戻す */}
-                <PhotoSlider key={item.id} images={item.images} alt={item.name} />
+                <PhotoSlider key={item.postId} images={item.postImageUrls} alt={item.itemName} />
 
                 <div className="item-detail-body">
                   {/* 入出力項目4: 落とし物名 */}
-                  <h2 className="item-detail-item-name">{item.name}</h2>
+                  <h2 className="item-detail-item-name">{item.itemName}</h2>
 
                   <dl className="item-detail-list">
                     {/* 入出力項目5: カテゴリー */}
                     <div className="item-detail-row">
                       <dt>カテゴリー</dt>
-                      <dd>{item.category}</dd>
+                      <dd>{item.itemCategory}</dd>
                     </div>
                     {/* 入出力項目6: 拾得日時 */}
                     <div className="item-detail-row">
@@ -124,22 +124,22 @@ export default function StudentItemDetail() {
                     {/* 入出力項目7: 拾得場所 */}
                     <div className="item-detail-row">
                       <dt>拾得場所</dt>
-                      <dd>{item.foundPlace}</dd>
+                      <dd>{item.foundLocation}</dd>
                     </div>
                     {/* 入出力項目8: 保管場所（ステータスと補足欄を併せて表示） */}
                     <div className="item-detail-row">
                       <dt>保管場所</dt>
                       <dd>
-                        <span className={`item-detail-status ${item.storageStatus.toLowerCase()}`}>
-                          {STORAGE_STATUS_LABELS[item.storageStatus]}
+                        <span className={`item-detail-status ${item.itemStatus.toLowerCase()}`}>
+                          {STORAGE_STATUS_LABELS[item.itemStatus]}
                         </span>
-                        {item.storageNote && <span className="item-detail-note">{item.storageNote}</span>}
+                        {item.storageLocation && <span className="item-detail-note">{item.storageLocation}</span>}
                       </dd>
                     </div>
                     {/* 入出力項目9: 特徴（未入力なら「特になし」） */}
                     <div className="item-detail-row">
                       <dt>特徴</dt>
-                      <dd>{item.features || '特になし'}</dd>
+                      <dd>{item.itemDescription || '特になし'}</dd>
                     </div>
                     {/* 入出力項目10: 保管期限（30日以内は強調） */}
                     <div className="item-detail-row">
@@ -159,7 +159,7 @@ export default function StudentItemDetail() {
             {/* 入出力項目11: 受け取り申請する（イベント3 → G018 studentApply） */}
             {!hideReason && (
               <div className="item-detail-footer">
-                <button type="button" className="item-detail-apply-btn" onClick={() => navigate(ROUTES.apply(item.id))}>
+                <button type="button" className="item-detail-apply-btn" onClick={() => navigate(ROUTES.apply(item.postId))}>
                   受け取り申請する
                 </button>
               </div>

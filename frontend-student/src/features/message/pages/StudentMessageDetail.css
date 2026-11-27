@@ -238,3 +238,11 @@
   min-width: 0;
   word-break: break-word;
 }
+
+/* 読み込み中・見つからないとき（G014 の .approval-detail-empty と同じ見た目。本文エリアに左右の余白があるので、上だけあける） */
+.message-detail-empty {
+  margin: 64px 0 0 0;
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+}

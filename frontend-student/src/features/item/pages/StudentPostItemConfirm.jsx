@@ -14,13 +14,14 @@ export default function StudentPostItemConfirm() {
 
   // G021から入力内容を受け取る
   const {
-    category = '',
-    foundDateTime = '',
-    foundPlace = '',
-    storageStatus = '',
+    // 項目名は G021 の previousData のところに書いてある（11/27 にそろえた）
+    itemCategory: category = '',
+    foundAt: foundDateTime = '',
+    foundLocation: foundPlace = '',
+    itemStatus: storageStatus = '',
     itemName = '',
-    feature = '',
-    images = [],
+    itemDescription: feature = '',
+    // 写真のファイル（postImageFiles）は、下の「画像の表示用URLを生成」で location.state から直接使う
   } = location.state || {}
 
   // 画像プレビュー
@@ -42,7 +43,7 @@ export default function StudentPostItemConfirm() {
 
   // 画像の表示用URLを生成
   useEffect(() => {
-    const urls = (location.state?.images || [])
+    const urls = (location.state?.postImageFiles || [])
       .slice(0, 4)
       .map((file) => URL.createObjectURL(file))
 
@@ -63,18 +64,13 @@ export default function StudentPostItemConfirm() {
   }
 
   // G021へ戻る（入力内容を保持）
+  // G021 から受け取った入力内容を、全部そのまま返す（11/27 修正）。
+  //   前は7つの項目だけを返していたので、G021 の「建物」「階」「場所の詳しい説明」
+  //   （foundBuilding・foundFloor・foundPlaceDetail）が、戻ったときに消えていた。
   const back = () => {
     navigate('/post', {
       replace: true,
-      state: {
-        category,
-        foundDateTime,
-        foundPlace,
-        storageStatus,
-        itemName,
-        feature,
-        images,
-      },
+      state: { ...location.state },
     })
   }
 

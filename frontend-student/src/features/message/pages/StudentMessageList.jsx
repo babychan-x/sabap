@@ -160,26 +160,26 @@ export default function StudentMessageList() {
             result.messages.map((message) => {
               // 受信: 送信者のアイコン・ニックネーム／送信: 落とし物の画像・落とし物名
               const isReceived = box === 'received'
-              const name = isReceived ? message.senderName : message.item?.name ?? ''
+              const name = isReceived ? message.senderNickname : message.post?.itemName ?? ''
               return (
                 // 入出力項目5: メッセージカード（イベント4 → G013 メッセージ詳細）
                 <button
-                  key={message.id}
+                  key={message.messageId}
                   type="button"
                   className="message-list-item"
-                  onClick={() => navigate(ROUTES.messageDetail(message.id))}
+                  onClick={() => navigate(ROUTES.messageDetail(message.messageId))}
                 >
                   <div className={`message-list-thumb ${isReceived ? 'avatar' : ''}`}>
                     {isReceived ? (
-                      <Avatar name={message.senderName} src={message.senderIcon} />
+                      <Avatar name={message.senderNickname} />
                     ) : (
-                      <ItemImage src={message.item?.image} alt={name} />
+                      <ItemImage src={message.post?.postImageUrls[0]} alt={name} />
                     )}
                   </div>
                   <div className="message-list-info">
                     <p className="message-list-name">{name}</p>
                     {/* 長いメッセージは1行で切って「…」を付ける（CSS） */}
-                    <p className="message-list-body">{message.body}</p>
+                    <p className="message-list-body">{message.messageBody}</p>
                     <p className="message-list-date">{formatDateTime(message.sentAt)}</p>
                   </div>
                   <svg className="message-list-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

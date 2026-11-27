@@ -2,16 +2,17 @@ import './StudentMessageDetail.css'
 
 // G013 メッセージ詳細画面（studentMessageDetail）
 // ※ 仮の画面。外部設計書 G013 の入出力項目・イベントに合わせて中身を作る。
-// 主なAPI（仮）: D-2
+// 主なAPI（仮）: D-2 メッセージ詳細（api/messages.js の getMessage。仮データは mock/messages.js と mock/myPosts.js）
 
 // G013 メッセージ画面（studentMessageDetail）
 // ※ 仮の画面。外部設計書 G013 の入出力項目・イベントに合わせて中身を作る。
-// 主なAPI（仮）: 感謝メッセージの詳細取得（API一覧表の番号に合わせて書き換える）
 // 置き場所: src/features/message/pages/StudentMessageDetail.jsx（App.jsx: /messages/:id）
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { getMessage } from '../../../api/messages';
 import BottomNav from '../../../components/BottomNav';
+import { formatDateTime } from '../../../utils/date';
 import './StudentMessageDetail.css';
 
 // 送信者のアイコン（アイコン画像が決まるまでの仮。ニックネームの横に表示する）
@@ -41,36 +42,34 @@ export default function StudentMessageDetail() {
   const { id } = useParams(); // /messages/:id のメッセージID
   const [imageFailed, setImageFailed] = useState(false);
 
-  // 写真つきの仮データ（G012 の仮データのメッセージID 201 / 202 に対応）
-  // TODO: API でメッセージを取得する（見つからないときの表示は仕様に記載なし）
-  const dummyMessages = {
-    201: {
-      senderName: 'こなん',
-      sentAt: '2026/10/13 13:00',
-      body: '大事な眼鏡が無事に戻ってきました！\n見通しゼロの暗闇から救出してくれたのは、間違いなくキミの親切な投稿です！本当にありがとうございました！',
-      item: {
-        name: '眼鏡',
-        place: '4号館',
-        foundAt: '2026/10/12 18:00',
-        feature: '',
-        image: 'https://images.unsplash.com/photo-1511499767150-a48a237f0083?auto=format&fit=crop&w=200&q=80',
-      },
-    },
-    202: {
-      senderName: 'ゆうき',
-      sentAt: '2026/10/11 13:00',
-      body: '英単語帳を拾ってくれてありがとうございました。\nテスト前だったので本当に助かりました！',
-      item: {
-        name: '英単語ターゲット1900',
-        place: '図書館',
-        foundAt: '2026/10/10 16:30',
-        feature: '表紙に付箋がたくさん貼ってある',
-        image: null,
-      },
-    },
-  };
-  const message = dummyMessages[id] ?? dummyMessages[201];
-  const { item } = message;
+  // 取得したメッセージ（どの ID の結果かも一緒に持つ。ID が変わったら「読み込み中」に戻る）
+  //   message: senderNickname・messageBody・sentAt など。message.post: 対象の落とし物（itemName など）
+  //   項目名と DB の列の対応は mock/messages.js・mock/myPosts.js の先頭に書いてある
+  // ※ 前は、仮データに無い ID のときに 201 の内容を出していた。いまは「見つかりません」を出す
+  const [result, setResult] = useState(null); // { messageId, message, error }
+
+  // 画面を開いたとき（ID が変わったとき）に、メッセージを取得する
+  useEffect(() => {
+    let ignore = false; // 画面を離れたあとに届いた結果は使わない
+    getMessage(id)
+      .then((message) => {
+        if (!ignore) setResult({ messageId: id, message, error: '' });
+      })
+      .catch((err) => {
+        // 文言は設計書に記載なし（仮）
+        const error = err.message === 'NOT_FOUND'
+          ? 'メッセージが見つかりませんでした'
+          : '読み込めませんでした。時間をおいて、もう一度お試しください。';
+        if (!ignore) setResult({ messageId: id, message: null, error });
+      });
+    return () => {
+      ignore = true;
+    };
+  }, [id]);
+
+  const loading = result?.messageId !== id;
+  const message = loading ? null : result.message;
+  const item = message?.post; // 対象の落とし物
 
   return (
     <div className="message-detail-page-wrapper">
@@ -92,53 +91,68 @@ export default function StudentMessageDetail() {
 
         {/* 本文エリア */}
         <div className="message-detail-content">
-          {/* 感謝メッセージ */}
-          <section className="message-detail-card">
-            <div className="message-detail-sender">
-              <div className="message-detail-avatar">
-                <AvatarIcon />
-              </div>
-              <div className="message-detail-sender-info">
-                <p className="message-detail-sender-name">{message.senderName}</p>
-                <p className="message-detail-sent-at">{message.sentAt}</p>
-              </div>
-            </div>
-            <p className="message-detail-body">{message.body}</p>
-          </section>
+          {/* 読み込み中・見つからないときは、文言だけを表示する（文言は仮） */}
+          {!message && (
+            <p className="message-detail-empty" role={loading ? undefined : 'alert'}>
+              {loading ? '読み込み中…' : result.error}
+            </p>
+          )}
 
-          {/* 対象の落とし物 */}
-          <h2 className="message-detail-section-title">落とし物詳細</h2>
-          <section className="message-detail-card message-detail-item-card">
-            <div className="message-detail-item-img-wrapper">
-              {item.image && !imageFailed ? (
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="message-detail-item-img"
-                  onError={() => setImageFailed(true)}
-                />
-              ) : (
-                <ImagePlaceholder />
+          {message && (
+            <>
+              {/* 感謝メッセージ */}
+              <section className="message-detail-card">
+                <div className="message-detail-sender">
+                  <div className="message-detail-avatar">
+                    <AvatarIcon />
+                  </div>
+                  <div className="message-detail-sender-info">
+                    <p className="message-detail-sender-name">{message.senderNickname}</p>
+                    <p className="message-detail-sent-at">{formatDateTime(message.sentAt)}</p>
+                  </div>
+                </div>
+                <p className="message-detail-body">{message.messageBody}</p>
+              </section>
+
+              {/* 対象の落とし物 */}
+              {item && (
+                <>
+                  <h2 className="message-detail-section-title">落とし物詳細</h2>
+                  <section className="message-detail-card message-detail-item-card">
+                    <div className="message-detail-item-img-wrapper">
+                      {item.postImageUrls[0] && !imageFailed ? (
+                        <img
+                          src={item.postImageUrls[0]}
+                          alt={item.itemName}
+                          className="message-detail-item-img"
+                          onError={() => setImageFailed(true)}
+                        />
+                      ) : (
+                        <ImagePlaceholder />
+                      )}
+                    </div>
+                    <div className="message-detail-item-info">
+                      <h3 className="message-detail-item-name">{item.itemName}</h3>
+                      <dl className="message-detail-item-list">
+                        <div className="message-detail-item-row">
+                          <dt>発見場所</dt>
+                          <dd>{item.foundLocation}</dd>
+                        </div>
+                        <div className="message-detail-item-row">
+                          <dt>発見日時</dt>
+                          <dd>{formatDateTime(item.foundAt)}</dd>
+                        </div>
+                        <div className="message-detail-item-row">
+                          <dt>特徴</dt>
+                          <dd>{item.itemDescription || '特になし'}</dd>
+                        </div>
+                      </dl>
+                    </div>
+                  </section>
+                </>
               )}
-            </div>
-            <div className="message-detail-item-info">
-              <h3 className="message-detail-item-name">{item.name}</h3>
-              <dl className="message-detail-item-list">
-                <div className="message-detail-item-row">
-                  <dt>発見場所</dt>
-                  <dd>{item.place}</dd>
-                </div>
-                <div className="message-detail-item-row">
-                  <dt>発見日時</dt>
-                  <dd>{item.foundAt}</dd>
-                </div>
-                <div className="message-detail-item-row">
-                  <dt>特徴</dt>
-                  <dd>{item.feature || '特になし'}</dd>
-                </div>
-              </dl>
-            </div>
-          </section>
+            </>
+          )}
         </div>
 
         {/* ボトムナビゲーション（フッター） */}

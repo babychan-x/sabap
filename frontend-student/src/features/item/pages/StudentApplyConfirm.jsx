@@ -4,7 +4,7 @@
 // 見た目は G028（StudentMyPostDetail）のカードに合わせている。
 //
 // 【G018 との受け渡し】
-//   G018 から router の state で form = { reason, photos } を受け取る。
+//   G018 から router の state で form = { applicationReason, applicationImages } を受け取る。
 //   「戻る」では、同じ form を state で G018 に返す（replace: true。G018 の説明を参照）。
 
 import { useEffect, useState } from 'react'
@@ -19,8 +19,8 @@ import './StudentApplyConfirm.css'
 // 遷移先のパス（App.jsx のルーティングと同じ）
 // ---------------------------------------------------------------
 const ROUTES = {
-  apply: (itemId) => `/items/${itemId}/apply`, // G018 受け取り申請
-  complete: (itemId) => `/items/${itemId}/apply/complete`, // G020 申請完了
+  apply: (postId) => `/items/${postId}/apply`, // G018 受け取り申請
+  complete: (postId) => `/items/${postId}/apply/complete`, // G020 申請完了
 }
 
 // 申請APIのエラー → 画面に出す文（文言は設計書に記載なし。仮）
@@ -116,17 +116,17 @@ export default function StudentApplyConfirm() {
           {item && (
             <section className="apply-confirm-card">
               {/* 入出力項目3: 画像（複数枚なら位置表示つき） */}
-              <PhotoSlider key={item.id} images={item.images} alt={item.name} />
+              <PhotoSlider key={item.postId} images={item.postImageUrls} alt={item.itemName} />
 
               <div className="apply-confirm-body">
                 {/* 入出力項目4: 落とし物名 */}
-                <h2 className="apply-confirm-item-name">{item.name}</h2>
+                <h2 className="apply-confirm-item-name">{item.itemName}</h2>
 
                 <dl className="apply-confirm-list">
                   {/* 入出力項目5: 申請理由（G018 で入力した理由。改行もそのまま表示） */}
                   <div className="apply-confirm-row">
                     <dt>理由</dt>
-                    <dd className="apply-confirm-reason">{form.reason}</dd>
+                    <dd className="apply-confirm-reason">{form.applicationReason}</dd>
                   </div>
                 </dl>
               </div>
