@@ -5,7 +5,8 @@
 //
 // 【G029（投稿編集画面）との受け渡し】
 //   G029 から router の state で form を受け取る。
-//     form = { title, category, foundAt（'2026-10-12T18:00' の形）, place, storage, feature, photos: [{ key, src, file? }] }
+//     form = { itemName, itemCategory, foundAt（'2026-10-12T18:00' の形）, foundLocation, itemStatus, itemDescription,
+//              postImages: [{ key, url, file? }] }（項目名は mock/myPosts.js と同じ）
 //   「戻る」では、同じ form を state で G029 に返す（G029 の入力内容が残る。設計書どおり）。
 //   replace: true にして、G029 → G030 → G029 と履歴が増えていかないようにする。
 
@@ -89,17 +90,17 @@ export default function StudentMyPostEditConfirm() {
         <div className="my-post-edit-confirm-content">
           <section className="my-post-edit-confirm-card">
             {/* 入出力項目3: 画像（編集後の写真。スワイプで切り替え・位置表示つき。イベント2） */}
-            <PhotoSlider images={form.photos.map((photo) => photo.src)} alt={form.title} />
+            <PhotoSlider images={form.postImages.map((image) => image.url)} alt={form.itemName} />
 
             <div className="my-post-edit-confirm-body">
               {/* 入出力項目4: 落とし物名（G029 のタイトル） */}
-              <h2 className="my-post-edit-confirm-item-name">{form.title}</h2>
+              <h2 className="my-post-edit-confirm-item-name">{form.itemName}</h2>
 
               <dl className="my-post-edit-confirm-list">
                 {/* 入出力項目5: カテゴリー */}
                 <div className="my-post-edit-confirm-row">
                   <dt>カテゴリー</dt>
-                  <dd>{form.category}</dd>
+                  <dd>{form.itemCategory}</dd>
                 </div>
                 {/* 入出力項目6: 拾得日時（例: 2026/10/12 15:00） */}
                 <div className="my-post-edit-confirm-row">
@@ -109,17 +110,17 @@ export default function StudentMyPostEditConfirm() {
                 {/* 入出力項目7: 拾得場所 */}
                 <div className="my-post-edit-confirm-row">
                   <dt>拾得場所</dt>
-                  <dd>{form.place}</dd>
+                  <dd>{form.foundLocation}</dd>
                 </div>
                 {/* 入出力項目8: 保管場所（G029 で選んだもの） */}
                 <div className="my-post-edit-confirm-row">
                   <dt>保管場所</dt>
-                  <dd>{STORAGE_STATUS_LABELS[form.storage] ?? form.storage}</dd>
+                  <dd>{STORAGE_STATUS_LABELS[form.itemStatus] ?? form.itemStatus}</dd>
                 </div>
                 {/* 入出力項目9: 特徴（未入力なら「特になし」。改行もそのまま表示） */}
                 <div className="my-post-edit-confirm-row">
                   <dt>特徴</dt>
-                  <dd className="my-post-edit-confirm-feature">{form.feature || '特になし'}</dd>
+                  <dd className="my-post-edit-confirm-feature">{form.itemDescription || '特になし'}</dd>
                 </div>
               </dl>
             </div>
