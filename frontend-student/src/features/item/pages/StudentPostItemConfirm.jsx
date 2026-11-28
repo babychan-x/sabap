@@ -1,12 +1,12 @@
 import './StudentPostItemConfirm.css'
 
 // G022 投稿確認画面（studentPostItemConfirm）
-// ※ 仮の画面。外部設計書 G022 の入出力項目・イベントに合わせて中身を作る。
-// 主なAPI（仮）: B-3（「投稿する」で実行）
+// 主なAPI（仮）: B-3 落とし物の投稿（createItem。api/items.js。「投稿する」で実行）
 
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import ScreenLayout from '../../../components/ScreenLayout'
+import { createItem } from '../../../api/items'
 
 export default function StudentPostItemConfirm() {
   const navigate = useNavigate()
@@ -33,6 +33,8 @@ export default function StudentPostItemConfirm() {
 
   // エラーメッセージ
   const [errorMessage, setErrorMessage] = useState('')
+  // 送信中は、ボタンを押せないようにする
+  const [submitting, setSubmitting] = useState(false)
 
   // G021を経由せずにアクセスした場合
   useEffect(() => {
@@ -103,32 +105,21 @@ export default function StudentPostItemConfirm() {
     touchStartX.current = null
   }
 
-  // 投稿する
-  const submitPost = () => {
+  // イベント2: 投稿する → G023
+  // 入力内容と画像をサーバーへ送り（B-3）、登録できたときだけ G023 へ進む（11/28 に「試運転用」をやめてつないだ）
+  const submitPost = async () => {
+    if (submitting) return
     setErrorMessage('')
-
-    // 試運転用：G023へ遷移
-    navigate('/post/complete', { replace: true })
-
-    /*
-    【バックエンド連携後の処理】
-
-    1. 入力内容と画像をサーバーへ送信する。
-    2. DBに落とし物投稿情報を登録する。
-    3. 登録に成功した場合のみG023へ遷移する。
-
-    navigate('/post/complete', { replace: true })
-
-    4. 送信または登録に失敗した場合は、
-       G022に留まりエラーメッセージを表示する。
-
-    setErrorMessage(
-      '投稿に失敗しました。もう一度お試しください。'
-    )
-
-    ※バックエンド連携時には上の試運転用の
-      navigateを削除する。
-    */
+    setSubmitting(true)
+    try {
+      await createItem(location.state)
+      // replace: 投稿完了のあとに「戻る」で、この確認画面（もう一度投稿できる画面）に戻らないようにする
+      navigate('/post/complete', { replace: true })
+    } catch {
+      // イベント3: 送信または登録に失敗したら、この画面にとどまり、エラーメッセージを出す
+      setErrorMessage('投稿に失敗しました。もう一度お試しください。')
+      setSubmitting(false)
+    }
   }
 
   if (!location.state) return null
@@ -137,6 +128,7 @@ export default function StudentPostItemConfirm() {
     <ScreenLayout
       title="投稿内容の確認"
       onBack={back}
+      backDisabled={submitting}
       steps={1}
       stepsLabel="投稿の手順"
       contentClassName="page post-confirm"
@@ -155,8 +147,9 @@ export default function StudentPostItemConfirm() {
             type="button"
             className="btn btn--primary"
             onClick={submitPost}
+            disabled={submitting}
           >
-            投稿する
+            {submitting ? '投稿中…' : '投稿する'}
           </button>
 
         </div>

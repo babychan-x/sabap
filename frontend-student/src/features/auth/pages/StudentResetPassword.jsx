@@ -1,11 +1,22 @@
 import './StudentResetPassword.css'
 
 // G009 パスワード再設定画面（studentResetPassword）
+// 主なAPI（仮）: A-6 再設定リンクの検証（verifyResetToken。開いたとき）、A-7 パスワード再設定（resetPassword）。api/auth.js
+// 11/28: 「試運転用」（入力に関係なく G010 へ進む）をやめて、リンクの検証・入力チェック・送信をつないだ
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import ScreenLayout from '../../../components/ScreenLayout'
+import { resetPassword, verifyResetToken } from '../../../api/auth'
+
+const ROUTES = {
+  complete: '/reset-password/complete', // G010 再設定完了
+  linkError: '/link-error', // G039 リンクエラー
+}
+
+// 新しいパスワードのルール（設計書 G009: 半角英字・数字を含む8〜64文字。使える記号は画面の説明文の !@_#$%&*）
+const PASSWORD_PATTERN = /^(?=.*[A-Za-z])(?=.*[0-9])[A-Za-z0-9!@_#$%&*]{8,64}$/
 
 export default function StudentResetPassword() {
   const navigate = useNavigate()
@@ -24,21 +35,25 @@ export default function StudentResetPassword() {
 
   // エラーメッセージ
   const [errorMessage, setErrorMessage] = useState('')
+  // 送信中は、ボタンを押せないようにする
+  const [sending, setSending] = useState(false)
 
-  // パスワード変更ボタン押下時
-  const changeButton = (e) => {
+  // 開いたとき: 再設定用URLのトークンを検証する（A-6）。無効・期限切れなら G039 へ（CLAUDE.md §5 の型）
+  useEffect(() => {
+    let ignore = false // 画面を離れたあとに届いた結果は使わない
+    verifyResetToken(token).catch(() => {
+      if (!ignore) navigate(ROUTES.linkError, { replace: true })
+    })
+    return () => {
+      ignore = true
+    }
+  }, [token, navigate])
+
+  // イベント1: パスワードを変更する → G010（入力チェックは、前にコメントにしてあった処理を戻した）
+  const changeButton = async (e) => {
     e.preventDefault()
+    if (sending) return
 
-    // ==========================================
-    // 試運転用：入力内容に関係なくG010へ遷移
-    // ==========================================
-    navigate('/reset-password/complete')
-
-    // ==========================================
-    // 本来の処理（試運転中はコメントアウト）
-    // ==========================================
-
-    /*
     // 未入力チェック
     if (!password || !confirmPassword) {
       setErrorMessage('パスワードを入力してください。')
@@ -48,10 +63,7 @@ export default function StudentResetPassword() {
     // パスワードの形式チェック
     // 半角英字・数字をそれぞれ1文字以上含む8〜64文字
     // 使用可能な記号：! @ _ # $ % & *
-    const passwordPattern =
-      /^(?=.*[A-Za-z])(?=.*[0-9])[A-Za-z0-9!@_#$%&*]{8,64}$/
-
-    if (!passwordPattern.test(password)) {
+    if (!PASSWORD_PATTERN.test(password)) {
       setErrorMessage(
         'パスワードは半角英字・数字を含む8〜64文字で入力してください。'
       )
@@ -64,20 +76,23 @@ export default function StudentResetPassword() {
       return
     }
 
-    // 入力内容に問題がなければエラーを消す
+    // 入力内容に問題がなければ、新しいパスワードを登録する（A-7）。
+    // 使った再設定用URLを無効にするのは、サーバーの仕事（設計書 G009 イベント1）
     setErrorMessage('')
-
-    // TODO:
-    // バックエンドと連携して以下を実施する
-    // 1. tokenの有効性・有効期限を確認
-    // 2. 新しいパスワードを登録
-    // 3. 使用済みの再設定用URLを無効化
-    // 4. 成功した場合のみG010へ遷移
-    // 5. tokenが無効・期限切れの場合はG039へ遷移
-
-    // API連携後に有効化する
-    // navigate('/reset-password/complete')
-    */
+    setSending(true)
+    try {
+      await resetPassword(token, password)
+      navigate(ROUTES.complete, { replace: true })
+    } catch (err) {
+      // 再設定用URLが期限切れ・無効のときは G039 へ（設計書 G009 イベント1）
+      if (err.message === 'LINK_INVALID') {
+        navigate(ROUTES.linkError, { replace: true })
+        return
+      }
+      // それ以外（通信できなかったなど）は、この画面にエラーを出す（文言は設計書に記載なし。仮）
+      setErrorMessage('パスワードを変更できませんでした。時間をおいて、もう一度お試しください。')
+      setSending(false)
+    }
   }
 
   return (
@@ -229,8 +244,9 @@ export default function StudentResetPassword() {
           <button
             type="submit"
             className="btn btn--primary"
+            disabled={sending}
           >
-            パスワードを変更する
+            {sending ? '変更中…' : 'パスワードを変更する'}
           </button>
         </div>
       </form>

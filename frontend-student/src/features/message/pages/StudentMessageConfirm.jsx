@@ -1,10 +1,10 @@
 import './StudentMessageConfirm.css'
 
 // G036 メッセージ確認画面（studentMessageConfirm）
+// 主なAPI（仮）: E-2 申請の詳細（getApplication。落とし物の名前・写真）、D-3 感謝メッセージの送信（sendMessage）
+// 11/28: 落とし物の仮データ（ピンクポーチ）と「試運転用」の送信をやめて、api をつないだ
 
-// G036 感謝メッセージ確認画面
-
-import { useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import {
   useNavigate,
   useLocation,
@@ -13,6 +13,16 @@ import {
 } from 'react-router-dom'
 import { ImageOff } from 'lucide-react'
 import ScreenLayout from '../../../components/ScreenLayout'
+import { getApplication } from '../../../api/applications'
+import { sendMessage } from '../../../api/messages'
+
+// 送信APIのエラー → 画面に出す文（文言は設計書に記載なし。仮）
+const SEND_ERRORS = {
+  ALREADY_SENT: 'この落とし物の感謝メッセージは、すでに送信しています。',
+  NOT_HANDED_OVER: 'まだ受け渡しが完了していないため、送信できません。',
+}
+const DEFAULT_SEND_ERROR = 'メッセージの送信に失敗しました。'
+
 const ROUTES = {
   write: (id) => `/mypage/applications/${id}/message`,
   complete: (id) => `/mypage/applications/${id}/message/complete`,
@@ -26,10 +36,27 @@ export default function StudentMessageConfirm() {
   // G035から入力内容を受け取る
   const form = location.state?.form
 
-  // 落とし物情報（現段階では仮データ）
-  // TODO: バックエンド連携後、申請IDをもとに取得する
-  const itemName = location.state?.itemName ?? 'ピンクポーチ'
-  const itemImages = (location.state?.itemImages ?? []).slice(0, 4)
+  // 落とし物情報（感謝メッセージの対象）。申請ID（URL の :id）から取る（E-2）。読み込むまでは null
+  const [post, setPost] = useState(null)
+  const [postError, setPostError] = useState('')
+  useEffect(() => {
+    let ignore = false // 画面を離れたあとに届いた結果は使わない
+    getApplication(id)
+      .then((application) => {
+        if (!ignore) setPost(application.post)
+      })
+      .catch(() => {
+        if (!ignore) setPostError('落とし物の情報を読み込めませんでした。')
+      })
+    return () => {
+      ignore = true
+    }
+  }, [id])
+  const itemName = post ? post.itemName : postError || '読み込み中…'
+  const itemImages = (post?.postImageUrls ?? []).slice(0, 4)
+
+  // 送信中は、ボタンを押せないようにする
+  const [sending, setSending] = useState(false)
 
   // 現在表示している画像
   const [currentImage, setCurrentImage] = useState(0)
@@ -82,39 +109,21 @@ export default function StudentMessageConfirm() {
   }
 
   // イベント2：メッセージを送信する
-  const submitMessage = () => {
+  //   申請IDとメッセージ内容（form.messageBody）を送る（D-3）。投稿者への通知はサーバーが作る。
+  //   登録できたときだけ G037 へ。失敗したら、この画面にとどまってエラーを出す
+  const submitMessage = async () => {
+    if (sending) return
     setErrorMessage('')
-
-    // 試運転用：G037へ遷移
-    navigate(ROUTES.complete(id), {
-      replace: true,
-    })
-
-    /*
-    【バックエンド連携後の処理】
-
-    1. 申請IDとメッセージ内容（form.messageBody）を
-       サーバーへ送信する。
-
-    2. 感謝メッセージをDBに登録する。
-
-    3. 落とし物の投稿者への通知を作成する。
-
-    4. 登録に成功した場合のみG037へ遷移する。
-
-    navigate(ROUTES.complete(id), {
-      replace: true,
-    })
-
-    5. 送信に失敗した場合は自画面に留まり、
-       エラーメッセージを表示する。
-
-    setErrorMessage(
-      'メッセージの送信に失敗しました。'
-    )
-
-    ※API連携時には試運転用のnavigateを削除する。
-    */
+    setSending(true)
+    try {
+      await sendMessage(id, form.messageBody)
+      navigate(ROUTES.complete(id), {
+        replace: true,
+      })
+    } catch (err) {
+      setErrorMessage(SEND_ERRORS[err.message] ?? DEFAULT_SEND_ERROR)
+      setSending(false)
+    }
   }
 
   // G035を経由せずにアクセスした場合
@@ -131,6 +140,7 @@ export default function StudentMessageConfirm() {
     <ScreenLayout
       title="メッセージ内容の確認"
       onBack={backToMessageWrite}
+      backDisabled={sending}
       steps={1}
       stepsLabel="送信の手順"
       contentClassName="page message-confirm"
@@ -148,8 +158,9 @@ export default function StudentMessageConfirm() {
             id="submitMessage"
             className="btn btn--primary"
             onClick={submitMessage}
+            disabled={sending}
           >
-            送信する
+            {sending ? '送信中…' : '送信する'}
           </button>
 
         </div>

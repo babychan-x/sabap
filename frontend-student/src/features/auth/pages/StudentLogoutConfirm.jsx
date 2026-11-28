@@ -1,8 +1,11 @@
 import './StudentLogoutConfirm.css'
 
 // G038 ログアウト確認画面
+// 主なAPI（仮）: A-9 ログアウト（logoutStudent。api/auth.js）
 
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { logoutStudent } from '../../../api/auth'
 import { DoorOpen } from 'lucide-react'
 import ScreenLayout from '../../../components/ScreenLayout'
 
@@ -21,35 +24,31 @@ export default function StudentLogoutConfirm() {
     })
   }
 
-  // イベント2：ログアウト
-  const logout = () => {
+  // ログアウト中は、ボタンを押せないようにする
+  const [loggingOut, setLoggingOut] = useState(false)
 
-    // 試運転用：ログイン画面へ遷移
+  // イベント2：ログアウト → G001
+  //   サーバーでログイン状態を消して（A-9）、ログイン画面へ（11/28 に「試運転用」をやめてつないだ）
+  //   ※ 認証方式（セッションか JWT か）が未定。JWT なら、ここでフロントに持っているトークンも消す
+  const logout = async () => {
+    if (loggingOut) return
+    setLoggingOut(true)
+    try {
+      await logoutStudent()
+    } catch {
+      // 失敗しても（通信できなかったなど）、ログイン画面へ進む（仮）。
+      //   この画面に残しても、利用者にできることが無いため
+    }
     navigate(ROUTES.login, {
       replace: true,
     })
-
-    /*
-    【認証機能との連携後の処理】
-
-    1. サーバー側でログアウト処理を行う。
-    2. セッションや認証トークンを無効化する。
-    3. フロントエンドのログイン状態を破棄する。
-    4. ログイン画面（G001）へ遷移する。
-
-    navigate(ROUTES.login, {
-      replace: true,
-    })
-
-    ※認証機能との連携時には、
-      上の試運転用のnavigateを削除する。
-    */
   }
 
   return (
     <ScreenLayout
       title="ログアウト"
       onBack={backToMyPage}
+      backDisabled={loggingOut}
       contentClassName="page logout-confirm"
     >
 
@@ -85,8 +84,9 @@ export default function StudentLogoutConfirm() {
           id="logoutButton"
           className="btn btn--primary"
           onClick={logout}
+          disabled={loggingOut}
         >
-          ログアウト
+          {loggingOut ? 'ログアウト中…' : 'ログアウト'}
         </button>
       </div>
 
