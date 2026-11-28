@@ -60,3 +60,66 @@ export async function registerStudent({ token, nickname, password, icon }) {
 
   await apiFetch('/api/student/signup', { method: 'POST', json: { token, nickname, password, icon } })
 }
+
+// A-5 パスワード再設定メールの送信（G007）
+// 失敗時の code（仮）: NOT_REGISTERED（登録されていないメールアドレス。設計書 G007 イベント2「未登録の場合はエラー」）
+export async function sendResetMail(email) {
+  if (USE_MOCK) {
+    await wait(300)
+    // モック用の仮ルール（本物の判定はサーバー側）: 大学のドメイン（仮に example.ac.jp）でない、
+    // または unregistered で始まるメールアドレスは「未登録」にする
+    if (!email.endsWith('@example.ac.jp') || email.startsWith('unregistered')) throw new Error('NOT_REGISTERED')
+    return
+  }
+
+  await apiFetch('/api/student/password-reset/mail', { method: 'POST', json: { email } })
+}
+
+// A-6 再設定リンクの検証（G009 を開いたとき）
+// 失敗（無効・期限切れ・使用済み）: code = LINK_INVALID → 画面はリンクエラー（G039）へ
+export async function verifyResetToken(token) {
+  if (USE_MOCK) {
+    await wait(300)
+    // モック: token が空、または "invalid" なら無効（A-3 と同じ仮ルール）
+    if (!token || token === 'invalid') throw new Error('LINK_INVALID')
+    return
+  }
+
+  await apiFetch('/api/student/password-reset/verify', { query: { token } })
+}
+
+// A-7 パスワード再設定の実行（G009 の「パスワードを変更する」）
+// 失敗時の code（仮）: LINK_INVALID（リンクが期限切れ・無効）
+export async function resetPassword(token, password) {
+  if (USE_MOCK) {
+    await wait(300)
+    if (!token || token === 'invalid') throw new Error('LINK_INVALID')
+    return
+  }
+
+  await apiFetch('/api/student/password-reset', { method: 'POST', json: { token, password } })
+}
+
+// A-8 パスワード変更（G025。ログイン中の人が、今のパスワードを入れて変える）
+// 失敗時の code（仮）: WRONG_PASSWORD（今のパスワードが違う）
+export async function changePassword(currentPassword, newPassword) {
+  if (USE_MOCK) {
+    await wait(300)
+    // モック: 今のパスワードは、ログイン（A-1）のモックと同じ password1
+    if (currentPassword !== 'password1') throw new Error('WRONG_PASSWORD')
+    return
+  }
+
+  await apiFetch('/api/student/password/change', { method: 'POST', json: { currentPassword, newPassword } })
+}
+
+// A-9 ログアウト（G038）
+// ※ 認証方式（セッションか JWT か）が未定。セッションなら、サーバーがログイン状態を消す
+export async function logoutStudent() {
+  if (USE_MOCK) {
+    await wait(300)
+    return
+  }
+
+  await apiFetch('/api/student/logout', { method: 'POST' })
+}

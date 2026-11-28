@@ -2,59 +2,70 @@ import './StudentResetPasswordRequest.css'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import ScreenLayout from '../../../components/ScreenLayout'
+import { sendResetMail } from '../../../api/auth'
 
 // G007 既存メールアドレス入力画面（studentResetPasswordRequest）
+// 主なAPI（仮）: A-5 再設定メールの送信（sendResetMail。api/auth.js）
+// 11/28: 「試運転用」（入力に関係なく G008 へ進む）をやめて、入力チェックと送信をつないだ
+
+// 送信APIのエラー → 画面に出す文（文言は設計書に記載なし。仮）
+const SEND_ERRORS = {
+  NOT_REGISTERED: 'このメールアドレスは登録されていません。',
+}
+const DEFAULT_SEND_ERROR = 'メールを送信できませんでした。時間をおいて、もう一度お試しください。'
 
 export default function StudentResetPasswordRequest() {
   const navigate = useNavigate()
 
   const [email, setEmail] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
+  // 送信中は、ボタンを押せないようにする
+  const [sending, setSending] = useState(false)
 
   // ログイン画面（G001）へ戻る
   const backToLogin = () => {
     navigate('/login')
   }
 
-  //試運転用
-  // メール送信ボタン押下時
-  const sendButton = (e) => {
+  // イベント2: メールを送信する → G008（入力チェックは、前にコメントにしてあった処理を戻した）
+  const sendButton = async (e) => {
     e.preventDefault()
+    if (sending) return
 
-    // 入力内容に関係なくG008へ遷移
-    navigate('/reset-password/mail-sent')
-  }
+    const inputEmail = email.trim()
 
-  // メール送信ボタン押下時
-  //const sendButton = (e) => {
-  //  e.preventDefault()
-
-  //  const inputEmail = email.trim()
-
-  //  // 未入力の場合
-  //  if (!inputEmail) {
-  //    setErrorMessage('メールアドレスを入力してください。')
-  //    return
-  //  }
+    // 未入力の場合
+    if (!inputEmail) {
+      setErrorMessage('メールアドレスを入力してください。')
+      return
+    }
 
     // メールアドレスの形式を確認
-    //const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-    //if (!emailPattern.test(inputEmail)) {
-    //  setErrorMessage('正しいメールアドレスを入力してください。')
-    //  return
-    //}
+    if (!emailPattern.test(inputEmail)) {
+      setErrorMessage('正しいメールアドレスを入力してください。')
+      return
+    }
 
-    // 文字数の確認
-    //if (inputEmail.length > 254) {
-    //  setErrorMessage('メールアドレスは254文字以内で入力してください。')
-    //  return
-    //}
+    // 文字数の確認（設計書: 254文字以下）
+    if (inputEmail.length > 254) {
+      setErrorMessage('メールアドレスは254文字以内で入力してください。')
+      return
+    }
 
-    // 入力内容に問題がなければG008へ遷移
-    //setErrorMessage('')
-    //navigate('/reset-password/mail-sent')
-    //}
+    // 入力内容に問題がなければ、メールを送信して G008 へ
+    setErrorMessage('')
+    setSending(true)
+    try {
+      await sendResetMail(inputEmail)
+      navigate('/reset-password/mail-sent')
+    } catch (err) {
+      // 形式が不正・未登録のときは、この画面にエラーを出す（設計書 G007 イベント2）
+      setErrorMessage(SEND_ERRORS[err.message] ?? DEFAULT_SEND_ERROR)
+      setSending(false)
+    }
+  }
 
   return (
     <ScreenLayout
@@ -161,8 +172,9 @@ export default function StudentResetPasswordRequest() {
           <button
             type="submit"
             className="btn btn--primary"
+            disabled={sending}
           >
-            メールを送信する
+            {sending ? '送信中…' : 'メールを送信する'}
           </button>
         </div>
       </form>

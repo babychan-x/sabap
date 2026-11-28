@@ -1,14 +1,15 @@
 import './StudentChangePassword.css'
 
 // G025 パスワード変更画面（studentChangePassword）
-// ※ 仮の画面。外部設計書 G025 の入出力項目・イベントに合わせて中身を作る。
-// 主なAPI（仮）: 現在のパスワードの照合と、新しいパスワードへの変更（API一覧表の番号に合わせて書き換える）
+// 主なAPI（仮）: A-8 パスワード変更（changePassword。api/auth.js。現在のパスワードの照合と変更）
 // 置き場所: src/features/mypage/pages/StudentChangePassword.jsx（App.jsx: /mypage/password）
+// 11/28: 送ったふりをやめて、A-8 をつないだ。パスワードの上限を、設計書どおり64文字にした
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './StudentChangePassword.css';
 import ScreenLayout from '../../../components/ScreenLayout';
+import { changePassword } from '../../../api/auth';
 
 // ---------------------------------------------------------------
 // 遷移先のパス（App.jsx のルーティングと同じ）
@@ -20,9 +21,9 @@ const ROUTES = {
 
 // ---------------------------------------------------------------
 // 新しいパスワードのルール（画面の説明文：半角英字・数字を含む8文字以上、使える記号は !@_#$%&*）
-// ※ 文字数の上限・エラーメッセージの文言は設計書に記載がないため仮。
+// 文字数は設計書 G025 の 8〜64（11/28 に上限 64 を足した）。エラーメッセージの文言は設計書に記載がないため仮。
 // ---------------------------------------------------------------
-const PASSWORD_PATTERN = /^[A-Za-z0-9!@_#$%&*]{8,}$/;
+const PASSWORD_PATTERN = /^[A-Za-z0-9!@_#$%&*]{8,64}$/;
 const HAS_LETTER = /[A-Za-z]/;
 const HAS_DIGIT = /[0-9]/;
 
@@ -38,7 +39,7 @@ function validate(values) {
     !HAS_LETTER.test(values.next) ||
     !HAS_DIGIT.test(values.next)
   ) {
-    errors.next = '半角英字・数字を含む8文字以上で入力してください（使える記号：!@_#$%&*）';
+    errors.next = '半角英字・数字を含む8〜64文字で入力してください（使える記号：!@_#$%&*）';
   }
   if (!values.confirm) {
     errors.confirm = '確認用のパスワードを入力してください';
@@ -122,6 +123,9 @@ export default function StudentChangePassword() {
   const [values, setValues] = useState({ current: '', next: '', confirm: '' });
   const [show, setShow] = useState({ current: false, next: false, confirm: false });
   const [errors, setErrors] = useState({});
+  // 送信中は、ボタンを押せないようにする。formError = 欄に関係ないエラー（通信できなかったなど）
+  const [sending, setSending] = useState(false);
+  const [formError, setFormError] = useState('');
 
   // 入力したとき：値を更新して、その欄のエラー表示を消す
   const handleChange = (key) => (e) => {
@@ -134,29 +138,48 @@ export default function StudentChangePassword() {
     setShow((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // 「パスワードを変更する」を押したとき
-  const handleSubmit = (e) => {
+  // イベント5: 「パスワードを変更する」を押したとき → G026
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    if (sending) return;
+    setFormError('');
     const nextErrors = validate(values);
+    // イベント6: 入力内容に不備があるときは、エラーを出して、この画面にとどまる
     if (Object.keys(nextErrors).length > 0) {
       setErrors(nextErrors);
       return;
     }
-    // TODO: API（現在のパスワードの照合と変更）を呼ぶ
-    //   現在のパスワードが違うときは、次のようにエラーを出して、この画面にとどまる
-    //   setErrors({ current: '現在のパスワードが正しくありません' });
-    navigate(ROUTES.complete);
+    setSending(true);
+    try {
+      await changePassword(values.current, values.next);
+      // replace: 完了のあとに「戻る」で、入力済みのこの画面に戻らないようにする
+      navigate(ROUTES.complete, { replace: true });
+    } catch (err) {
+      // 現在のパスワードが違うときは、その欄にエラーを出す（イベント6。文言は仮）
+      if (err.message === 'WRONG_PASSWORD') {
+        setErrors({ current: '現在のパスワードが正しくありません' });
+      } else {
+        setFormError('パスワードを変更できませんでした。時間をおいて、もう一度お試しください。');
+      }
+      setSending(false);
+    }
   };
 
   return (
     <ScreenLayout
       title="パスワード再設定"
       onBack={() => navigate(ROUTES.mypage)}
+      backDisabled={sending}
       footer={
         <div className="change-password-footer">
           {/* 送信ボタンは下に固定するため、フォームの外にある。form="…" でフォームとつなぐ */}
-          <button type="submit" form="change-password-form" className="change-password-submit-btn">
-            パスワードを変更する
+          {formError && (
+            <p className="change-password-form-error" role="alert">
+              {formError}
+            </p>
+          )}
+          <button type="submit" form="change-password-form" className="change-password-submit-btn" disabled={sending}>
+            {sending ? '変更中…' : 'パスワードを変更する'}
           </button>
         </div>
       }

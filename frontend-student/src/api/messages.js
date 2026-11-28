@@ -6,6 +6,8 @@ import { apiFetch, USE_MOCK, wait } from './client'
 import { findMockItem } from './items'
 import { mockMessages } from '../mock/messages'
 import { mockMyPosts } from '../mock/myPosts'
+import { mockApplications } from '../mock/applications'
+import { mockMe } from '../mock/me'
 
 // モック用: メッセージに、対象の落とし物（post）を付けて返す（仮の形）
 //   受け取ったメッセージ → 自分の投稿（mock/myPosts.js）、送ったメッセージ → 自分が受け取った落とし物（mock/items.js）
@@ -49,4 +51,37 @@ export async function getMessage(messageId) {
   }
 
   return apiFetch(`/api/student/messages/${encodeURIComponent(messageId)}`)
+}
+
+// D-3 感謝メッセージの送信（G036 の「送信する」→ G037）
+// POST /api/student/applications/{id}/message（パスは内部設計書 第7章の仮）
+// applicationId: 受け渡し済みの申請の ID（URL の /mypage/applications/:id/message の :id）
+// 失敗時の code（仮）: NOT_FOUND（申請がない）/ NOT_HANDED_OVER（まだ受け渡していない）/ ALREADY_SENT（送信済み）
+// ※ 落とし物の投稿者への通知は、サーバーが作る（設計書 G036 イベント2）
+export async function sendMessage(applicationId, messageBody) {
+  if (USE_MOCK) {
+    await wait(500)
+    const application = mockApplications.find((a) => String(a.applicationId) === String(applicationId))
+    if (!application) throw new Error('NOT_FOUND')
+    if (!application.isHandedOver) throw new Error('NOT_HANDED_OVER')
+    if (application.isMessageSent) throw new Error('ALREADY_SENT')
+    // モック: 送信済みにして、送ったメッセージ（G032 の「送信」タブ）にも足す（ページを再読み込みすると元に戻る）
+    application.isMessageSent = true
+    const messageId = Math.max(0, ...mockMessages.map((m) => m.messageId)) + 1
+    mockMessages.push({
+      messageId,
+      messageBox: 'sent',
+      senderNickname: mockMe.nickname,
+      senderIconNumber: mockMe.iconNumber,
+      postId: application.postId,
+      messageBody,
+      sentAt: new Date().toISOString(),
+    })
+    return { messageId }
+  }
+
+  return apiFetch(`/api/student/applications/${encodeURIComponent(applicationId)}/message`, {
+    method: 'POST',
+    json: { messageBody },
+  })
 }
