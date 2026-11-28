@@ -95,3 +95,8 @@ export async function createApplication(postId, { applicationReason, application
   applicationImages.forEach((image) => body.append('applicationImages', image.file))
   return apiFetch(`/api/student/items/${encodeURIComponent(postId)}/applications`, { method: 'POST', body })
 }
+
+// 結果（承認・却下）が出ていて、まだ確認していない申請か（G033 の NEW マーク・G024 の「新着〇件」に使う）
+export function isNewResult(application) {
+  return !application.isResultRead && (application.applicationStatus === 'APPROVED' || application.applicationStatus === 'REJECTED')
+}
