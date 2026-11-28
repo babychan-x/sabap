@@ -1,1 +1,94 @@
-/* G040 ログイン */
+/* G040 ログイン画面だけの配置。
+   色・入力欄・ボタン・カード・エラーは、共通のクラス（styles/components.css）を使う。
+   色は variables.css の変数を使う（CLAUDE.md §4.4）。 */
+
+/* ヘッダーが無い画面なので、中身を画面の上下まんなかに置く */
+.login-main {
+  display: flex;
+  align-items: center;
+  padding-top: 48px;
+  padding-bottom: 48px;
+}
+
+/* ロゴ・システム名・説明文 */
+.login-header {
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+.login-logo {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 96px;
+  height: 96px;
+  margin-bottom: 16px;
+  border-radius: 28px;
+  background-color: var(--color-primary-soft);
+}
+
+.login-title {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--color-heading);
+  letter-spacing: -0.02em;
+}
+
+.login-lead {
+  margin-top: 10px;
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+/* ログインのフォーム（白いカード） */
+.login-card {
+  padding: 32px;
+}
+
+/* 入力欄の左のアイコン（人・鍵） */
+.login-input-icon {
+  display: flex;
+  flex-shrink: 0;
+  color: var(--color-text-faint);
+  transition: color 0.2s ease;
+}
+
+/* 入力中は、アイコンも青くする */
+.login-input-wrapper:focus-within .login-input-icon {
+  color: var(--color-primary);
+}
+
+.login-submit {
+  margin-top: 8px;
+}
+
+/* パスワードを忘れた方はこちら */
+.login-reset {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.login-reset-link {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  text-decoration: none;
+}
+
+.login-reset-link:hover {
+  text-decoration: underline;
+}
+
+.login-reset-link:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* 画面の幅が狭いとき（ノートPCの分割表示など）は、カードの余白を少なくする */
+@media (max-width: 520px) {
+  .login-card {
+    padding: 24px 20px;
+  }
+}
