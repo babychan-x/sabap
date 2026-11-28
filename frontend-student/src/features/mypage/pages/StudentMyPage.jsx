@@ -1,7 +1,10 @@
 import './StudentMyPage.css'
 
 // G024 マイページ画面（studentMyPage）
+// 主なAPI（仮）: F-1 マイページ（getMe。api/me.js）。「新着〇件」は E-1 受け取り申請一覧（getApplications）から数える
+// 11/28: 画面の中の仮データをやめて、api から取る形にした（仮データは mock/me.js・mock/applications.js）
 
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   UserRound,
@@ -13,15 +16,42 @@ import {
   ChevronRight,
 } from 'lucide-react'
 import ScreenLayout from '../../../components/ScreenLayout'
+import { getMe } from '../../../api/me'
+import { getApplications, isNewResult } from '../../../api/applications'
 
 export default function StudentMyPage() {
   const navigate = useNavigate()
 
-  // ユーザー情報（試運転用の仮データ）
-  // TODO: バックエンドからログイン中のユーザー情報を取得する
-  const nickname = 'りんご'
+  // ログイン中の人の情報（F-1）。me = { nickname, iconNumber }。読み込むまでは null
+  const [me, setMe] = useState(null)
+  const [error, setError] = useState('')
+  // 受け取り申請一覧の「新着〇件」= G033 で NEW マークが付く申請（結果が出ていて、まだ見ていない申請）の数
+  // ※ 「新着〇件」は外部設計書に無い（前の画面にあったので残した。G024-3）
+  const [newRequestCount, setNewRequestCount] = useState(0)
+
+  useEffect(() => {
+    let ignore = false // 画面を離れたあとに届いた結果は使わない
+    getMe()
+      .then((data) => {
+        if (!ignore) setMe(data)
+      })
+      .catch(() => {
+        if (!ignore) setError('読み込めませんでした。時間をおいて、もう一度お試しください。')
+      })
+    // 件数は読めなくても、画面は使えるので、エラーは出さない（0件のまま。仮）
+    getApplications()
+      .then((applications) => {
+        if (!ignore) setNewRequestCount(applications.filter(isNewResult).length)
+      })
+      .catch(() => {})
+    return () => {
+      ignore = true
+    }
+  }, [])
+
+  const nickname = me ? me.nickname : ''
+  // アイコンの画像は未定（users.icon_number は番号だけ）。いまは全員、仮の人型アイコンを出す
   const userIcon = null
-  const newRequestCount = 2
 
   // 自分の投稿一覧（G027）
   const myPost = () => {
@@ -73,12 +103,19 @@ export default function StudentMyPage() {
             )}
           </div>
 
-          {/* ニックネーム */}
+          {/* ニックネーム（読み込み中は「…」） */}
           <p className="mypage__nickname">
-            ニックネーム：{nickname}
+            ニックネーム：{me ? nickname : '…'}
           </p>
 
         </div>
+
+        {/* 読み込めなかったとき */}
+        {error && (
+          <p className="mypage__error" role="alert">
+            {error}
+          </p>
+        )}
 
         {/* メニュー一覧 */}
         <div className="mypage__menu">

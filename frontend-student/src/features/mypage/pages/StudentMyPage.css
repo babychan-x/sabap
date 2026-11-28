@@ -54,6 +54,17 @@
   overflow-wrap: anywhere;
 }
 
+/* 読み込めなかったとき（エラーをまとめて出す形。G025〜G029 と同じ色） */
+.mypage__error {
+  margin: -16px 0 24px;
+  padding: 10px 14px;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  background-color: #fef2f2;
+  color: #dc2626;
+  font-size: 13px;
+}
+
 /* メニュー一覧 */
 .mypage__menu {
   display: flex;

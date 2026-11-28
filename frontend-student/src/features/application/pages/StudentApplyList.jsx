@@ -5,7 +5,7 @@
 
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getApplications, markApplicationRead } from '../../../api/applications'
+import { getApplications, isNewResult, markApplicationRead } from '../../../api/applications'
 import { formatDateTime } from '../../../utils/date'
 import './StudentApplyList.css'
 import ScreenLayout from '../../../components/ScreenLayout'
@@ -33,9 +33,8 @@ const BADGES = {
 // バッジの種類を決める（受け渡し済みなら「済」、それ以外は申請状況のまま）
 const badgeKey = (application) => (application.isHandedOver ? 'HANDED_OVER' : application.applicationStatus)
 
-// 結果（承認・却下）が出ていて、まだ確認していない申請に NEW マークを付ける
-const isNew = (application) =>
-  !application.isResultRead && (application.applicationStatus === 'APPROVED' || application.applicationStatus === 'REJECTED')
+// 結果（承認・却下）が出ていて、まだ確認していない申請に NEW マークを付ける（式は api/applications.js の isNewResult。G024 の「新着〇件」と同じ）
+const isNew = isNewResult
 
 // 案内文（文言は設計書に記載なし。旧スライドの文言）
 const guideText = (application) => {

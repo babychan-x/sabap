@@ -20,6 +20,11 @@
   color: #6b7280;
 }
 
+/* 読み込めなかったとき（エラーの色） */
+.notification-empty.error {
+  color: #dc2626;
+}
+
 /* 通知1件分（線で区切る。押したときのポップなアニメーション） */
 .notification-item {
   display: flex;
