@@ -6,7 +6,7 @@ import { apiFetch, USE_MOCK, wait } from './client'
 
 // H-1 管理者ログイン（G040）
 // POST /api/admin/login（パスは内部設計書 第7章の仮）
-// 返す値（仮）: { name }（admins.name。ホーム G048 などで使う想定）
+// 返す値（仮）: { adminName }（admins.name。項目名は mock/me.js と同じ）
 // 失敗時: どんな理由でも code = LOGIN_FAILED
 //   設計書 G040: 「メールアドレス・パスワードのどちらが誤りかは区別しない」。無効化された管理者も、同じエラーにする
 export async function loginAdmin(email, password) {
@@ -16,7 +16,7 @@ export async function loginAdmin(email, password) {
     //   パスワードが password1 のときだけ成功（学生用のログインのモックと同じ）。
     //   ただし disabled で始まるメールアドレスは「無効化された管理者」として失敗にする
     if (password === 'password1' && !email.startsWith('disabled')) {
-      return { name: '管理者（仮）' }
+      return { adminName: '管理者（仮）' }
     }
     throw new Error('LOGIN_FAILED')
   }

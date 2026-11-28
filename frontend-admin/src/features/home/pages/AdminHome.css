@@ -1,1 +1,110 @@
-/* G048 管理者ホーム */
+/* G048 管理者ホーム画面だけの配置。
+   並べ方（3列 → 狭いと2列 → 1列）は共通の admin-grid admin-grid-3。色は variables.css の変数を使う。 */
+
+.home-menu {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* メニューのカード（白、角丸、影。押すと少し縮む） */
+.home-menu-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+  min-height: 176px;
+  padding: 24px 20px;
+  border: 1px solid var(--color-border-card);
+  border-radius: var(--radius-list-card);
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  font-family: inherit;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.home-menu-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: 0 10px 24px rgba(59, 130, 246, 0.14);
+}
+
+.home-menu-card:active {
+  transform: scale(0.98);
+}
+
+.home-menu-card:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+
+/* アイコン（薄い青の丸の中） */
+.home-menu-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 4px;
+  border-radius: 20px;
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary);
+}
+
+.home-menu-label {
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--color-heading);
+  letter-spacing: -0.02em;
+}
+
+.home-menu-description {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--color-text-muted);
+}
+
+/* ログアウトだけは、アイコンを灰色にして目立たせない（ほかの業務と区別する） */
+.home-menu-card.muted .home-menu-icon {
+  background-color: var(--color-muted-bg);
+  color: var(--color-text-sub);
+}
+
+.home-menu-card.muted:hover {
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-card);
+}
+
+/* 表示するときに、カードが順番にふわっと出る */
+.home-menu li {
+  animation: home-menu-in 0.35s ease-out both;
+}
+
+.home-menu li:nth-child(2) { animation-delay: 0.03s; }
+.home-menu li:nth-child(3) { animation-delay: 0.06s; }
+.home-menu li:nth-child(4) { animation-delay: 0.09s; }
+.home-menu li:nth-child(5) { animation-delay: 0.12s; }
+.home-menu li:nth-child(6) { animation-delay: 0.15s; }
+.home-menu li:nth-child(7) { animation-delay: 0.18s; }
+.home-menu li:nth-child(8) { animation-delay: 0.21s; }
+
+@keyframes home-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-menu li {
+    animation: none;
+  }
+}

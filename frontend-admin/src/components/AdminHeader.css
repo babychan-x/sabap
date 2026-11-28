@@ -14,7 +14,8 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  max-width: var(--content-max-width);
+  /* 中身（admin-main の admin-container）と左右の端をそろえる: 中身の最大幅＋左右の余白（11/28 に直した。前は 32px ずれていた） */
+  max-width: calc(var(--content-max-width) + var(--page-padding-x) * 2);
   min-height: var(--header-height);
   margin: 0 auto;
   padding: 12px var(--page-padding-x);

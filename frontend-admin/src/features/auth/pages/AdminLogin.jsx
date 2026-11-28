@@ -17,6 +17,11 @@ const ROUTES = {
   resetPasswordRequest: '/reset-password/request', // G041 既存メールアドレス入力
 }
 
+// 【確認用・仮】true の間は、何も入力しなくても「ログイン」で G048 へ進む（画面を確認しやすくするため。11/28 ユーザーの依頼）。
+//   本来の処理（入力チェック → ログイン API）に戻すときは false にする。発表・本番の前に必ず false に戻す。
+//   学生用 G001 も、同じく確認用の状態になっている。
+const CHECK_MODE = true
+
 // 入力チェック（設計書 G040: メールアドレスは必須・254文字以下、パスワードは必須・8〜64文字）。
 // 問題があればエラー文を返し、なければ空文字を返す。文言は学生用 G001 と同じ（設計書に記載なし。仮）
 function validate(email, password) {
@@ -71,6 +76,13 @@ export default function AdminLogin() {
   async function handleSubmit(e) {
     e.preventDefault()
     if (loading) return
+
+    // 【確認用・仮】入力チェックもログインもせずに、G048 へ進む（上の CHECK_MODE）
+    if (CHECK_MODE) {
+      navigate(ROUTES.home, { replace: true })
+      return
+    }
+
     const message = validate(email, password)
     if (message) {
       setErrorMessage(message)
