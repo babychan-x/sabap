@@ -5,6 +5,7 @@ import './StudentResetPassword.css'
 import { useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 export default function StudentResetPassword() {
   const navigate = useNavigate()
@@ -80,7 +81,9 @@ export default function StudentResetPassword() {
   }
 
   return (
-    <div className="page reset-password">
+    <ScreenLayout
+      contentClassName="page reset-password"
+    >
 
       {/* 画面タイトル */}
       <h1 className="reset-password__header">
@@ -231,7 +234,7 @@ export default function StudentResetPassword() {
           </button>
         </div>
       </form>
-    </div>
+    </ScreenLayout>
   )
 }
 

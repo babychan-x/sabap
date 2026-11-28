@@ -11,9 +11,9 @@ import './StudentMessageDetail.css'
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getMessage } from '../../../api/messages';
-import BottomNav from '../../../components/BottomNav';
 import { formatDateTime } from '../../../utils/date';
 import './StudentMessageDetail.css';
+import ScreenLayout from '../../../components/ScreenLayout';
 
 // 送信者のアイコン（アイコン画像が決まるまでの仮。ニックネームの横に表示する）
 function AvatarIcon() {
@@ -72,92 +72,78 @@ export default function StudentMessageDetail() {
   const item = message?.post; // 対象の落とし物
 
   return (
-    <div className="message-detail-page-wrapper">
-      {/* 9:16比率のスマホ枠 */}
-      <div className="message-detail-mobile-container">
-        {/* ヘッダー */}
-        <header className="message-detail-header">
-          <button
-            className="message-detail-back-btn"
-            onClick={() => navigate(-1)} // 遷移元（G012 通知 / G032 メッセージ一覧）に戻る
-            aria-label="戻る"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
-          <h1 className="message-detail-title">感謝メッセージ詳細</h1>
-        </header>
+    <ScreenLayout
+      title="感謝メッセージ詳細"
+      onBack={() => navigate(-1)}
+      bottomNav="mypage"
+      background="gray"
+    >
+      {/* 本文エリア */}
+      <div className="message-detail-content">
+        {/* 読み込み中・見つからないときは、文言だけを表示する（文言は仮） */}
+        {!message && (
+          <p className="message-detail-empty" role={loading ? undefined : 'alert'}>
+            {loading ? '読み込み中…' : result.error}
+          </p>
+        )}
 
-        {/* 本文エリア */}
-        <div className="message-detail-content">
-          {/* 読み込み中・見つからないときは、文言だけを表示する（文言は仮） */}
-          {!message && (
-            <p className="message-detail-empty" role={loading ? undefined : 'alert'}>
-              {loading ? '読み込み中…' : result.error}
-            </p>
-          )}
-
-          {message && (
-            <>
-              {/* 感謝メッセージ */}
-              <section className="message-detail-card">
-                <div className="message-detail-sender">
-                  <div className="message-detail-avatar">
-                    <AvatarIcon />
-                  </div>
-                  <div className="message-detail-sender-info">
-                    <p className="message-detail-sender-name">{message.senderNickname}</p>
-                    <p className="message-detail-sent-at">{formatDateTime(message.sentAt)}</p>
-                  </div>
+        {message && (
+          <>
+            {/* 感謝メッセージ */}
+            <section className="message-detail-card">
+              <div className="message-detail-sender">
+                <div className="message-detail-avatar">
+                  <AvatarIcon />
                 </div>
-                <p className="message-detail-body">{message.messageBody}</p>
-              </section>
+                <div className="message-detail-sender-info">
+                  <p className="message-detail-sender-name">{message.senderNickname}</p>
+                  <p className="message-detail-sent-at">{formatDateTime(message.sentAt)}</p>
+                </div>
+              </div>
+              <p className="message-detail-body">{message.messageBody}</p>
+            </section>
 
-              {/* 対象の落とし物 */}
-              {item && (
-                <>
-                  <h2 className="message-detail-section-title">落とし物詳細</h2>
-                  <section className="message-detail-card message-detail-item-card">
-                    <div className="message-detail-item-img-wrapper">
-                      {item.postImageUrls[0] && !imageFailed ? (
-                        <img
-                          src={item.postImageUrls[0]}
-                          alt={item.itemName}
-                          className="message-detail-item-img"
-                          onError={() => setImageFailed(true)}
-                        />
-                      ) : (
-                        <ImagePlaceholder />
-                      )}
-                    </div>
-                    <div className="message-detail-item-info">
-                      <h3 className="message-detail-item-name">{item.itemName}</h3>
-                      <dl className="message-detail-item-list">
-                        <div className="message-detail-item-row">
-                          <dt>発見場所</dt>
-                          <dd>{item.foundLocation}</dd>
-                        </div>
-                        <div className="message-detail-item-row">
-                          <dt>発見日時</dt>
-                          <dd>{formatDateTime(item.foundAt)}</dd>
-                        </div>
-                        <div className="message-detail-item-row">
-                          <dt>特徴</dt>
-                          <dd>{item.itemDescription || '特になし'}</dd>
-                        </div>
-                      </dl>
-                    </div>
-                  </section>
-                </>
-              )}
-            </>
-          )}
-        </div>
-
-        {/* ボトムナビゲーション（フッター） */}
-        <BottomNav active="mypage" />
+            {/* 対象の落とし物 */}
+            {item && (
+              <>
+                <h2 className="message-detail-section-title">落とし物詳細</h2>
+                <section className="message-detail-card message-detail-item-card">
+                  <div className="message-detail-item-img-wrapper">
+                    {item.postImageUrls[0] && !imageFailed ? (
+                      <img
+                        src={item.postImageUrls[0]}
+                        alt={item.itemName}
+                        className="message-detail-item-img"
+                        onError={() => setImageFailed(true)}
+                      />
+                    ) : (
+                      <ImagePlaceholder />
+                    )}
+                  </div>
+                  <div className="message-detail-item-info">
+                    <h3 className="message-detail-item-name">{item.itemName}</h3>
+                    <dl className="message-detail-item-list">
+                      <div className="message-detail-item-row">
+                        <dt>発見場所</dt>
+                        <dd>{item.foundLocation}</dd>
+                      </div>
+                      <div className="message-detail-item-row">
+                        <dt>発見日時</dt>
+                        <dd>{formatDateTime(item.foundAt)}</dd>
+                      </div>
+                      <div className="message-detail-item-row">
+                        <dt>特徴</dt>
+                        <dd>{item.itemDescription || '特になし'}</dd>
+                      </div>
+                    </dl>
+                  </div>
+                </section>
+              </>
+            )}
+          </>
+        )}
       </div>
-    </div>
+
+    </ScreenLayout>
   );
 }

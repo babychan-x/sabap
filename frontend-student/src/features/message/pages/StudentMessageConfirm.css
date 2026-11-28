@@ -2,47 +2,9 @@
 /* G036 感謝メッセージ確認画面 */
 
 .message-confirm {
+  /* 高さ・はみ出しは、外枠（components/ScreenLayout）が決める（2026/11/27。ここではスクロールする中身の配置だけ） */
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  height: 100dvh;
-  min-height: 0;
-  overflow: hidden;
-}
-
-/* ヘッダー */
-.message-confirm__header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-/* 戻るボタン */
-.message-confirm__back {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: var(--color-text);
-  cursor: pointer;
-}
-
-/* 画面タイトル */
-.message-confirm__title {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--color-text);
-}
-
-/* 進行状況表示の配置 */
-.message-confirm__steps {
-  flex-shrink: 0;
-  margin: 24px 0 32px;
 }
 
 /* スクロール可能なコンテンツ */
@@ -171,7 +133,7 @@
 /* 送信ボタンの配置 */
 .message-confirm__footer {
   flex-shrink: 0;
-  padding-top: 24px;
-  padding-bottom: 16px;
+  /* 下に固定したので、左右の余白をほかの画面（G025 など）と同じにする（11/27） */
+  padding: 24px 32px 40px;
 }
 

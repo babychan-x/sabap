@@ -2,32 +2,53 @@
    画面ごとのCSSには、これらを書き直さず、className を付けて使う。 */
 
 /* ---------- ボタン ---------- */
+/* 形・影は、投稿完了（G023 .post-complete__button）・G025 のメインのボタンと同じ（2026/11/27 にそろえた。
+   前は 高さ 48px・角丸 8px・影なし だった） */
 .btn {
   display: block;
   width: 100%;
-  height: var(--button-height);
-  border-radius: var(--radius);
+  height: 52px;
+  padding: 0 12px;
+  border-radius: 14px;
   font-family: inherit;
-  font-size: var(--font-size-base);
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
   cursor: pointer;
+  transition: transform 0.15s ease, background-color 0.2s ease, box-shadow 0.15s ease;
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 3px;
 }
 
 .btn--primary {
   border: none;
   background: var(--color-primary);
   color: var(--color-primary-text);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.28);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: #2563eb;
 }
 
 .btn--primary:disabled {
   background: var(--color-disabled);
+  box-shadow: none;
   cursor: not-allowed;
 }
 
+/* 白いボタン。影は、青いボタンより薄くした（仮。共通-20） */
 .btn--secondary {
-  border: 1px solid var(--color-primary);
+  border: 1.5px solid var(--color-primary);
   background: var(--color-surface);
   color: var(--color-primary);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.12);
 }
 
 /* リンクのように見えるボタン */
@@ -41,6 +62,7 @@
   font-weight: 400;
   color: var(--color-link);
   text-decoration: underline;
+  box-shadow: none;
 }
 
 /* ---------- フォーム ---------- */

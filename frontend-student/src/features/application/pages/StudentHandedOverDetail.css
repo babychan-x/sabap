@@ -2,69 +2,6 @@
    外枠・カード・ボタンは G019（StudentApplyConfirm）と同じ値（もとは G025・G028）。
    スタンプは G014（StudentApprovalDetail）の「承認」「却下」スタンプと同じ形。写真は共通部品 PhotoSlider。 */
 
-/* PC画面で中央に配置する背景ラッパー */
-.handed-over-page-wrapper {
-  min-height: 100vh;
-  background-color: #f0f2f5;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
-}
-
-/* スマホ枠（背景を少しグレーにして、白いカードを浮かせる。G028 と同じ） */
-.handed-over-mobile-container {
-  width: 100%;
-  max-width: var(--page-max-width);
-  height: 100vh;
-  max-height: 844px;
-  background-color: #f7f8fa;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-@media (min-width: 450px) {
-  .handed-over-mobile-container {
-    border: 4px solid #ffffff;
-  }
-}
-
-/* ヘッダー（戻るボタン＋タイトル） */
-.handed-over-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 32px 32px 14px 24px;
-}
-
-.handed-over-back-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #4b5563;
-  display: flex;
-  align-items: center;
-  padding: 8px;
-  border-radius: 50%;
-  transition: transform 0.2s ease, background-color 0.2s ease;
-}
-
-.handed-over-back-btn:active {
-  transform: scale(0.85);
-  background-color: #eceef1;
-}
-
-.handed-over-title {
-  font-size: 18px;
-  font-weight: 800;
-  color: #111827;
-  margin: 0;
-  letter-spacing: -0.02em;
-}
-
 /* 本文エリア（ここだけスクロールする。表示するときにふわっと出る） */
 .handed-over-content {
   flex: 1;

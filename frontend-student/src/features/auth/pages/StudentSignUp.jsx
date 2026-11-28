@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { sendSignUpMail } from '../../../api/auth'
 import './StudentSignUp.css'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 // G002 新規メールアドレス入力画面（studentSignUp）
 // 外部設計書 第2.0版 G002 に対応。
@@ -50,7 +51,9 @@ export default function StudentSignUp() {
   }
 
   return (
-    <main className="page">
+    <ScreenLayout
+      contentClassName="page"
+    >
       {/* イベント1: 戻る → G001（studentLogin）。入力内容は破棄 */}
       <button
         type="button"
@@ -96,6 +99,6 @@ export default function StudentSignUp() {
           {loading ? '送信中…' : 'メールを送信する'}
         </button>
       </form>
-    </main>
+    </ScreenLayout>
   )
 }

@@ -4,74 +4,11 @@
    /* G013 メッセージ画面だけの見た目（配置）。
    色・ボタンは共通CSS（src/styles/）を使う。 */
 
-/* PC画面で中央に配置する背景ラッパー */
-.message-detail-page-wrapper {
-  min-height: 100vh;
-  background-color: #f0f2f5;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
-}
-
-/* 9:16比率のスマホ枠（背景を少しグレーにして、白いカードを浮かせる） */
-.message-detail-mobile-container {
-  width: 100%;
-  max-width: var(--page-max-width);
-  height: 100vh;
-  max-height: 844px;
-  background-color: #f7f8fa;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-@media (min-width: 450px) {
-  .message-detail-mobile-container {
-    border: 4px solid #ffffff;
-  }
-}
-
-/* ヘッダー（戻るボタン＋タイトル） */
-.message-detail-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 32px 32px 18px 24px;
-}
-
-.message-detail-back-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #4b5563;
-  display: flex;
-  align-items: center;
-  padding: 8px;
-  border-radius: 50%;
-  transition: transform 0.2s ease, background-color 0.2s ease;
-}
-
-.message-detail-back-btn:active {
-  transform: scale(0.85);
-  background-color: #eceef1;
-}
-
-.message-detail-title {
-  font-size: 18px;
-  font-weight: 800;
-  color: #111827;
-  margin: 0;
-  letter-spacing: -0.02em;
-}
-
 /* 本文エリア（上下左右の余白を十分確保。表示するときにふわっと出る） */
 .message-detail-content {
   flex: 1;
   overflow-y: auto;
-  padding: 4px 32px 88px 32px;
+  padding: 4px 32px 24px 32px; /* 下タブが中身に重ならなくなったので、88px → 24px（11/27） */
   animation: message-detail-fade-in 0.35s ease-out both;
 }
 

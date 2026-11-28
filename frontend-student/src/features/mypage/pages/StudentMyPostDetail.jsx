@@ -9,6 +9,7 @@ import './StudentMyPostDetail.css'
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { deleteMyPost, getMyPost } from '../../../api/myPosts';
+import ScreenLayout from '../../../components/ScreenLayout';
 import { formatDateTime } from '../../../utils/date';
 import './StudentMyPostDetail.css';
 
@@ -78,25 +79,11 @@ export default function StudentMyPostDetail() {
   // 読み込み中・見つからないときは、別の投稿を代わりに出さず、文言だけを表示する
   if (!post) {
     return (
-      <div className="my-post-detail-page-wrapper">
-        <div className="my-post-detail-mobile-container">
-          <header className="my-post-detail-header">
-            <button
-              className="my-post-detail-back-btn"
-              onClick={() => navigate(ROUTES.myPostList)}
-              aria-label="戻る"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="15 18 9 12 15 6"></polyline>
-              </svg>
-            </button>
-            <h1 className="my-post-detail-title">投稿の詳細</h1>
-          </header>
-          <p className="my-post-detail-empty" role={loading ? undefined : 'alert'}>
-            {loading ? '読み込み中…' : result.error}
-          </p>
-        </div>
-      </div>
+      <ScreenLayout title="投稿の詳細" onBack={() => navigate(ROUTES.myPostList)} background="gray">
+        <p className="my-post-detail-empty" role={loading ? undefined : 'alert'}>
+          {loading ? '読み込み中…' : result.error}
+        </p>
+      </ScreenLayout>
     );
   }
 
@@ -167,172 +154,158 @@ export default function StudentMyPostDetail() {
     navigate(ROUTES.myPostList);
   };
 
-  return (
-    <div className="my-post-detail-page-wrapper">
-      {/* 9:16比率のスマホ枠 */}
-      <div className="my-post-detail-mobile-container">
-        {/* ヘッダー */}
-        <header className="my-post-detail-header">
-          <button
-            className="my-post-detail-back-btn"
-            onClick={() => navigate(ROUTES.myPostList)}
-            aria-label="戻る"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
-          <h1 className="my-post-detail-title">投稿の詳細</h1>
-        </header>
-
-        {/* 本文エリア */}
-        <div className="my-post-detail-content">
-          <section className="my-post-detail-card">
-            {/* 写真（スワイプで切り替え） */}
-            <div className="my-post-detail-photo-area">
-              <div
-                className="my-post-detail-slider"
-                ref={sliderRef}
-                onScroll={handleScroll}
-              >
-                {images.map((src, index) => (
-                  <div className="my-post-detail-slide" key={index}>
-                    {src && !failedImages.includes(index) ? (
-                      <img
-                        src={src}
-                        alt={`${post.itemName}の写真${index + 1}`}
-                        className="my-post-detail-img"
-                        onError={() => setFailedImages((prev) => [...prev, index])}
-                      />
-                    ) : (
-                      <ImagePlaceholder />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* 写真が2枚以上のときだけ点を表示 */}
-            {images.length > 1 && (
-              <div className="my-post-detail-dots">
-                {images.map((_, index) => (
-                  <button
-                    key={index}
-                    className={`my-post-detail-dot ${index === activeIndex ? 'active' : ''}`}
-                    onClick={() => handleDotClick(index)}
-                    aria-label={`${index + 1}枚目の写真を表示`}
-                  />
-                ))}
-              </div>
+  // 削除の確認（D001）・完了（D002）ダイアログ（画面全体に重ねる。ScreenLayout の overlay に渡す）
+  const dialogOverlay = dialog && (
+    <div
+      className="my-post-detail-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="my-post-detail-dialog-message"
+    >
+      <div className="my-post-detail-dialog">
+        {dialog === 'confirm' ? (
+          <>
+            <p id="my-post-detail-dialog-message" className="my-post-detail-dialog-message">
+              投稿を削除しますか？
+            </p>
+            {deleteError && (
+              <p className="my-post-detail-dialog-error" role="alert">
+                {deleteError}
+              </p>
             )}
-
-            <div className="my-post-detail-body">
-              <h2 className="my-post-detail-item-name">{post.itemName}</h2>
-
-              <dl className="my-post-detail-list">
-                <div className="my-post-detail-row">
-                  <dt>カテゴリー</dt>
-                  <dd>{post.itemCategory}</dd>
-                </div>
-                <div className="my-post-detail-row">
-                  <dt>発見日時</dt>
-                  <dd>{formatDateTime(post.foundAt)}</dd>
-                </div>
-                <div className="my-post-detail-row">
-                  <dt>発見場所</dt>
-                  <dd>{post.foundLocation}</dd>
-                </div>
-                <div className="my-post-detail-row">
-                  <dt>保管場所</dt>
-                  <dd>{STORAGE_LABELS[post.itemStatus]}</dd>
-                </div>
-                <div className="my-post-detail-row">
-                  <dt>特徴</dt>
-                  <dd>{post.itemDescription || '特になし'}</dd>
-                </div>
-                <div className="my-post-detail-row">
-                  <dt>保管期限</dt>
-                  <dd>{formatDateTime(post.storageDeadline)} まで</dd>
-                </div>
-              </dl>
+            <div className="my-post-detail-dialog-actions">
+              <button
+                className="my-post-detail-dialog-btn secondary"
+                onClick={handleCancelDelete}
+                disabled={deleting}
+              >
+                戻る
+              </button>
+              <button
+                className="my-post-detail-dialog-btn danger"
+                onClick={handleConfirmDelete}
+                disabled={deleting}
+              >
+                {deleting ? '削除中…' : '確認'}
+              </button>
             </div>
-          </section>
-
-          {/* 編集・削除ボタン（使えないときは灰色にして、理由を下に表示） */}
-          <div className="my-post-detail-actions">
-            <button
-              className="my-post-detail-btn edit"
-              disabled={!canEdit}
-              onClick={() => navigate(ROUTES.myPostEdit(id))}
-            >
-              編集する
-            </button>
-            <button
-              className="my-post-detail-btn delete"
-              disabled={!canDelete}
-              onClick={handleDelete}
-            >
-              削除する
-            </button>
-          </div>
-          {notice && <p className="my-post-detail-notice">{notice}</p>}
-        </div>
-
-        {/* 削除の確認（D001）・完了（D002）ダイアログ */}
-        {dialog && (
-          <div
-            className="my-post-detail-overlay"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="my-post-detail-dialog-message"
-          >
-            <div className="my-post-detail-dialog">
-              {dialog === 'confirm' ? (
-                <>
-                  <p id="my-post-detail-dialog-message" className="my-post-detail-dialog-message">
-                    投稿を削除しますか？
-                  </p>
-                  {deleteError && (
-                    <p className="my-post-detail-dialog-error" role="alert">
-                      {deleteError}
-                    </p>
-                  )}
-                  <div className="my-post-detail-dialog-actions">
-                    <button
-                      className="my-post-detail-dialog-btn secondary"
-                      onClick={handleCancelDelete}
-                      disabled={deleting}
-                    >
-                      戻る
-                    </button>
-                    <button
-                      className="my-post-detail-dialog-btn danger"
-                      onClick={handleConfirmDelete}
-                      disabled={deleting}
-                    >
-                      {deleting ? '削除中…' : '確認'}
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <p id="my-post-detail-dialog-message" className="my-post-detail-dialog-message">
-                    投稿の削除が完了しました
-                  </p>
-                  <div className="my-post-detail-dialog-actions">
-                    <button
-                      className="my-post-detail-dialog-btn primary"
-                      onClick={handleBackToList}
-                    >
-                      一覧に戻る
-                    </button>
-                  </div>
-                </>
-              )}
+          </>
+        ) : (
+          <>
+            <p id="my-post-detail-dialog-message" className="my-post-detail-dialog-message">
+              投稿の削除が完了しました
+            </p>
+            <div className="my-post-detail-dialog-actions">
+              <button
+                className="my-post-detail-dialog-btn primary"
+                onClick={handleBackToList}
+              >
+                一覧に戻る
+              </button>
             </div>
-          </div>
+          </>
         )}
       </div>
     </div>
+  );
+
+  return (
+    <ScreenLayout
+      title="投稿の詳細"
+      onBack={() => navigate(ROUTES.myPostList)}
+      background="gray"
+      contentClassName="my-post-detail-content"
+      overlay={dialogOverlay}
+    >
+      <section className="my-post-detail-card">
+        {/* 写真（スワイプで切り替え） */}
+        <div className="my-post-detail-photo-area">
+          <div
+            className="my-post-detail-slider"
+            ref={sliderRef}
+            onScroll={handleScroll}
+          >
+            {images.map((src, index) => (
+              <div className="my-post-detail-slide" key={index}>
+                {src && !failedImages.includes(index) ? (
+                  <img
+                    src={src}
+                    alt={`${post.itemName}の写真${index + 1}`}
+                    className="my-post-detail-img"
+                    onError={() => setFailedImages((prev) => [...prev, index])}
+                  />
+                ) : (
+                  <ImagePlaceholder />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* 写真が2枚以上のときだけ点を表示 */}
+        {images.length > 1 && (
+          <div className="my-post-detail-dots">
+            {images.map((_, index) => (
+              <button
+                key={index}
+                className={`my-post-detail-dot ${index === activeIndex ? 'active' : ''}`}
+                onClick={() => handleDotClick(index)}
+                aria-label={`${index + 1}枚目の写真を表示`}
+              />
+            ))}
+          </div>
+        )}
+
+        <div className="my-post-detail-body">
+          <h2 className="my-post-detail-item-name">{post.itemName}</h2>
+
+          <dl className="my-post-detail-list">
+            <div className="my-post-detail-row">
+              <dt>カテゴリー</dt>
+              <dd>{post.itemCategory}</dd>
+            </div>
+            <div className="my-post-detail-row">
+              <dt>発見日時</dt>
+              <dd>{formatDateTime(post.foundAt)}</dd>
+            </div>
+            <div className="my-post-detail-row">
+              <dt>発見場所</dt>
+              <dd>{post.foundLocation}</dd>
+            </div>
+            <div className="my-post-detail-row">
+              <dt>保管場所</dt>
+              <dd>{STORAGE_LABELS[post.itemStatus]}</dd>
+            </div>
+            <div className="my-post-detail-row">
+              <dt>特徴</dt>
+              <dd>{post.itemDescription || '特になし'}</dd>
+            </div>
+            <div className="my-post-detail-row">
+              <dt>保管期限</dt>
+              <dd>{formatDateTime(post.storageDeadline)} まで</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      {/* 編集・削除ボタン（使えないときは灰色にして、理由を下に表示） */}
+      <div className="my-post-detail-actions">
+        <button
+          className="my-post-detail-btn edit"
+          disabled={!canEdit}
+          onClick={() => navigate(ROUTES.myPostEdit(id))}
+        >
+          編集する
+        </button>
+        <button
+          className="my-post-detail-btn delete"
+          disabled={!canDelete}
+          onClick={handleDelete}
+        >
+          削除する
+        </button>
+      </div>
+      {notice && <p className="my-post-detail-notice">{notice}</p>}
+    </ScreenLayout>
   );
 }

@@ -1,27 +1,9 @@
 /* G021 落とし物投稿画面 */
 
 .post-item {
+  /* 高さ・はみ出しは、外枠（components/ScreenLayout）が決める（2026/11/27。ここではスクロールする中身の配置だけ） */
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-}
-
-/* 戻るボタン */
-.post-item__back {
-  align-self: flex-start;
-  padding: 0;
-  border: none;
-  background: none;
-  color: var(--color-text);
-  font-family: inherit;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-/* 進行状況の配置（見た目は共通部品 ProgressSteps） */
-.post-item__steps {
-  margin: 32px 0;
 }
 
 /* 入力フォーム */
@@ -211,6 +193,3 @@
   padding-bottom: 16px;
 }
 
-.post-item__footer .btn {
-  font-size: 18px;
-}

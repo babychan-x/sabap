@@ -11,6 +11,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { getApplication } from '../../../api/applications';
 import { formatDateTime } from '../../../utils/date';
 import './StudentApprovalDetail.css';
+import ScreenLayout from '../../../components/ScreenLayout';
 
 // ---------------------------------------------------------------
 // 写真にかさねるスタンプの設定
@@ -72,25 +73,15 @@ export default function StudentApprovalDetail() {
   // 読み込み中・見つからないときは、別の落とし物を代わりに出さず、文言だけを表示する
   if (!application || !post) {
     return (
-      <div className="approval-detail-page-wrapper">
-        <div className="approval-detail-mobile-container">
-          <header className="approval-detail-header">
-            <button
-              className="approval-detail-back-btn"
-              onClick={() => navigate(-1)}
-              aria-label="戻る"
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="15 18 9 12 15 6"></polyline>
-              </svg>
-            </button>
-            <h1 className="approval-detail-title">申請結果の詳細</h1>
-          </header>
-          <p className="approval-detail-empty" role={loading ? undefined : 'alert'}>
-            {loading ? '読み込み中…' : result.error || '申請結果が見つかりませんでした'}
-          </p>
-        </div>
-      </div>
+      <ScreenLayout
+        title="申請結果の詳細"
+        onBack={() => navigate(-1)}
+        background="gray"
+      >
+        <p className="approval-detail-empty" role={loading ? undefined : 'alert'}>
+          {loading ? '読み込み中…' : result.error || '申請結果が見つかりませんでした'}
+        </p>
+      </ScreenLayout>
     );
   }
 
@@ -114,114 +105,101 @@ export default function StudentApprovalDetail() {
   };
 
   return (
-    <div className="approval-detail-page-wrapper">
-      {/* 9:16比率のスマホ枠 */}
-      <div className="approval-detail-mobile-container">
-        {/* ヘッダー */}
-        <header className="approval-detail-header">
-          <button
-            className="approval-detail-back-btn"
-            onClick={() => navigate(-1)} // 遷移元（G012 通知 / G033 受け取り申請一覧）に戻る
-            aria-label="戻る"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
-          <h1 className="approval-detail-title">申請結果の詳細</h1>
-        </header>
-
-        {/* 本文エリア */}
-        <div className="approval-detail-content">
-          <section className="approval-detail-card">
-            {/* 写真（スワイプで切り替え）＋ スタンプ */}
-            <div className="approval-detail-photo-area">
-              <div
-                className="approval-detail-slider"
-                ref={sliderRef}
-                onScroll={handleScroll}
-              >
-                {images.map((src, index) => (
-                  <div className="approval-detail-slide" key={index}>
-                    {!src || failedImages.includes(index) ? (
-                      <ImagePlaceholder />
-                    ) : (
-                      <img
-                        src={src}
-                        alt={`${post.itemName}の写真${index + 1}`}
-                        className="approval-detail-img"
-                        onError={() => setFailedImages((prev) => [...prev, index])}
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-              {stamp && (
-                <span className={`approval-detail-stamp ${stamp.className}`}>
-                  {stamp.label}
-                </span>
-              )}
+    <ScreenLayout
+      title="申請結果の詳細"
+      onBack={() => navigate(-1)}
+      background="gray"
+    >
+      {/* 本文エリア */}
+      <div className="approval-detail-content">
+        <section className="approval-detail-card">
+          {/* 写真（スワイプで切り替え）＋ スタンプ */}
+          <div className="approval-detail-photo-area">
+            <div
+              className="approval-detail-slider"
+              ref={sliderRef}
+              onScroll={handleScroll}
+            >
+              {images.map((src, index) => (
+                <div className="approval-detail-slide" key={index}>
+                  {!src || failedImages.includes(index) ? (
+                    <ImagePlaceholder />
+                  ) : (
+                    <img
+                      src={src}
+                      alt={`${post.itemName}の写真${index + 1}`}
+                      className="approval-detail-img"
+                      onError={() => setFailedImages((prev) => [...prev, index])}
+                    />
+                  )}
+                </div>
+              ))}
             </div>
+            {stamp && (
+              <span className={`approval-detail-stamp ${stamp.className}`}>
+                {stamp.label}
+              </span>
+            )}
+          </div>
 
-            {/* 写真が2枚以上のときだけ点を表示 */}
-            {images.length > 1 && (
-              <div className="approval-detail-dots">
-                {images.map((_, index) => (
-                  <button
-                    key={index}
-                    className={`approval-detail-dot ${index === activeIndex ? 'active' : ''}`}
-                    onClick={() => handleDotClick(index)}
-                    aria-label={`${index + 1}枚目の写真を表示`}
-                  />
-                ))}
+          {/* 写真が2枚以上のときだけ点を表示 */}
+          {images.length > 1 && (
+            <div className="approval-detail-dots">
+              {images.map((_, index) => (
+                <button
+                  key={index}
+                  className={`approval-detail-dot ${index === activeIndex ? 'active' : ''}`}
+                  onClick={() => handleDotClick(index)}
+                  aria-label={`${index + 1}枚目の写真を表示`}
+                />
+              ))}
+            </div>
+          )}
+
+          <div className="approval-detail-body">
+            <h2 className="approval-detail-item-name">{post.itemName}</h2>
+
+            <dl className="approval-detail-list">
+              <div className="approval-detail-row">
+                <dt>カテゴリー</dt>
+                <dd>{post.itemCategory}</dd>
+              </div>
+              <div className="approval-detail-row">
+                <dt>発見日時</dt>
+                <dd>{formatDateTime(post.foundAt)}</dd>
+              </div>
+              <div className="approval-detail-row">
+                <dt>発見場所</dt>
+                <dd>{post.foundLocation}</dd>
+              </div>
+              <div className="approval-detail-row">
+                <dt>特徴</dt>
+                <dd>{post.itemDescription || '特になし'}</dd>
+              </div>
+              <div className="approval-detail-row">
+                <dt>申請理由</dt>
+                <dd className="approval-detail-reason">{application.applicationReason}</dd>
+              </div>
+            </dl>
+
+            {/* 承認されたときだけ、受け取りの期限と場所を表示（却下のときは出さない：要確認） */}
+            {application.applicationStatus === 'APPROVED' && (
+              <div className="approval-detail-pickup">
+                <div className="approval-detail-pickup-row">
+                  <span className="approval-detail-pickup-label">期限</span>
+                  <span className="approval-detail-pickup-value">
+                    {application.pickupDeadline ? formatDateTime(application.pickupDeadline) : ''}
+                  </span>
+                </div>
+                <div className="approval-detail-pickup-row">
+                  <span className="approval-detail-pickup-label">受取場所</span>
+                  <span className="approval-detail-pickup-value">{application.pickupLocation}</span>
+                </div>
               </div>
             )}
-
-            <div className="approval-detail-body">
-              <h2 className="approval-detail-item-name">{post.itemName}</h2>
-
-              <dl className="approval-detail-list">
-                <div className="approval-detail-row">
-                  <dt>カテゴリー</dt>
-                  <dd>{post.itemCategory}</dd>
-                </div>
-                <div className="approval-detail-row">
-                  <dt>発見日時</dt>
-                  <dd>{formatDateTime(post.foundAt)}</dd>
-                </div>
-                <div className="approval-detail-row">
-                  <dt>発見場所</dt>
-                  <dd>{post.foundLocation}</dd>
-                </div>
-                <div className="approval-detail-row">
-                  <dt>特徴</dt>
-                  <dd>{post.itemDescription || '特になし'}</dd>
-                </div>
-                <div className="approval-detail-row">
-                  <dt>申請理由</dt>
-                  <dd className="approval-detail-reason">{application.applicationReason}</dd>
-                </div>
-              </dl>
-
-              {/* 承認されたときだけ、受け取りの期限と場所を表示（却下のときは出さない：要確認） */}
-              {application.applicationStatus === 'APPROVED' && (
-                <div className="approval-detail-pickup">
-                  <div className="approval-detail-pickup-row">
-                    <span className="approval-detail-pickup-label">期限</span>
-                    <span className="approval-detail-pickup-value">
-                      {application.pickupDeadline ? formatDateTime(application.pickupDeadline) : ''}
-                    </span>
-                  </div>
-                  <div className="approval-detail-pickup-row">
-                    <span className="approval-detail-pickup-label">受取場所</span>
-                    <span className="approval-detail-pickup-value">{application.pickupLocation}</span>
-                  </div>
-                </div>
-              )}
-            </div>
-          </section>
-        </div>
+          </div>
+        </section>
       </div>
-    </div>
+    </ScreenLayout>
   );
 }

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { verifySignUpToken } from '../../../api/auth'
-import ProgressSteps from '../../../components/ProgressSteps'
 import './StudentSignUpForm.css'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 // アイコンの選択肢（仮）。
 // 外部設計書には「複数のアイコン画像から1つを選択」とあるだけで、画像と個数は未定。
@@ -88,11 +88,11 @@ export default function StudentSignUpForm() {
   }
 
   return (
-    <main className="page">
-      {/* 進行状況（見た目は G029 と同じ共通部品 ProgressSteps） */}
-      <div className="signup-form__steps">
-        <ProgressSteps current={0} label="登録の手順" />
-      </div>
+    <ScreenLayout
+      steps={0}
+      stepsLabel="登録の手順"
+      contentClassName="page"
+    >
       <h1 className="signup-form__title">情報登録</h1>
 
       <form onSubmit={handleSubmit} noValidate>
@@ -170,6 +170,6 @@ export default function StudentSignUpForm() {
           登録する
         </button>
       </form>
-    </main>
+    </ScreenLayout>
   )
 }

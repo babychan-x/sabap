@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import './StudentSignUpMailSent.css'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 // G003 メール送信完了画面（studentSignUpMailSent）
 // 外部設計書 第2.0版 G003 に対応。入力欄はなく、ボタンが1つだけの画面。
@@ -7,7 +8,9 @@ export default function StudentSignUpMailSent() {
   const navigate = useNavigate()
 
   return (
-    <main className="page">
+    <ScreenLayout
+      contentClassName="page"
+    >
       <h1 className="mail-sent__title">
         メール送信が
         <br />
@@ -29,6 +32,6 @@ export default function StudentSignUpMailSent() {
       >
         ログイン画面に戻る
       </button>
-    </main>
+    </ScreenLayout>
   )
 }

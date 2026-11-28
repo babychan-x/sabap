@@ -8,6 +8,7 @@ import './StudentChangePassword.css'
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './StudentChangePassword.css';
+import ScreenLayout from '../../../components/ScreenLayout';
 
 // ---------------------------------------------------------------
 // 遷移先のパス（App.jsx のルーティングと同じ）
@@ -148,77 +149,65 @@ export default function StudentChangePassword() {
   };
 
   return (
-    <div className="change-password-page-wrapper">
-      {/* 9:16比率のスマホ枠 */}
-      <div className="change-password-mobile-container">
-        {/* ヘッダー */}
-        <header className="change-password-header">
-          <button
-            className="change-password-back-btn"
-            onClick={() => navigate(ROUTES.mypage)}
-            aria-label="戻る"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
+    <ScreenLayout
+      title="パスワード再設定"
+      onBack={() => navigate(ROUTES.mypage)}
+      footer={
+        <div className="change-password-footer">
+          {/* 送信ボタンは下に固定するため、フォームの外にある。form="…" でフォームとつなぐ */}
+          <button type="submit" form="change-password-form" className="change-password-submit-btn">
+            パスワードを変更する
           </button>
-          <h1 className="change-password-title">パスワード再設定</h1>
-        </header>
-
-        <form className="change-password-form" onSubmit={handleSubmit} noValidate>
-          {/* 入力エリア */}
-          <div className="change-password-content">
-            <div className="change-password-lock">
-              <LockIcon />
-            </div>
-            <h2 className="change-password-heading">新しいパスワードを設定してください</h2>
-            <p className="change-password-hint">
-              半角英字・数字を含む8文字以上（記号 !@_#$%&*の使用可能）
-            </p>
-
-            <PasswordField
-              id="current-password"
-              label="現在のパスワード"
-              placeholder="現在のパスワードを入力"
-              value={values.current}
-              onChange={handleChange('current')}
-              show={show.current}
-              onToggle={handleToggle('current')}
-              error={errors.current}
-              autoComplete="current-password"
-            />
-            <PasswordField
-              id="new-password"
-              label="新しいパスワード"
-              placeholder="新しいパスワードを入力"
-              value={values.next}
-              onChange={handleChange('next')}
-              show={show.next}
-              onToggle={handleToggle('next')}
-              error={errors.next}
-              autoComplete="new-password"
-            />
-            <PasswordField
-              id="confirm-password"
-              label="新しいパスワード（確認用）"
-              placeholder="もう一度入力してください"
-              value={values.confirm}
-              onChange={handleChange('confirm')}
-              show={show.confirm}
-              onToggle={handleToggle('confirm')}
-              error={errors.confirm}
-              autoComplete="new-password"
-            />
+        </div>
+      }
+    >
+      <form id="change-password-form" className="change-password-form" onSubmit={handleSubmit} noValidate>
+        {/* 入力エリア */}
+        <div className="change-password-content">
+          <div className="change-password-lock">
+            <LockIcon />
           </div>
+          <h2 className="change-password-heading">新しいパスワードを設定してください</h2>
+          <p className="change-password-hint">
+            半角英字・数字を含む8文字以上（記号 !@_#$%&*の使用可能）
+          </p>
 
-          {/* ボタン */}
-          <div className="change-password-footer">
-            <button type="submit" className="change-password-submit-btn">
-              パスワードを変更する
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+          <PasswordField
+            id="current-password"
+            label="現在のパスワード"
+            placeholder="現在のパスワードを入力"
+            value={values.current}
+            onChange={handleChange('current')}
+            show={show.current}
+            onToggle={handleToggle('current')}
+            error={errors.current}
+            autoComplete="current-password"
+          />
+          <PasswordField
+            id="new-password"
+            label="新しいパスワード"
+            placeholder="新しいパスワードを入力"
+            value={values.next}
+            onChange={handleChange('next')}
+            show={show.next}
+            onToggle={handleToggle('next')}
+            error={errors.next}
+            autoComplete="new-password"
+          />
+          <PasswordField
+            id="confirm-password"
+            label="新しいパスワード（確認用）"
+            placeholder="もう一度入力してください"
+            value={values.confirm}
+            onChange={handleChange('confirm')}
+            show={show.confirm}
+            onToggle={handleToggle('confirm')}
+            error={errors.confirm}
+            autoComplete="new-password"
+          />
+        </div>
+
+      </form>
+    </ScreenLayout>
   );
 }

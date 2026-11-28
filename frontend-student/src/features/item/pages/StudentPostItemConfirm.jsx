@@ -6,7 +6,7 @@ import './StudentPostItemConfirm.css'
 
 import { useState, useEffect, useRef } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import ProgressSteps from '../../../components/ProgressSteps'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 export default function StudentPostItemConfirm() {
   const navigate = useNavigate()
@@ -134,25 +134,35 @@ export default function StudentPostItemConfirm() {
   if (!location.state) return null
 
   return (
-    <div className="page post-confirm">
+    <ScreenLayout
+      title="投稿内容の確認"
+      onBack={back}
+      steps={1}
+      stepsLabel="投稿の手順"
+      contentClassName="page post-confirm"
+      footer={
+        <div className="post-confirm__footer">
 
-      {/* 戻る */}
-      <button
-        type="button"
-        id="back"
-        className="post-confirm__back"
-        onClick={back}
-      >
-        ＜ 投稿内容の確認
-      </button>
+          {/* 投稿失敗時のみ表示 */}
+          {errorMessage && (
+            <p className="form-error" role="alert">
+              {errorMessage}
+            </p>
+          )}
 
-      {/* 進行状況（見た目は G029 と同じ共通部品 ProgressSteps） */}
-      <div
-        id="stepIndicator"
-        className="post-confirm__steps"
-      >
-        <ProgressSteps current={1} label="投稿の手順" />
-      </div>
+          <button
+            id="submitPost"
+            type="button"
+            className="btn btn--primary"
+            onClick={submitPost}
+          >
+            投稿する
+          </button>
+
+        </div>
+      }
+    >
+
 
       {/* スクロール可能な投稿内容 */}
       <main className="post-confirm__content">
@@ -250,28 +260,8 @@ export default function StudentPostItemConfirm() {
         </div>
       </main>
 
-      {/* 投稿ボタン */}
-      <div className="post-confirm__footer">
 
-        {/* 投稿失敗時のみ表示 */}
-        {errorMessage && (
-          <p className="form-error" role="alert">
-            {errorMessage}
-          </p>
-        )}
-
-        <button
-          id="submitPost"
-          type="button"
-          className="btn btn--primary"
-          onClick={submitPost}
-        >
-          投稿する
-        </button>
-
-      </div>
-
-    </div>
+    </ScreenLayout>
   )
 }
 

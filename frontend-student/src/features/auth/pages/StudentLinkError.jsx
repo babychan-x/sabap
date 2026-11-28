@@ -5,6 +5,7 @@ import './StudentLinkError.css'
 
 import { useLocation } from 'react-router-dom'
 import { X } from 'lucide-react'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 // エラーの原因ごとに表示するメッセージ
 const ERROR_MESSAGES = {
@@ -45,7 +46,9 @@ export default function StudentLinkError() {
     ERROR_MESSAGES[reason] ?? ERROR_MESSAGES.invalid
 
   return (
-    <div className="page link-error">
+    <ScreenLayout
+      contentClassName="page link-error"
+    >
 
       <main className="link-error__content">
 
@@ -72,6 +75,6 @@ export default function StudentLinkError() {
 
       </main>
 
-    </div>
+    </ScreenLayout>
   )
 }

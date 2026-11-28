@@ -2,30 +2,10 @@
 /* G037 メッセージ送信完了画面 */
 
 .message-complete {
+  /* 高さ・はみ出しは、外枠（components/ScreenLayout）が決める（2026/11/27。ここではスクロールする中身の配置だけ） */
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  min-height: 100dvh;
   box-sizing: border-box;
-}
-
-/* ヘッダー */
-.message-complete__header {
-  flex-shrink: 0;
-}
-
-/* 画面タイトル */
-.message-complete__title {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--color-text);
-}
-
-/* 進行状況表示の配置 */
-.message-complete__steps {
-  flex-shrink: 0;
-  margin: 24px 0 32px;
 }
 
 /* 完了メッセージの配置 */
@@ -60,6 +40,6 @@
 /* ボタンの配置 */
 .message-complete__footer {
   flex-shrink: 0;
-  padding-top: 24px;
-  padding-bottom: 16px;
+  /* 下に固定したので、左右の余白をほかの画面（G025 など）と同じにする（11/27） */
+  padding: 24px 32px 40px;
 }

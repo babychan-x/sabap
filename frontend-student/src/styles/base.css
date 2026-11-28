@@ -7,6 +7,16 @@
   box-sizing: border-box;
 }
 
+/* ページ全体は動かさない（スクロールするのは、各画面の中身だけ。components/ScreenLayout）。
+   overscroll-behavior: none … タッチパッドやスマホで端まで引っぱったとき、
+   ブラウザが画面全体をゴムのように引っぱって見せる動き（オーバースクロール）を止める（2026/11/27） */
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
 body {
   margin: 0;
   background: var(--color-page-bg);
@@ -15,12 +25,11 @@ body {
   font-size: var(--font-size-base);
 }
 
-/* 1画面ぶんの外枠。どの画面も、いちばん外側にこれを付ける。 */
+/* 古い形の画面（ログイン・新規登録など）の中身の余白。
+   2026/11/27 から、外枠（幅・高さ・スクロール）は components/ScreenLayout が決める。
+   ここは ScreenLayout の contentClassName="page …" で付ける、中身の余白と背景だけ（左右 32px は G025〜G029 と同じ）。 */
 .page {
-  width: 100%;
-  max-width: var(--page-max-width);
-  min-height: 100vh;
-  margin: 0 auto;
-  padding: 48px 24px 32px;
+  padding: 48px 32px 32px;
   background: var(--color-surface);
+  font-size: 15px; /* 本文の大きさを、ほかの画面（14〜15px）にそろえる。入力欄は .form-input で 16px のまま（スマホで拡大されないように） */
 }

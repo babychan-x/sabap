@@ -3,7 +3,8 @@ import './StudentLogoutConfirm.css'
 // G038 ログアウト確認画面
 
 import { useNavigate } from 'react-router-dom'
-import { ChevronLeft, DoorOpen } from 'lucide-react'
+import { DoorOpen } from 'lucide-react'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 const ROUTES = {
   myPage: '/mypage',
@@ -46,24 +47,12 @@ export default function StudentLogoutConfirm() {
   }
 
   return (
-    <div className="page logout-confirm">
+    <ScreenLayout
+      title="ログアウト"
+      onBack={backToMyPage}
+      contentClassName="page logout-confirm"
+    >
 
-      {/* ヘッダー */}
-      <header className="logout-confirm__header">
-        <button
-          type="button"
-          id="backToMyPage"
-          className="logout-confirm__back"
-          onClick={backToMyPage}
-          aria-label="マイページに戻る"
-        >
-          <ChevronLeft size={22} />
-        </button>
-
-        <h1 className="logout-confirm__title">
-          ログアウト
-        </h1>
-      </header>
 
       {/* ログアウト確認メッセージ */}
       <main className="logout-confirm__content">
@@ -101,6 +90,6 @@ export default function StudentLogoutConfirm() {
         </button>
       </div>
 
-    </div>
+    </ScreenLayout>
   )
 }

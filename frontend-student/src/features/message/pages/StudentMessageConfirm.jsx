@@ -11,8 +11,8 @@ import {
   useParams,
   Navigate,
 } from 'react-router-dom'
-import { ChevronLeft, ImageOff } from 'lucide-react'
-import ProgressSteps from '../../../components/ProgressSteps'
+import { ImageOff } from 'lucide-react'
+import ScreenLayout from '../../../components/ScreenLayout'
 const ROUTES = {
   write: (id) => `/mypage/applications/${id}/message`,
   complete: (id) => `/mypage/applications/${id}/message/complete`,
@@ -128,32 +128,35 @@ export default function StudentMessageConfirm() {
   }
 
   return (
-    <div className="page message-confirm">
+    <ScreenLayout
+      title="メッセージ内容の確認"
+      onBack={backToMessageWrite}
+      steps={1}
+      stepsLabel="送信の手順"
+      contentClassName="page message-confirm"
+      footer={
+        <div className="message-confirm__footer">
 
-      {/* ヘッダー */}
-      <header className="message-confirm__header">
-        <button
-          type="button"
-          id="backToMessageWrite"
-          className="message-confirm__back"
-          onClick={backToMessageWrite}
-          aria-label="戻る"
-        >
-          <ChevronLeft size={22} />
-        </button>
+          {errorMessage && (
+            <p className="form-error" role="alert">
+              {errorMessage}
+            </p>
+          )}
 
-        <h1 className="message-confirm__title">
-          メッセージ内容の確認
-        </h1>
-      </header>
+          <button
+            type="button"
+            id="submitMessage"
+            className="btn btn--primary"
+            onClick={submitMessage}
+          >
+            送信する
+          </button>
 
-      {/* 共通の進行状況表示 */}
-      <div className="message-confirm__steps">
-        <ProgressSteps
-          current={1}
-          label="送信の手順"
-        />
-      </div>
+        </div>
+      }
+    >
+
+
 
       {/* スクロール可能なコンテンツ */}
       <main className="message-confirm__content">
@@ -232,26 +235,7 @@ export default function StudentMessageConfirm() {
         </div>
       </main>
 
-      {/* 送信ボタン */}
-      <div className="message-confirm__footer">
 
-        {errorMessage && (
-          <p className="form-error" role="alert">
-            {errorMessage}
-          </p>
-        )}
-
-        <button
-          type="button"
-          id="submitMessage"
-          className="btn btn--primary"
-          onClick={submitMessage}
-        >
-          送信する
-        </button>
-
-      </div>
-
-    </div>
+    </ScreenLayout>
   )
 }

@@ -1,5 +1,6 @@
 import './StudentResetPasswordMailSent.css'
 import { useNavigate } from 'react-router-dom'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 
 // G008 メール送信完了画面（studentResetPasswordMailSent）
@@ -13,7 +14,9 @@ export default function StudentResetPasswordMailSent() {
   }
 
   return (
-    <div className="page reset-password-mail-sent">
+    <ScreenLayout
+      contentClassName="page reset-password-mail-sent"
+    >
 
       {/* メール送信完了メッセージ */}
       <div className="reset-password-mail-sent__message">
@@ -39,7 +42,7 @@ export default function StudentResetPasswordMailSent() {
         </button>
       </div>
 
-    </div>
+    </ScreenLayout>
   )
 }
 
