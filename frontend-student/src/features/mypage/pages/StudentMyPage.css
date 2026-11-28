@@ -1,13 +1,11 @@
 /* G024 マイページ */
 
 .mypage {
+  /* 高さ・はみ出しは、外枠（components/ScreenLayout）が決める（2026/11/27。ここではスクロールする中身の配置だけ） */
   position: relative;
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  height: 100dvh;
   padding: 0;
-  overflow: hidden;
 }
 
 /* スクロール可能なコンテンツ部分 */
@@ -15,15 +13,7 @@
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding: 48px 24px 88px;
-}
-
-/* 画面タイトル */
-.mypage__header {
-  margin: 0 0 24px;
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--color-text);
+  padding: 4px 32px 24px; /* 画面名はヘッダー（ScreenLayout）に移った。下タブも重ならない（11/27） */
 }
 
 /* ユーザー情報 */

@@ -8,9 +8,9 @@ import './StudentMyPostList.css'
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getMyPosts } from '../../../api/myPosts';
-import BottomNav from '../../../components/BottomNav';
 import { formatDateTime } from '../../../utils/date';
 import './StudentMyPostList.css';
+import ScreenLayout from '../../../components/ScreenLayout';
 
 // ---------------------------------------------------------------
 // 遷移先のパス（App.jsx のルーティングと同じ）
@@ -70,63 +70,48 @@ export default function StudentMyPostList() {
   }, []);
 
   return (
-    <div className="my-post-list-page-wrapper">
-      {/* 9:16比率のスマホ枠 */}
-      <div className="my-post-list-mobile-container">
-        {/* ヘッダー */}
-        <header className="my-post-list-header">
-          <button
-            className="my-post-list-back-btn"
-            onClick={() => navigate(ROUTES.mypage)}
-            aria-label="戻る"
+    <ScreenLayout
+      title="自分の投稿一覧"
+      onBack={() => navigate(ROUTES.mypage)}
+      bottomNav="mypage"
+    >
+      {/* 投稿リスト */}
+      <div className="my-post-list">
+        {loadError && (
+          <p className="my-post-list-empty" role="alert">{loadError}</p>
+        )}
+        {!loadError && myPosts === null && (
+          <p className="my-post-list-empty">読み込み中…</p>
+        )}
+        {myPosts?.length === 0 && (
+          <p className="my-post-list-empty">投稿した落とし物はありません</p>
+        )}
+
+        {myPosts?.map((post) => (
+          <div
+            key={post.postId}
+            className="my-post-list-item"
+            role="button"
+            tabIndex={0}
+            onClick={() => navigate(ROUTES.myPostDetail(post.postId))}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') navigate(ROUTES.myPostDetail(post.postId));
+            }}
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
-          <h1 className="my-post-list-title">自分の投稿一覧</h1>
-        </header>
-
-        {/* 投稿リスト */}
-        <div className="my-post-list">
-          {loadError && (
-            <p className="my-post-list-empty" role="alert">{loadError}</p>
-          )}
-          {!loadError && myPosts === null && (
-            <p className="my-post-list-empty">読み込み中…</p>
-          )}
-          {myPosts?.length === 0 && (
-            <p className="my-post-list-empty">投稿した落とし物はありません</p>
-          )}
-
-          {myPosts?.map((post) => (
-            <div
-              key={post.postId}
-              className="my-post-list-item"
-              role="button"
-              tabIndex={0}
-              onClick={() => navigate(ROUTES.myPostDetail(post.postId))}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') navigate(ROUTES.myPostDetail(post.postId));
-              }}
-            >
-              {/* 写真は1枚目をサムネイルにする */}
-              <Thumbnail src={post.postImageUrls[0] ?? null} alt={post.itemName} />
-              <div className="my-post-list-info">
-                <h2 className="my-post-list-name">{post.itemName}</h2>
-                {/* 投稿日時（設計書 G027 入出力項目4: 投稿が登録された日時） */}
-                <p className="my-post-list-date">{formatDateTime(post.postedAt)}</p>
-              </div>
-              <svg className="my-post-list-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <polyline points="9 6 15 12 9 18"></polyline>
-              </svg>
+            {/* 写真は1枚目をサムネイルにする */}
+            <Thumbnail src={post.postImageUrls[0] ?? null} alt={post.itemName} />
+            <div className="my-post-list-info">
+              <h2 className="my-post-list-name">{post.itemName}</h2>
+              {/* 投稿日時（設計書 G027 入出力項目4: 投稿が登録された日時） */}
+              <p className="my-post-list-date">{formatDateTime(post.postedAt)}</p>
             </div>
-          ))}
-        </div>
-
-        {/* ボトムナビゲーション（フッター） */}
-        <BottomNav active="mypage" />
+            <svg className="my-post-list-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <polyline points="9 6 15 12 9 18"></polyline>
+            </svg>
+          </div>
+        ))}
       </div>
-    </div>
+
+    </ScreenLayout>
   );
 }

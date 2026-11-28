@@ -2,75 +2,11 @@
    外枠・ヘッダー・一覧の1行は G027（StudentMyPostList）と同じ値。下タブは共通部品 BottomNav。
    バッジ・NEW マークは旧スライドの形を、G025〜G029 の色にした（色は仮）。 */
 
-/* PC画面で中央に配置する背景ラッパー */
-.apply-list-page-wrapper {
-  min-height: 100vh;
-  background-color: #f0f2f5;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", "Noto Sans JP", sans-serif;
-}
-
-/* スマホ枠 */
-.apply-list-mobile-container {
-  width: 100%;
-  max-width: var(--page-max-width);
-  height: 100vh;
-  max-height: 844px;
-  background-color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  box-sizing: border-box;
-  overflow: hidden;
-}
-
-@media (min-width: 450px) {
-  .apply-list-mobile-container {
-    border: 4px solid #ffffff;
-  }
-}
-
-/* ヘッダー（戻るボタン＋タイトル） */
-.apply-list-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 32px 32px 18px 24px;
-  background-color: #ffffff;
-}
-
-.apply-list-back-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #4b5563;
-  display: flex;
-  align-items: center;
-  padding: 8px;
-  border-radius: 50%;
-  transition: transform 0.2s ease, background-color 0.2s ease;
-}
-
-.apply-list-back-btn:active {
-  transform: scale(0.85);
-  background-color: #f3f4f6;
-}
-
-.apply-list-title {
-  font-size: 20px;
-  font-weight: 800;
-  color: #111827;
-  margin: 0;
-  letter-spacing: -0.02em;
-}
-
 /* 一覧エリア（ここだけスクロールする。下タブの分だけ下を空ける） */
 .apply-list {
   flex: 1;
   overflow-y: auto;
-  padding: 0 32px 88px 32px;
+  padding: 0 32px 24px 32px; /* 下タブが中身に重ならなくなったので、88px → 24px（11/27） */
   display: flex;
   flex-direction: column;
 }

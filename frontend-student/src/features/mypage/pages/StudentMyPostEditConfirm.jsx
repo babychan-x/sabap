@@ -14,10 +14,10 @@ import { useState } from 'react'
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { updateMyPost } from '../../../api/myPosts'
 import PhotoSlider from '../../../components/PhotoSlider'
-import ProgressSteps from '../../../components/ProgressSteps'
 import { formatDateTime } from '../../../utils/date'
 import { STORAGE_STATUS_LABELS } from '../../../utils/labels'
 import './StudentMyPostEditConfirm.css'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 // ---------------------------------------------------------------
 // 遷移先のパス（App.jsx のルーティングと同じ）
@@ -68,66 +68,14 @@ export default function StudentMyPostEditConfirm() {
   }
 
   return (
-    <div className="my-post-edit-confirm-page-wrapper">
-      {/* スマホ枠 */}
-      <div className="my-post-edit-confirm-mobile-container">
-        {/* ヘッダー */}
-        <header className="my-post-edit-confirm-header">
-          {/* 入出力項目1: 戻る（イベント1） */}
-          <button className="my-post-edit-confirm-back-btn" onClick={handleBack} disabled={submitting} aria-label="戻る">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
-          {/* タイトルは設計書に記載なし（旧スライドの文言） */}
-          <h1 className="my-post-edit-confirm-title">編集内容の確認</h1>
-        </header>
-
-        {/* 入出力項目2: 進行状況表示（この画面では「確認」を強調） */}
-        <ProgressSteps current={1} label="編集の手順" />
-
-        {/* 本文エリア（ここだけスクロールする。特徴が長いときも、スクロールで全文を読める） */}
-        <div className="my-post-edit-confirm-content">
-          <section className="my-post-edit-confirm-card">
-            {/* 入出力項目3: 画像（編集後の写真。スワイプで切り替え・位置表示つき。イベント2） */}
-            <PhotoSlider images={form.postImages.map((image) => image.url)} alt={form.itemName} />
-
-            <div className="my-post-edit-confirm-body">
-              {/* 入出力項目4: 落とし物名（G029 のタイトル） */}
-              <h2 className="my-post-edit-confirm-item-name">{form.itemName}</h2>
-
-              <dl className="my-post-edit-confirm-list">
-                {/* 入出力項目5: カテゴリー */}
-                <div className="my-post-edit-confirm-row">
-                  <dt>カテゴリー</dt>
-                  <dd>{form.itemCategory}</dd>
-                </div>
-                {/* 入出力項目6: 拾得日時（例: 2026/10/12 15:00） */}
-                <div className="my-post-edit-confirm-row">
-                  <dt>拾得日時</dt>
-                  <dd>{formatDateTime(form.foundAt)}</dd>
-                </div>
-                {/* 入出力項目7: 拾得場所 */}
-                <div className="my-post-edit-confirm-row">
-                  <dt>拾得場所</dt>
-                  <dd>{form.foundLocation}</dd>
-                </div>
-                {/* 入出力項目8: 保管場所（G029 で選んだもの） */}
-                <div className="my-post-edit-confirm-row">
-                  <dt>保管場所</dt>
-                  <dd>{STORAGE_STATUS_LABELS[form.itemStatus] ?? form.itemStatus}</dd>
-                </div>
-                {/* 入出力項目9: 特徴（未入力なら「特になし」。改行もそのまま表示） */}
-                <div className="my-post-edit-confirm-row">
-                  <dt>特徴</dt>
-                  <dd className="my-post-edit-confirm-feature">{form.itemDescription || '特になし'}</dd>
-                </div>
-              </dl>
-            </div>
-          </section>
-        </div>
-
-        {/* 入出力項目10: 編集完了する（イベント3。下に固定） */}
+    <ScreenLayout
+      title="編集内容の確認"
+      onBack={handleBack}
+      backDisabled={submitting}
+      steps={1}
+      stepsLabel="編集の手順"
+      background="gray"
+      footer={
         <div className="my-post-edit-confirm-footer">
           {submitError && (
             <p className="my-post-edit-confirm-submit-error" role="alert">
@@ -138,7 +86,49 @@ export default function StudentMyPostEditConfirm() {
             {submitting ? '保存中…' : '編集完了する'}
           </button>
         </div>
+      }
+    >
+      {/* 本文エリア（ここだけスクロールする。特徴が長いときも、スクロールで全文を読める） */}
+      <div className="my-post-edit-confirm-content">
+        <section className="my-post-edit-confirm-card">
+          {/* 入出力項目3: 画像（編集後の写真。スワイプで切り替え・位置表示つき。イベント2） */}
+          <PhotoSlider images={form.postImages.map((image) => image.url)} alt={form.itemName} />
+
+          <div className="my-post-edit-confirm-body">
+            {/* 入出力項目4: 落とし物名（G029 のタイトル） */}
+            <h2 className="my-post-edit-confirm-item-name">{form.itemName}</h2>
+
+            <dl className="my-post-edit-confirm-list">
+              {/* 入出力項目5: カテゴリー */}
+              <div className="my-post-edit-confirm-row">
+                <dt>カテゴリー</dt>
+                <dd>{form.itemCategory}</dd>
+              </div>
+              {/* 入出力項目6: 拾得日時（例: 2026/10/12 15:00） */}
+              <div className="my-post-edit-confirm-row">
+                <dt>拾得日時</dt>
+                <dd>{formatDateTime(form.foundAt)}</dd>
+              </div>
+              {/* 入出力項目7: 拾得場所 */}
+              <div className="my-post-edit-confirm-row">
+                <dt>拾得場所</dt>
+                <dd>{form.foundLocation}</dd>
+              </div>
+              {/* 入出力項目8: 保管場所（G029 で選んだもの） */}
+              <div className="my-post-edit-confirm-row">
+                <dt>保管場所</dt>
+                <dd>{STORAGE_STATUS_LABELS[form.itemStatus] ?? form.itemStatus}</dd>
+              </div>
+              {/* 入出力項目9: 特徴（未入力なら「特になし」。改行もそのまま表示） */}
+              <div className="my-post-edit-confirm-row">
+                <dt>特徴</dt>
+                <dd className="my-post-edit-confirm-feature">{form.itemDescription || '特になし'}</dd>
+              </div>
+            </dl>
+          </div>
+        </section>
       </div>
-    </div>
+
+    </ScreenLayout>
   )
 }

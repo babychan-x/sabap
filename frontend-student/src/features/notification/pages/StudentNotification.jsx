@@ -14,8 +14,8 @@ import './StudentNotification.css'
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import BottomNav from '../../../components/BottomNav';
 import './StudentNotification.css';
+import ScreenLayout from '../../../components/ScreenLayout';
 
 // ---------------------------------------------------------------
 // 遷移先のパス（App.jsx のルーティングと同じ）
@@ -199,71 +199,56 @@ export default function StudentNotification() {
   };
 
   return (
-    <div className="notification-page-wrapper">
-      {/* 9:16比率のスマホ枠 */}
-      <div className="notification-mobile-container">
-        {/* ヘッダー */}
-        <header className="notification-header">
-          <button
-            className="notification-back-btn"
-            onClick={() => navigate(ROUTES.home)}
-            aria-label="戻る"
-          >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
-          <h1 className="notification-title">通知</h1>
-        </header>
+    <ScreenLayout
+      title="通知"
+      onBack={() => navigate(ROUTES.home)}
+      bottomNav="home"
+    >
+      {/* 通知リスト */}
+      <div className="notification-list">
+        {notifications.length === 0 && (
+          <p className="notification-empty">通知はありません</p>
+        )}
 
-        {/* 通知リスト */}
-        <div className="notification-list">
-          {notifications.length === 0 && (
-            <p className="notification-empty">通知はありません</p>
-          )}
-
-          {notifications.map((n) => {
-            const config = NOTIFICATION_TYPES[n.type];
-            return (
-              <div
-                key={n.id}
-                className="notification-item"
-                role="button"
-                tabIndex={0}
-                onClick={() => handleSelect(n)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleSelect(n);
-                }}
-              >
-                {/* 落とし物の写真 または 封筒アイコン */}
-                <div className="notification-img-wrapper">
-                  {config.icon === 'envelope' ? (
-                    <EnvelopeIcon />
-                  ) : (
-                    <img src={n.image} alt={n.itemName} className="notification-img" />
-                  )}
-                  {/* 未読の通知にだけNEWマークを表示 */}
-                  {!n.isRead && (
-                    <span className="notification-new-badge">
-                      <span>NEW</span>
-                    </span>
-                  )}
-                </div>
-
-                <div className="notification-info">
-                  <p className="notification-text">
-                    『{n.itemName}』{config.text}
-                  </p>
-                  <p className="notification-date">{n.date}</p>
-                </div>
+        {notifications.map((n) => {
+          const config = NOTIFICATION_TYPES[n.type];
+          return (
+            <div
+              key={n.id}
+              className="notification-item"
+              role="button"
+              tabIndex={0}
+              onClick={() => handleSelect(n)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleSelect(n);
+              }}
+            >
+              {/* 落とし物の写真 または 封筒アイコン */}
+              <div className="notification-img-wrapper">
+                {config.icon === 'envelope' ? (
+                  <EnvelopeIcon />
+                ) : (
+                  <img src={n.image} alt={n.itemName} className="notification-img" />
+                )}
+                {/* 未読の通知にだけNEWマークを表示 */}
+                {!n.isRead && (
+                  <span className="notification-new-badge">
+                    <span>NEW</span>
+                  </span>
+                )}
               </div>
-            );
-          })}
-        </div>
 
-        {/* ボトムナビゲーション（フッター） */}
-        <BottomNav active="home" />
+              <div className="notification-info">
+                <p className="notification-text">
+                  『{n.itemName}』{config.text}
+                </p>
+                <p className="notification-date">{n.date}</p>
+              </div>
+            </div>
+          );
+        })}
       </div>
-    </div>
+
+    </ScreenLayout>
   );
 }

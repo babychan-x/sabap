@@ -12,8 +12,8 @@ import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { createApplication } from '../../../api/applications'
 import { getItem } from '../../../api/items'
 import PhotoSlider from '../../../components/PhotoSlider'
-import ProgressSteps from '../../../components/ProgressSteps'
 import './StudentApplyConfirm.css'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 // ---------------------------------------------------------------
 // 遷移先のパス（App.jsx のルーティングと同じ）
@@ -88,53 +88,14 @@ export default function StudentApplyConfirm() {
   const item = itemLoading ? null : itemResult.item
 
   return (
-    <div className="apply-confirm-page-wrapper">
-      {/* スマホ枠 */}
-      <div className="apply-confirm-mobile-container">
-        {/* ヘッダー */}
-        <header className="apply-confirm-header">
-          <button className="apply-confirm-back-btn" onClick={handleBack} disabled={submitting} aria-label="戻る">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
-          {/* タイトルは設計書に記載なし（旧スライドの文言） */}
-          <h1 className="apply-confirm-title">申請内容の確認</h1>
-        </header>
-
-        {/* 入出力項目2: 進行状況表示（この画面では「確認」を強調） */}
-        <ProgressSteps current={1} label="申請の手順" />
-
-        {/* 本文エリア（ここだけスクロールする） */}
-        <div className="apply-confirm-content">
-          {itemLoading && <p className="apply-confirm-message">読み込み中…</p>}
-
-          {!itemLoading && itemResult.error && (
-            <p className="apply-confirm-message error" role="alert">{itemResult.error}</p>
-          )}
-
-          {item && (
-            <section className="apply-confirm-card">
-              {/* 入出力項目3: 画像（複数枚なら位置表示つき） */}
-              <PhotoSlider key={item.postId} images={item.postImageUrls} alt={item.itemName} />
-
-              <div className="apply-confirm-body">
-                {/* 入出力項目4: 落とし物名 */}
-                <h2 className="apply-confirm-item-name">{item.itemName}</h2>
-
-                <dl className="apply-confirm-list">
-                  {/* 入出力項目5: 申請理由（G018 で入力した理由。改行もそのまま表示） */}
-                  <div className="apply-confirm-row">
-                    <dt>理由</dt>
-                    <dd className="apply-confirm-reason">{form.applicationReason}</dd>
-                  </div>
-                </dl>
-              </div>
-            </section>
-          )}
-        </div>
-
-        {/* 入出力項目6: 受け取り申請する（下に固定） */}
+    <ScreenLayout
+      title="申請内容の確認"
+      onBack={handleBack}
+      backDisabled={submitting}
+      steps={1}
+      stepsLabel="申請の手順"
+      background="gray"
+      footer={
         <div className="apply-confirm-footer">
           {submitError && (
             <p className="apply-confirm-submit-error" role="alert">
@@ -151,7 +112,37 @@ export default function StudentApplyConfirm() {
             {submitting ? '申請中…' : '受け取り申請する'}
           </button>
         </div>
+      }
+    >
+      {/* 本文エリア（ここだけスクロールする） */}
+      <div className="apply-confirm-content">
+        {itemLoading && <p className="apply-confirm-message">読み込み中…</p>}
+
+        {!itemLoading && itemResult.error && (
+          <p className="apply-confirm-message error" role="alert">{itemResult.error}</p>
+        )}
+
+        {item && (
+          <section className="apply-confirm-card">
+            {/* 入出力項目3: 画像（複数枚なら位置表示つき） */}
+            <PhotoSlider key={item.postId} images={item.postImageUrls} alt={item.itemName} />
+
+            <div className="apply-confirm-body">
+              {/* 入出力項目4: 落とし物名 */}
+              <h2 className="apply-confirm-item-name">{item.itemName}</h2>
+
+              <dl className="apply-confirm-list">
+                {/* 入出力項目5: 申請理由（G018 で入力した理由。改行もそのまま表示） */}
+                <div className="apply-confirm-row">
+                  <dt>理由</dt>
+                  <dd className="apply-confirm-reason">{form.applicationReason}</dd>
+                </div>
+              </dl>
+            </div>
+          </section>
+        )}
       </div>
-    </div>
+
+    </ScreenLayout>
   )
 }

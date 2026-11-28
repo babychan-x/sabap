@@ -8,8 +8,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { getItems } from '../../../api/items'
 import { formatDateTime } from '../../../utils/date'
 import { STORAGE_STATUS_LABELS } from '../../../utils/labels'
-import BottomNav from '../../../components/BottomNav'
 import './StudentSearchResult.css'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 // ---------------------------------------------------------------
 // 遷移先のパス（App.jsx のルーティングと同じ）
@@ -94,21 +94,12 @@ export default function StudentSearchResult() {
   }
 
   return (
-    <div className="search-result-page-wrapper">
-      {/* スマホ枠 */}
-      <div className="search-result-mobile-container">
-        {/* ヘッダー */}
-        <header className="search-result-header">
-          {/* イベント1: 戻るボタン押下 → G011（studentHome） */}
-          <button className="search-result-back-btn" onClick={() => navigate(ROUTES.home)} aria-label="戻る">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
-          <h1 className="search-result-title">検索結果一覧</h1>
-        </header>
-
-        {/* 入出力項目2: キーワード検索 */}
+    <ScreenLayout
+      title="検索結果一覧"
+      onBack={() => navigate(ROUTES.home)}
+      bottomNav="home"
+      subHeader={
+        // 入出力項目2: キーワード検索（ヘッダーの下に固定する。前と同じ。落とし物リストだけがスクロールする）
         <form className="search-result-search-section" role="search" onSubmit={handleSearch}>
           <div className="search-result-search-bar">
             <svg className="search-result-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -127,55 +118,53 @@ export default function StudentSearchResult() {
             />
           </div>
         </form>
+      }
+    >
+      {/* 落とし物リスト */}
+      <div className="search-result-list" aria-busy={loading}>
+        {loading && <p className="search-result-message">検索中…</p>}
 
-        {/* 落とし物リスト */}
-        <div className="search-result-list" aria-busy={loading}>
-          {loading && <p className="search-result-message">検索中…</p>}
+        {!loading && result.error && (
+          <p className="search-result-message error" role="alert">{result.error}</p>
+        )}
 
-          {!loading && result.error && (
-            <p className="search-result-message error" role="alert">{result.error}</p>
-          )}
+        {!loading && !result.error && (
+          <>
+            {/* 入出力項目3: 該当件数（例: 該当件数:4件） */}
+            <p className="search-result-count" aria-live="polite">該当件数:{result.items.length}件</p>
 
-          {!loading && !result.error && (
-            <>
-              {/* 入出力項目3: 該当件数（例: 該当件数:4件） */}
-              <p className="search-result-count" aria-live="polite">該当件数:{result.items.length}件</p>
+            {/* 0件のときの文言は設計書に記載なし（仮） */}
+            {result.items.length === 0 && (
+              <p className="search-result-message">該当する落とし物はありませんでした。</p>
+            )}
 
-              {/* 0件のときの文言は設計書に記載なし（仮） */}
-              {result.items.length === 0 && (
-                <p className="search-result-message">該当する落とし物はありませんでした。</p>
-              )}
-
-              {/* 入出力項目4・5: 落とし物一覧・落とし物カード */}
-              {result.items.map((item) => (
-                <button
-                  key={item.postId}
-                  type="button"
-                  className="search-result-card"
-                  // イベント3: 落とし物カード選択 → 落とし物詳細画面
-                  onClick={() => navigate(ROUTES.itemDetail(item.postId))}
-                >
-                  <Thumbnail src={item.postImageUrls[0]} alt={item.itemName} />
-                  <div className="search-result-info">
-                    {/* button の中には見出し（h2）を入れられない決まりなので p にしている */}
-                    <p className="search-result-name">{item.itemName}</p>
-                    {/* 拾得日時・拾得場所 */}
-                    <p className="search-result-date">{formatDateTime(item.foundAt)}</p>
-                    <p className="search-result-place">{item.foundLocation}</p>
-                  </div>
-                  {/* 保管場所ステータス */}
-                  <span className={`search-result-status ${item.itemStatus.toLowerCase()}`}>
-                    {STORAGE_STATUS_LABELS[item.itemStatus]}
-                  </span>
-                </button>
-              ))}
-            </>
-          )}
-        </div>
-
-        {/* 入出力項目6〜8: 下タブ（共通部品 BottomNav。イベント4〜6: ホーム→G011、投稿→G021、マイページ→G024）。ホームから来る画面なので「ホーム」を選択中にする */}
-        <BottomNav active="home" />
+            {/* 入出力項目4・5: 落とし物一覧・落とし物カード */}
+            {result.items.map((item) => (
+              <button
+                key={item.postId}
+                type="button"
+                className="search-result-card"
+                // イベント3: 落とし物カード選択 → 落とし物詳細画面
+                onClick={() => navigate(ROUTES.itemDetail(item.postId))}
+              >
+                <Thumbnail src={item.postImageUrls[0]} alt={item.itemName} />
+                <div className="search-result-info">
+                  {/* button の中には見出し（h2）を入れられない決まりなので p にしている */}
+                  <p className="search-result-name">{item.itemName}</p>
+                  {/* 拾得日時・拾得場所 */}
+                  <p className="search-result-date">{formatDateTime(item.foundAt)}</p>
+                  <p className="search-result-place">{item.foundLocation}</p>
+                </div>
+                {/* 保管場所ステータス */}
+                <span className={`search-result-status ${item.itemStatus.toLowerCase()}`}>
+                  {STORAGE_STATUS_LABELS[item.itemStatus]}
+                </span>
+              </button>
+            ))}
+          </>
+        )}
       </div>
-    </div>
+
+    </ScreenLayout>
   )
 }

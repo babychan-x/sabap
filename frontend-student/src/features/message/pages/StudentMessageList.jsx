@@ -11,8 +11,8 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { getMessages } from '../../../api/messages'
 import { formatDateTime } from '../../../utils/date'
-import BottomNav from '../../../components/BottomNav'
 import './StudentMessageList.css'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 // ---------------------------------------------------------------
 // 遷移先のパス（App.jsx のルーティングと同じ）
@@ -113,22 +113,12 @@ export default function StudentMessageList() {
   }
 
   return (
-    <div className="message-list-page-wrapper">
-      {/* スマホ枠 */}
-      <div className="message-list-mobile-container">
-        {/* ヘッダー */}
-        <header className="message-list-header">
-          {/* 入出力項目1: 戻る（イベント1 → G024 マイページ） */}
-          <button className="message-list-back-btn" onClick={() => navigate(ROUTES.mypage)} aria-label="戻る">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
-          {/* タイトルは設計書に記載なし（旧スライドの文言） */}
-          <h1 className="message-list-title">感謝メッセージボックス</h1>
-        </header>
-
-        {/* 入出力項目2・3: 受信メッセージ／送信メッセージのタブ */}
+    <ScreenLayout
+      title="感謝メッセージボックス"
+      onBack={() => navigate(ROUTES.mypage)}
+      bottomNav="mypage"
+      subHeader={
+        // 入出力項目2・3: 受信メッセージ／送信メッセージのタブ（ヘッダーの下に固定する。メッセージ一覧だけがスクロールする）
         <div className="message-list-tabs" role="tablist" aria-label="メッセージの種類">
           {TABS.map((tab) => (
             <button
@@ -143,56 +133,54 @@ export default function StudentMessageList() {
             </button>
           ))}
         </div>
+      }
+    >
+      {/* 入出力項目4: メッセージ一覧（ここだけスクロールする） */}
+      <div className="message-list" role="tabpanel">
+        {loading && <p className="message-list-message">読み込み中…</p>}
 
-        {/* 入出力項目4: メッセージ一覧（ここだけスクロールする） */}
-        <div className="message-list" role="tabpanel">
-          {loading && <p className="message-list-message">読み込み中…</p>}
+        {!loading && result.error && (
+          <p className="message-list-message error" role="alert">{result.error}</p>
+        )}
 
-          {!loading && result.error && (
-            <p className="message-list-message error" role="alert">{result.error}</p>
-          )}
+        {!loading && !result.error && result.messages.length === 0 && (
+          <p className="message-list-message">{EMPTY_TEXTS[box]}</p>
+        )}
 
-          {!loading && !result.error && result.messages.length === 0 && (
-            <p className="message-list-message">{EMPTY_TEXTS[box]}</p>
-          )}
-
-          {!loading &&
-            result.messages.map((message) => {
-              // 受信: 送信者のアイコン・ニックネーム／送信: 落とし物の画像・落とし物名
-              const isReceived = box === 'received'
-              const name = isReceived ? message.senderNickname : message.post?.itemName ?? ''
-              return (
-                // 入出力項目5: メッセージカード（イベント4 → G013 メッセージ詳細）
-                <button
-                  key={message.messageId}
-                  type="button"
-                  className="message-list-item"
-                  onClick={() => navigate(ROUTES.messageDetail(message.messageId))}
-                >
-                  <div className={`message-list-thumb ${isReceived ? 'avatar' : ''}`}>
-                    {isReceived ? (
-                      <Avatar name={message.senderNickname} />
-                    ) : (
-                      <ItemImage src={message.post?.postImageUrls[0]} alt={name} />
-                    )}
-                  </div>
-                  <div className="message-list-info">
-                    <p className="message-list-name">{name}</p>
-                    {/* 長いメッセージは1行で切って「…」を付ける（CSS） */}
-                    <p className="message-list-body">{message.messageBody}</p>
-                    <p className="message-list-date">{formatDateTime(message.sentAt)}</p>
-                  </div>
-                  <svg className="message-list-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <polyline points="9 6 15 12 9 18"></polyline>
-                  </svg>
-                </button>
-              )
-            })}
-        </div>
-
-        {/* 入出力項目6〜8: 下タブ（共通部品 BottomNav。イベント5〜7: ホーム→G011、投稿→G021、マイページ→G024）。マイページから来る画面なので「マイページ」を選択中にする */}
-        <BottomNav active="mypage" />
+        {!loading &&
+          result.messages.map((message) => {
+            // 受信: 送信者のアイコン・ニックネーム／送信: 落とし物の画像・落とし物名
+            const isReceived = box === 'received'
+            const name = isReceived ? message.senderNickname : message.post?.itemName ?? ''
+            return (
+              // 入出力項目5: メッセージカード（イベント4 → G013 メッセージ詳細）
+              <button
+                key={message.messageId}
+                type="button"
+                className="message-list-item"
+                onClick={() => navigate(ROUTES.messageDetail(message.messageId))}
+              >
+                <div className={`message-list-thumb ${isReceived ? 'avatar' : ''}`}>
+                  {isReceived ? (
+                    <Avatar name={message.senderNickname} />
+                  ) : (
+                    <ItemImage src={message.post?.postImageUrls[0]} alt={name} />
+                  )}
+                </div>
+                <div className="message-list-info">
+                  <p className="message-list-name">{name}</p>
+                  {/* 長いメッセージは1行で切って「…」を付ける（CSS） */}
+                  <p className="message-list-body">{message.messageBody}</p>
+                  <p className="message-list-date">{formatDateTime(message.sentAt)}</p>
+                </div>
+                <svg className="message-list-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="9 6 15 12 9 18"></polyline>
+                </svg>
+              </button>
+            )
+          })}
       </div>
-    </div>
+
+    </ScreenLayout>
   )
 }

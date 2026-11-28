@@ -2,40 +2,10 @@
 /* G038 ログアウト確認画面 */
 
 .logout-confirm {
+  /* 高さ・はみ出しは、外枠（components/ScreenLayout）が決める（2026/11/27。ここではスクロールする中身の配置だけ） */
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  min-height: 100dvh;
   box-sizing: border-box;
-}
-
-/* ヘッダー */
-.logout-confirm__header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-/* 戻るボタン */
-.logout-confirm__back {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: var(--color-text);
-  cursor: pointer;
-}
-
-/* 画面タイトル */
-.logout-confirm__title {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--color-text);
 }
 
 /* 確認メッセージの配置 */

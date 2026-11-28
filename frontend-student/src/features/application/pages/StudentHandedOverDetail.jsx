@@ -9,6 +9,7 @@ import { getApplication } from '../../../api/applications'
 import PhotoSlider from '../../../components/PhotoSlider'
 import { formatDateTime } from '../../../utils/date'
 import './StudentHandedOverDetail.css'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 // ---------------------------------------------------------------
 // 遷移先のパス（App.jsx のルーティングと同じ）
@@ -59,75 +60,12 @@ export default function StudentHandedOverDetail() {
   const item = application?.post // 申請した落とし物（mock/items.js の形）
 
   return (
-    <div className="handed-over-page-wrapper">
-      {/* スマホ枠 */}
-      <div className="handed-over-mobile-container">
-        {/* ヘッダー */}
-        <header className="handed-over-header">
-          {/* 入出力項目1: 戻る（イベント1 → G033 受け取り申請一覧） */}
-          <button className="handed-over-back-btn" onClick={() => navigate(ROUTES.applyList)} aria-label="戻る">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
-          {/* タイトルは設計書に記載なし（旧スライドの文言。G014 と同じ） */}
-          <h1 className="handed-over-title">申請結果の詳細</h1>
-        </header>
-
-        {/* 本文エリア（ここだけスクロールする） */}
-        <div className="handed-over-content">
-          {loading && <p className="handed-over-message">読み込み中…</p>}
-
-          {!loading && result.error && (
-            <p className="handed-over-message error" role="alert">{result.error}</p>
-          )}
-
-          {application && (
-            <section className="handed-over-card">
-              {/* 入出力項目2・3: 画像（スワイプで切り替え。イベント2）と画像位置表示 */}
-              <PhotoSlider key={application.applicationId} images={item?.postImageUrls ?? []} alt={item?.itemName ?? ''}>
-                {/* 入出力項目4: 申請結果スタンプ（「受け渡し済」） */}
-                <span className="handed-over-stamp">受け渡し済</span>
-              </PhotoSlider>
-
-              <div className="handed-over-body">
-                {/* 入出力項目5: 落とし物名 */}
-                <h2 className="handed-over-item-name">{item?.itemName}</h2>
-
-                <dl className="handed-over-list">
-                  {/* 入出力項目6: カテゴリー */}
-                  <div className="handed-over-row">
-                    <dt>カテゴリー</dt>
-                    <dd>{item?.itemCategory}</dd>
-                  </div>
-                  {/* 入出力項目7: 拾得日時 */}
-                  <div className="handed-over-row">
-                    <dt>拾得日時</dt>
-                    <dd>{item ? formatDateTime(item.foundAt) : ''}</dd>
-                  </div>
-                  {/* 入出力項目8: 拾得場所 */}
-                  <div className="handed-over-row">
-                    <dt>拾得場所</dt>
-                    <dd>{item?.foundLocation}</dd>
-                  </div>
-                  {/* 入出力項目9: 特徴（未入力なら「特になし」） */}
-                  <div className="handed-over-row">
-                    <dt>特徴</dt>
-                    <dd>{item?.itemDescription || '特になし'}</dd>
-                  </div>
-                  {/* 入出力項目10: 申請理由（申請時に入力した内容。改行もそのまま表示） */}
-                  <div className="handed-over-row">
-                    <dt>申請理由</dt>
-                    <dd className="handed-over-reason">{application.applicationReason}</dd>
-                  </div>
-                </dl>
-              </div>
-            </section>
-          )}
-        </div>
-
-        {/* 入出力項目11: 感謝メッセージを書く（イベント3 → G035。下に固定） */}
-        {application && (
+    <ScreenLayout
+      title="申請結果の詳細"
+      onBack={() => navigate(ROUTES.applyList)}
+      background="gray"
+      footer={
+        application && (
           <div className="handed-over-footer">
             <button
               type="button"
@@ -139,8 +77,61 @@ export default function StudentHandedOverDetail() {
               {application.isMessageSent ? '感謝メッセージは送信済みです' : '感謝メッセージを書く'}
             </button>
           </div>
+        )
+      }
+    >
+      {/* 本文エリア（ここだけスクロールする） */}
+      <div className="handed-over-content">
+        {loading && <p className="handed-over-message">読み込み中…</p>}
+
+        {!loading && result.error && (
+          <p className="handed-over-message error" role="alert">{result.error}</p>
+        )}
+
+        {application && (
+          <section className="handed-over-card">
+            {/* 入出力項目2・3: 画像（スワイプで切り替え。イベント2）と画像位置表示 */}
+            <PhotoSlider key={application.applicationId} images={item?.postImageUrls ?? []} alt={item?.itemName ?? ''}>
+              {/* 入出力項目4: 申請結果スタンプ（「受け渡し済」） */}
+              <span className="handed-over-stamp">受け渡し済</span>
+            </PhotoSlider>
+
+            <div className="handed-over-body">
+              {/* 入出力項目5: 落とし物名 */}
+              <h2 className="handed-over-item-name">{item?.itemName}</h2>
+
+              <dl className="handed-over-list">
+                {/* 入出力項目6: カテゴリー */}
+                <div className="handed-over-row">
+                  <dt>カテゴリー</dt>
+                  <dd>{item?.itemCategory}</dd>
+                </div>
+                {/* 入出力項目7: 拾得日時 */}
+                <div className="handed-over-row">
+                  <dt>拾得日時</dt>
+                  <dd>{item ? formatDateTime(item.foundAt) : ''}</dd>
+                </div>
+                {/* 入出力項目8: 拾得場所 */}
+                <div className="handed-over-row">
+                  <dt>拾得場所</dt>
+                  <dd>{item?.foundLocation}</dd>
+                </div>
+                {/* 入出力項目9: 特徴（未入力なら「特になし」） */}
+                <div className="handed-over-row">
+                  <dt>特徴</dt>
+                  <dd>{item?.itemDescription || '特になし'}</dd>
+                </div>
+                {/* 入出力項目10: 申請理由（申請時に入力した内容。改行もそのまま表示） */}
+                <div className="handed-over-row">
+                  <dt>申請理由</dt>
+                  <dd className="handed-over-reason">{application.applicationReason}</dd>
+                </div>
+              </dl>
+            </div>
+          </section>
         )}
       </div>
-    </div>
+
+    </ScreenLayout>
   )
 }

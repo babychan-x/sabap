@@ -12,8 +12,8 @@
 
 import { useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import ProgressSteps from '../../../components/ProgressSteps'
 import './StudentMessageWrite.css'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 // ---------------------------------------------------------------
 // 遷移先のパス（App.jsx のルーティングと同じ）
@@ -66,67 +66,56 @@ export default function StudentMessageWrite() {
   }
 
   return (
-    <div className="message-write-page-wrapper">
-      {/* スマホ枠 */}
-      <div className="message-write-mobile-container">
-        {/* ヘッダー */}
-        <header className="message-write-header">
-          {/* 入出力項目1: 戻る（イベント1） */}
-          <button className="message-write-back-btn" onClick={handleBack} aria-label="戻る">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
+    <ScreenLayout
+      title="感謝メッセージを書く"
+      onBack={handleBack}
+      steps={0}
+      stepsLabel="送信の手順"
+      footer={
+        <div className="message-write-footer">
+          {/* 送信ボタンは下に固定するため、フォームの外にある。form="…" でフォームとつなぐ */}
+          <button type="submit" form="message-write-form" className="message-write-submit-btn">
+            確認画面へ
           </button>
-          {/* タイトルは設計書に記載なし（旧スライドの文言） */}
-          <h1 className="message-write-title">感謝メッセージを書く</h1>
-        </header>
-
-        {/* 入出力項目2: 進行状況表示（この画面では「入力」を強調） */}
-        <ProgressSteps current={0} label="送信の手順" />
-
-        <form className="message-write-form" onSubmit={handleSubmit} noValidate>
-          <div className="message-write-content">
-            {/* 入出力項目3: メッセージ内容（必須・140文字以下） */}
-            <div className="message-write-field">
-              <div className="message-write-label-row">
-                <span className="message-write-badge required">必須</span>
-                <label className="message-write-label" htmlFor="message-write-body">
-                  メッセージ内容
-                </label>
-                <span className="message-write-counter">
-                  {form.messageBody.length}/{MAX_BODY}
-                </span>
-              </div>
-              <div className={`message-write-input-wrapper ${errorMessage ? 'has-error' : ''}`}>
-                <textarea
-                  id="message-write-body"
-                  className="message-write-textarea"
-                  // 案内の文は設計書に記載なし（仮）
-                  placeholder="落とし物を届けてくれた方へ、感謝の気持ちを書きましょう"
-                  maxLength={MAX_BODY}
-                  value={form.messageBody}
-                  onChange={handleBodyChange}
-                  aria-invalid={errorMessage ? true : undefined}
-                  aria-describedby={errorMessage ? 'message-write-error' : undefined}
-                />
-              </div>
-              {/* 入出力項目4: エラーメッセージ */}
-              {errorMessage && (
-                <p id="message-write-error" className="message-write-error" role="alert">
-                  {errorMessage}
-                </p>
-              )}
+        </div>
+      }
+    >
+      <form id="message-write-form" className="message-write-form" onSubmit={handleSubmit} noValidate>
+        <div className="message-write-content">
+          {/* 入出力項目3: メッセージ内容（必須・140文字以下） */}
+          <div className="message-write-field">
+            <div className="message-write-label-row">
+              <span className="message-write-badge required">必須</span>
+              <label className="message-write-label" htmlFor="message-write-body">
+                メッセージ内容
+              </label>
+              <span className="message-write-counter">
+                {form.messageBody.length}/{MAX_BODY}
+              </span>
             </div>
+            <div className={`message-write-input-wrapper ${errorMessage ? 'has-error' : ''}`}>
+              <textarea
+                id="message-write-body"
+                className="message-write-textarea"
+                // 案内の文は設計書に記載なし（仮）
+                placeholder="落とし物を届けてくれた方へ、感謝の気持ちを書きましょう"
+                maxLength={MAX_BODY}
+                value={form.messageBody}
+                onChange={handleBodyChange}
+                aria-invalid={errorMessage ? true : undefined}
+                aria-describedby={errorMessage ? 'message-write-error' : undefined}
+              />
+            </div>
+            {/* 入出力項目4: エラーメッセージ */}
+            {errorMessage && (
+              <p id="message-write-error" className="message-write-error" role="alert">
+                {errorMessage}
+              </p>
+            )}
           </div>
+        </div>
 
-          {/* 入出力項目5: 確認画面へ（イベント2。下に固定） */}
-          <div className="message-write-footer">
-            <button type="submit" className="message-write-submit-btn">
-              確認画面へ
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+      </form>
+    </ScreenLayout>
   )
 }

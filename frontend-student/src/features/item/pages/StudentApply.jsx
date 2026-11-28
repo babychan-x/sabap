@@ -13,8 +13,8 @@
 
 import { useRef, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import ProgressSteps from '../../../components/ProgressSteps'
 import './StudentApply.css'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 // ---------------------------------------------------------------
 // 遷移先のパス（App.jsx のルーティングと同じ）
@@ -88,115 +88,105 @@ export default function StudentApply() {
   }
 
   return (
-    <div className="apply-page-wrapper">
-      {/* スマホ枠 */}
-      <div className="apply-mobile-container">
-        {/* ヘッダー */}
-        <header className="apply-header">
-          <button className="apply-back-btn" onClick={handleBack} aria-label="戻る">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
+    <ScreenLayout
+      title="受け取り申請をする"
+      onBack={handleBack}
+      steps={0}
+      stepsLabel="申請の手順"
+      footer={
+        <div className="apply-footer">
+          {/* 送信ボタンは下に固定するため、フォームの外にある。form="…" でフォームとつなぐ */}
+          <button type="submit" form="apply-form" className="apply-submit-btn">
+            確認画面へ
           </button>
-          {/* タイトルは設計書に記載なし（旧スライドの文言） */}
-          <h1 className="apply-title">受け取り申請をする</h1>
-        </header>
-
-        {/* 入出力項目2: 進行状況表示（この画面では「入力」を強調） */}
-        <ProgressSteps current={0} label="申請の手順" />
-
-        <form className="apply-form" onSubmit={handleSubmit} noValidate>
-          <div className="apply-content">
-            {/* 入出力項目3: 申請理由（必須・1000文字以下） */}
-            <div className="apply-field">
-              <div className="apply-label-row">
-                <span className="apply-badge required">必須</span>
-                <label className="apply-label" htmlFor="apply-reason">
-                  理由
-                </label>
-                <span className="apply-counter">
-                  {form.applicationReason.length}/{MAX_REASON}
-                </span>
-              </div>
-              <div className={`apply-input-wrapper ${errorMessage ? 'has-error' : ''}`}>
-                <textarea
-                  id="apply-reason"
-                  className="apply-textarea"
-                  placeholder="落とした日時、落とした場所、落とし物の特徴など、本人確認に必要な情報をすべて記入してください"
-                  maxLength={MAX_REASON}
-                  value={form.applicationReason}
-                  onChange={handleReasonChange}
-                  aria-invalid={errorMessage ? true : undefined}
-                  aria-describedby={errorMessage ? 'apply-error' : undefined}
-                />
-              </div>
-              {/* 入出力項目5: エラーメッセージ */}
-              {errorMessage && (
-                <p id="apply-error" className="apply-error" role="alert">
-                  {errorMessage}
-                </p>
-              )}
+        </div>
+      }
+    >
+      <form id="apply-form" className="apply-form" onSubmit={handleSubmit} noValidate>
+        <div className="apply-content">
+          {/* 入出力項目3: 申請理由（必須・1000文字以下） */}
+          <div className="apply-field">
+            <div className="apply-label-row">
+              <span className="apply-badge required">必須</span>
+              <label className="apply-label" htmlFor="apply-reason">
+                理由
+              </label>
+              <span className="apply-counter">
+                {form.applicationReason.length}/{MAX_REASON}
+              </span>
             </div>
-
-            {/* 入出力項目4: 写真（任意・最大4枚。追加した写真は一覧で表示） */}
-            <div className="apply-field">
-              <div className="apply-label-row">
-                <span className="apply-badge optional">任意</span>
-                <span className="apply-label" id="apply-photo-label">
-                  写真（所持していたときの写真など）
-                </span>
-                <span className="apply-counter">
-                  {form.applicationImages.length}/{MAX_PHOTOS}枚
-                </span>
-              </div>
-              <div className="apply-photos" role="group" aria-labelledby="apply-photo-label">
-                {form.applicationImages.map((photo, index) => (
-                  <div className="apply-photo" key={photo.key}>
-                    <img src={photo.url} alt={`写真${index + 1}`} className="apply-photo-img" />
-                    <button
-                      type="button"
-                      className="apply-photo-remove"
-                      onClick={() => handleRemovePhoto(photo.key)}
-                      aria-label={`写真${index + 1}を外す`}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-
-                {form.applicationImages.length < MAX_PHOTOS && (
-                  <button type="button" className="apply-add-photo" onClick={() => fileInputRef.current?.click()}>
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d="M9 3 7.17 5H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.17L15 3H9zm3 15a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-2a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-                    </svg>
-                    <span>
-                      写真を追加する
-                      <br />
-                      （最大{MAX_PHOTOS}枚まで）
-                    </span>
-                  </button>
-                )}
-              </div>
-              {/* 端末の写真選択画面を開くための、見えない入力欄 */}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                className="apply-file-input"
-                onChange={handleAddPhotos}
+            <div className={`apply-input-wrapper ${errorMessage ? 'has-error' : ''}`}>
+              <textarea
+                id="apply-reason"
+                className="apply-textarea"
+                placeholder="落とした日時、落とした場所、落とし物の特徴など、本人確認に必要な情報をすべて記入してください"
+                maxLength={MAX_REASON}
+                value={form.applicationReason}
+                onChange={handleReasonChange}
+                aria-invalid={errorMessage ? true : undefined}
+                aria-describedby={errorMessage ? 'apply-error' : undefined}
               />
             </div>
+            {/* 入出力項目5: エラーメッセージ */}
+            {errorMessage && (
+              <p id="apply-error" className="apply-error" role="alert">
+                {errorMessage}
+              </p>
+            )}
           </div>
 
-          {/* 入出力項目6: 確認画面へ（下に固定） */}
-          <div className="apply-footer">
-            <button type="submit" className="apply-submit-btn">
-              確認画面へ
-            </button>
+          {/* 入出力項目4: 写真（任意・最大4枚。追加した写真は一覧で表示） */}
+          <div className="apply-field">
+            <div className="apply-label-row">
+              <span className="apply-badge optional">任意</span>
+              <span className="apply-label" id="apply-photo-label">
+                写真（所持していたときの写真など）
+              </span>
+              <span className="apply-counter">
+                {form.applicationImages.length}/{MAX_PHOTOS}枚
+              </span>
+            </div>
+            <div className="apply-photos" role="group" aria-labelledby="apply-photo-label">
+              {form.applicationImages.map((photo, index) => (
+                <div className="apply-photo" key={photo.key}>
+                  <img src={photo.url} alt={`写真${index + 1}`} className="apply-photo-img" />
+                  <button
+                    type="button"
+                    className="apply-photo-remove"
+                    onClick={() => handleRemovePhoto(photo.key)}
+                    aria-label={`写真${index + 1}を外す`}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+
+              {form.applicationImages.length < MAX_PHOTOS && (
+                <button type="button" className="apply-add-photo" onClick={() => fileInputRef.current?.click()}>
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M9 3 7.17 5H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.17L15 3H9zm3 15a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-2a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                  </svg>
+                  <span>
+                    写真を追加する
+                    <br />
+                    （最大{MAX_PHOTOS}枚まで）
+                  </span>
+                </button>
+              )}
+            </div>
+            {/* 端末の写真選択画面を開くための、見えない入力欄 */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="apply-file-input"
+              onChange={handleAddPhotos}
+            />
           </div>
-        </form>
-      </div>
-    </div>
+        </div>
+
+      </form>
+    </ScreenLayout>
   )
 }

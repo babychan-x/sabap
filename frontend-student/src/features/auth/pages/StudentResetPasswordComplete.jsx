@@ -3,6 +3,7 @@ import './StudentResetPasswordComplete.css'
 // G010 再設定完了画面（studentResetPasswordComplete）
 
 import { useNavigate } from 'react-router-dom'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 export default function StudentResetPasswordComplete() {
   const navigate = useNavigate()
@@ -13,7 +14,9 @@ export default function StudentResetPasswordComplete() {
   }
 
   return (
-    <div className="page reset-password-complete">
+    <ScreenLayout
+      contentClassName="page reset-password-complete"
+    >
 
       {/* 画面タイトル */}
       <h1 className="reset-password-complete__header">
@@ -44,7 +47,7 @@ export default function StudentResetPasswordComplete() {
         </button>
       </div>
 
-    </div>
+    </ScreenLayout>
   )
 }
 

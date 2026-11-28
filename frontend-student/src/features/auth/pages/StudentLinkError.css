@@ -2,10 +2,9 @@
 /* G039 リンクエラー画面 */
 
 .link-error {
+  /* 高さ・はみ出しは、外枠（components/ScreenLayout）が決める（2026/11/27。ここではスクロールする中身の配置だけ） */
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  min-height: 100dvh;
   box-sizing: border-box;
 }
 

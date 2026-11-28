@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { registerStudent } from '../../../api/auth'
-import ProgressSteps from '../../../components/ProgressSteps'
 import './StudentSignUpConfirm.css'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 // 学籍番号の取り出し（仮）。
 // 設計書は「入力内容から学籍番号を取り出して表示」とあるが、取り出し方は書いていない。
@@ -53,11 +53,11 @@ export default function StudentSignUpConfirm() {
   }
 
   return (
-    <main className="page">
-      {/* 進行状況（見た目は G029 と同じ共通部品 ProgressSteps） */}
-      <div className="signup-confirm__steps">
-        <ProgressSteps current={1} label="登録の手順" />
-      </div>
+    <ScreenLayout
+      steps={1}
+      stepsLabel="登録の手順"
+      contentClassName="page"
+    >
       <h1 className="signup-confirm__title">入力内容の確認</h1>
 
       <dl className="signup-confirm__list">
@@ -118,6 +118,6 @@ export default function StudentSignUpConfirm() {
       >
         戻る
       </button>
-    </main>
+    </ScreenLayout>
   )
 }

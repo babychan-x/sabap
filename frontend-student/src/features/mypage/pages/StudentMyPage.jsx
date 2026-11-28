@@ -12,7 +12,7 @@ import {
   LogOut,
   ChevronRight,
 } from 'lucide-react'
-import BottomNav from '../../../components/BottomNav'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 export default function StudentMyPage() {
   const navigate = useNavigate()
@@ -49,15 +49,14 @@ export default function StudentMyPage() {
   }
 
   return (
-    <div className="page mypage">
+    <ScreenLayout
+      title="マイページ"
+      bottomNav="mypage"
+      contentClassName="page mypage"
+    >
 
       {/* スクロール可能なコンテンツ部分 */}
       <main className="mypage__content">
-
-        {/* 画面タイトル */}
-        <h1 className="mypage__header">
-          マイページ
-        </h1>
 
         {/* ユーザー情報 */}
         <div className="mypage__profile">
@@ -160,10 +159,7 @@ export default function StudentMyPage() {
         </div>
       </main>
 
-      {/* 共通の下部ナビゲーション */}
-      <BottomNav active="mypage" />
-
-    </div>
+    </ScreenLayout>
   )
 }
 

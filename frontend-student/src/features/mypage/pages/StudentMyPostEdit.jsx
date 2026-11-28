@@ -12,9 +12,10 @@ import './StudentMyPostEdit.css'
 //   G030 の「戻る」では、その form を次のように G029 に返すと、入力内容が保持される（設計書どおり）。
 //     navigate(`/mypage/posts/${id}/edit`, { state: { form } })
 
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getMyPost } from '../../../api/myPosts';
+import ScreenLayout from '../../../components/ScreenLayout';
 import './StudentMyPostEdit.css';
 
 // ---------------------------------------------------------------
@@ -39,7 +40,6 @@ const STORAGE_OPTIONS = [
 const MAX_TITLE = 50; // タイトルは50文字以内
 const MAX_FEATURE = 200; // 特徴の説明は200文字以内
 const MAX_PHOTOS = 4; // 写真は最大4枚
-const STEPS = ['入力', '確認', '完了'];
 
 // 入力内容のチェック。エラーがあった項目だけ、メッセージを入れて返す。
 // ※ エラーの文言は設計書に記載がないため仮。
@@ -120,19 +120,9 @@ function SelectBox({ id, value, onChange, error, children }) {
 // 見つからない／編集できないときの画面
 function MessagePage({ message, onBack }) {
   return (
-    <div className="my-post-edit-page-wrapper">
-      <div className="my-post-edit-mobile-container">
-        <header className="my-post-edit-header">
-          <button className="my-post-edit-back-btn" onClick={onBack} aria-label="戻る">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
-          <h1 className="my-post-edit-title">投稿を編集する</h1>
-        </header>
-        <p className="my-post-edit-empty">{message}</p>
-      </div>
-    </div>
+    <ScreenLayout title="投稿を編集する" onBack={onBack}>
+      <p className="my-post-edit-empty">{message}</p>
+    </ScreenLayout>
   );
 }
 
@@ -241,179 +231,152 @@ export default function StudentMyPostEdit() {
   const hasErrors = Object.values(errors).some(Boolean);
 
   return (
-    <div className="my-post-edit-page-wrapper">
-      {/* 9:16比率のスマホ枠 */}
-      <div className="my-post-edit-mobile-container">
-        {/* ヘッダー */}
-        <header className="my-post-edit-header">
-          <button
-            className="my-post-edit-back-btn"
-            onClick={() => navigate(ROUTES.detail(id))}
-            aria-label="戻る"
+    <ScreenLayout
+      title="投稿を編集する"
+      onBack={() => navigate(ROUTES.detail(id))}
+      steps={0}
+      stepsLabel="編集の手順"
+      contentRef={contentRef /* エラーのときに、中身を一番上に戻すため */}
+    >
+      <form className="my-post-edit-form" onSubmit={handleSubmit} noValidate>
+        <div className="my-post-edit-content">
+          {/* エラーメッセージ表示部（入力内容に不備があるときだけ表示） */}
+          {hasErrors && (
+            <p className="my-post-edit-error-banner" role="alert">
+              入力内容に不備があります。赤く表示した項目を確認してください。
+            </p>
+          )}
+
+          <h2 className="my-post-edit-section-title">基本情報</h2>
+
+          <Field label="カテゴリー" required htmlFor="edit-category" error={errors.itemCategory}>
+            <SelectBox id="edit-category" value={form.itemCategory} onChange={handleChange('itemCategory')} error={errors.itemCategory}>
+              <option value="">選択してください</option>
+              {CATEGORIES.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </SelectBox>
+          </Field>
+
+          <Field label="発見日時" required htmlFor="edit-found-at" error={errors.foundAt}>
+            <div className={`my-post-edit-input-wrapper ${errors.foundAt ? 'has-error' : ''}`}>
+              <input
+                id="edit-found-at"
+                className="my-post-edit-input"
+                type="datetime-local"
+                value={form.foundAt}
+                onChange={handleChange('foundAt')}
+              />
+            </div>
+          </Field>
+
+          <Field label="発見場所" required htmlFor="edit-place" error={errors.foundLocation}>
+            <SelectBox id="edit-place" value={form.foundLocation} onChange={handleChange('foundLocation')} error={errors.foundLocation}>
+              <option value="">選択してください</option>
+              {PLACES.map((p) => (
+                <option key={p} value={p}>{p}</option>
+              ))}
+            </SelectBox>
+          </Field>
+
+          <Field label="現在の保管場所" required htmlFor="edit-storage" error={errors.itemStatus}>
+            <SelectBox id="edit-storage" value={form.itemStatus} onChange={handleChange('itemStatus')} error={errors.itemStatus}>
+              <option value="">選択してください</option>
+              {STORAGE_OPTIONS.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </SelectBox>
+          </Field>
+
+          <h2 className="my-post-edit-section-title">落とし物の情報</h2>
+
+          <Field
+            label="タイトル"
+            required
+            htmlFor="edit-title"
+            error={errors.itemName}
+            counter={`${form.itemName.length}/${MAX_TITLE}`}
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
-          <h1 className="my-post-edit-title">投稿を編集する</h1>
-        </header>
+            <div className={`my-post-edit-input-wrapper ${errors.itemName ? 'has-error' : ''}`}>
+              <input
+                id="edit-title"
+                className="my-post-edit-input"
+                type="text"
+                placeholder="例：黒い折り畳み財布"
+                maxLength={MAX_TITLE}
+                value={form.itemName}
+                onChange={handleChange('itemName')}
+                autoComplete="off"
+              />
+            </div>
+          </Field>
 
-        {/* 進行状況（入力 → 確認 → 完了。この画面では「入力」を強調） */}
-        <ol className="my-post-edit-steps" aria-label="編集の手順">
-          {STEPS.map((label, index) => (
-            <React.Fragment key={label}>
-              {index > 0 && <li className="my-post-edit-step-line" aria-hidden="true" />}
-              <li
-                className={`my-post-edit-step ${index === 0 ? 'current' : ''}`}
-                aria-current={index === 0 ? 'step' : undefined}
-              >
-                <span className="my-post-edit-step-circle">{index + 1}</span>
-                <span className="my-post-edit-step-label">{label}</span>
-              </li>
-            </React.Fragment>
-          ))}
-        </ol>
+          <Field
+            label="特徴の説明"
+            htmlFor="edit-feature"
+            error={errors.itemDescription}
+            counter={`${form.itemDescription.length}/${MAX_FEATURE}`}
+          >
+            <div className={`my-post-edit-input-wrapper textarea ${errors.itemDescription ? 'has-error' : ''}`}>
+              <textarea
+                id="edit-feature"
+                className="my-post-edit-textarea"
+                placeholder="落とし物の特徴や状態などを記入してください"
+                maxLength={MAX_FEATURE}
+                value={form.itemDescription}
+                onChange={handleChange('itemDescription')}
+              />
+            </div>
+          </Field>
 
-        <form className="my-post-edit-form" onSubmit={handleSubmit} noValidate>
-          <div className="my-post-edit-content" ref={contentRef}>
-            {/* エラーメッセージ表示部（入力内容に不備があるときだけ表示） */}
-            {hasErrors && (
-              <p className="my-post-edit-error-banner" role="alert">
-                入力内容に不備があります。赤く表示した項目を確認してください。
-              </p>
-            )}
-
-            <h2 className="my-post-edit-section-title">基本情報</h2>
-
-            <Field label="カテゴリー" required htmlFor="edit-category" error={errors.itemCategory}>
-              <SelectBox id="edit-category" value={form.itemCategory} onChange={handleChange('itemCategory')} error={errors.itemCategory}>
-                <option value="">選択してください</option>
-                {CATEGORIES.map((c) => (
-                  <option key={c} value={c}>{c}</option>
-                ))}
-              </SelectBox>
-            </Field>
-
-            <Field label="発見日時" required htmlFor="edit-found-at" error={errors.foundAt}>
-              <div className={`my-post-edit-input-wrapper ${errors.foundAt ? 'has-error' : ''}`}>
-                <input
-                  id="edit-found-at"
-                  className="my-post-edit-input"
-                  type="datetime-local"
-                  value={form.foundAt}
-                  onChange={handleChange('foundAt')}
-                />
-              </div>
-            </Field>
-
-            <Field label="発見場所" required htmlFor="edit-place" error={errors.foundLocation}>
-              <SelectBox id="edit-place" value={form.foundLocation} onChange={handleChange('foundLocation')} error={errors.foundLocation}>
-                <option value="">選択してください</option>
-                {PLACES.map((p) => (
-                  <option key={p} value={p}>{p}</option>
-                ))}
-              </SelectBox>
-            </Field>
-
-            <Field label="現在の保管場所" required htmlFor="edit-storage" error={errors.itemStatus}>
-              <SelectBox id="edit-storage" value={form.itemStatus} onChange={handleChange('itemStatus')} error={errors.itemStatus}>
-                <option value="">選択してください</option>
-                {STORAGE_OPTIONS.map((s) => (
-                  <option key={s.value} value={s.value}>{s.label}</option>
-                ))}
-              </SelectBox>
-            </Field>
-
-            <h2 className="my-post-edit-section-title">落とし物の情報</h2>
-
-            <Field
-              label="タイトル"
-              required
-              htmlFor="edit-title"
-              error={errors.itemName}
-              counter={`${form.itemName.length}/${MAX_TITLE}`}
-            >
-              <div className={`my-post-edit-input-wrapper ${errors.itemName ? 'has-error' : ''}`}>
-                <input
-                  id="edit-title"
-                  className="my-post-edit-input"
-                  type="text"
-                  placeholder="例：黒い折り畳み財布"
-                  maxLength={MAX_TITLE}
-                  value={form.itemName}
-                  onChange={handleChange('itemName')}
-                  autoComplete="off"
-                />
-              </div>
-            </Field>
-
-            <Field
-              label="特徴の説明"
-              htmlFor="edit-feature"
-              error={errors.itemDescription}
-              counter={`${form.itemDescription.length}/${MAX_FEATURE}`}
-            >
-              <div className={`my-post-edit-input-wrapper textarea ${errors.itemDescription ? 'has-error' : ''}`}>
-                <textarea
-                  id="edit-feature"
-                  className="my-post-edit-textarea"
-                  placeholder="落とし物の特徴や状態などを記入してください"
-                  maxLength={MAX_FEATURE}
-                  value={form.itemDescription}
-                  onChange={handleChange('itemDescription')}
-                />
-              </div>
-            </Field>
-
-            <Field label="写真" required error={errors.postImages}>
-              <div className="my-post-edit-photos">
-                {form.postImages.map((photo, index) => (
-                  <div className="my-post-edit-photo" key={photo.key}>
-                    <img src={photo.url} alt={`写真${index + 1}`} className="my-post-edit-photo-img" />
-                    <button
-                      type="button"
-                      className="my-post-edit-photo-remove"
-                      onClick={() => handleRemovePhoto(photo.key)}
-                      aria-label={`写真${index + 1}を外す`}
-                    >
-                      ×
-                    </button>
-                  </div>
-                ))}
-
-                {form.postImages.length < MAX_PHOTOS && (
+          <Field label="写真" required error={errors.postImages}>
+            <div className="my-post-edit-photos">
+              {form.postImages.map((photo, index) => (
+                <div className="my-post-edit-photo" key={photo.key}>
+                  <img src={photo.url} alt={`写真${index + 1}`} className="my-post-edit-photo-img" />
                   <button
                     type="button"
-                    className={`my-post-edit-add-photo ${errors.postImages ? 'has-error' : ''}`}
-                    onClick={() => fileInputRef.current?.click()}
+                    className="my-post-edit-photo-remove"
+                    onClick={() => handleRemovePhoto(photo.key)}
+                    aria-label={`写真${index + 1}を外す`}
                   >
-                    <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d="M9 3 7.17 5H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.17L15 3H9zm3 15a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-2a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
-                    </svg>
-                    <span>
-                      写真を追加する
-                      <br />
-                      （最大{MAX_PHOTOS}枚まで）
-                    </span>
+                    ×
                   </button>
-                )}
-              </div>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                multiple
-                className="my-post-edit-file-input"
-                onChange={handleAddPhotos}
-              />
-            </Field>
+                </div>
+              ))}
 
-            <button type="submit" className="my-post-edit-submit-btn">
-              確認画面へ
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+              {form.postImages.length < MAX_PHOTOS && (
+                <button
+                  type="button"
+                  className={`my-post-edit-add-photo ${errors.postImages ? 'has-error' : ''}`}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M9 3 7.17 5H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.17L15 3H9zm3 15a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-2a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                  </svg>
+                  <span>
+                    写真を追加する
+                    <br />
+                    （最大{MAX_PHOTOS}枚まで）
+                  </span>
+                </button>
+              )}
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              multiple
+              className="my-post-edit-file-input"
+              onChange={handleAddPhotos}
+            />
+          </Field>
+
+          <button type="submit" className="my-post-edit-submit-btn">
+            確認画面へ
+          </button>
+        </div>
+      </form>
+    </ScreenLayout>
   );
 }

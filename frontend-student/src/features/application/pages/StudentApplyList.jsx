@@ -6,9 +6,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { getApplications, markApplicationRead } from '../../../api/applications'
-import BottomNav from '../../../components/BottomNav'
 import { formatDateTime } from '../../../utils/date'
 import './StudentApplyList.css'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 // ---------------------------------------------------------------
 // 遷移先のパス（App.jsx のルーティングと同じ）
@@ -102,76 +102,63 @@ export default function StudentApplyList() {
   const { loading, applications, error } = result
 
   return (
-    <div className="apply-list-page-wrapper">
-      {/* スマホ枠 */}
-      <div className="apply-list-mobile-container">
-        {/* ヘッダー */}
-        <header className="apply-list-header">
-          {/* 入出力項目1: 戻る（イベント1 → G024 マイページ） */}
-          <button className="apply-list-back-btn" onClick={() => navigate(ROUTES.mypage)} aria-label="戻る">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
-          {/* タイトルは設計書に記載なし（旧スライドの文言） */}
-          <h1 className="apply-list-title">受け取り申請一覧</h1>
-        </header>
+    <ScreenLayout
+      title="受け取り申請一覧"
+      onBack={() => navigate(ROUTES.mypage)}
+      bottomNav="mypage"
+    >
+      {/* 入出力項目2: 受け取り申請一覧（ここだけスクロールする） */}
+      <div className="apply-list">
+        {loading && <p className="apply-list-message">読み込み中…</p>}
 
-        {/* 入出力項目2: 受け取り申請一覧（ここだけスクロールする） */}
-        <div className="apply-list">
-          {loading && <p className="apply-list-message">読み込み中…</p>}
+        {!loading && error && (
+          <p className="apply-list-message error" role="alert">{error}</p>
+        )}
 
-          {!loading && error && (
-            <p className="apply-list-message error" role="alert">{error}</p>
-          )}
+        {!loading && !error && applications.length === 0 && (
+          // 文言は設計書に記載なし（仮）
+          <p className="apply-list-message">受け取り申請はまだありません。</p>
+        )}
 
-          {!loading && !error && applications.length === 0 && (
-            // 文言は設計書に記載なし（仮）
-            <p className="apply-list-message">受け取り申請はまだありません。</p>
-          )}
+        {!loading &&
+          applications.map((application) => {
+            const badge = BADGES[badgeKey(application)]
+            const guide = guideText(application)
+            const name = application.post?.itemName ?? ''
+            return (
+              // 入出力項目3: 申請カード（イベント2）
+              <button
+                key={application.applicationId}
+                type="button"
+                className="apply-list-item"
+                onClick={() => handleSelect(application)}
+              >
+                {/* 落とし物の画像（結果を未確認なら、左上に NEW マーク） */}
+                <div className="apply-list-img-wrapper">
+                  <Thumbnail src={application.post?.postImageUrls[0]} alt={name} />
+                  {isNew(application) && <span className="apply-list-new">NEW</span>}
+                </div>
 
-          {!loading &&
-            applications.map((application) => {
-              const badge = BADGES[badgeKey(application)]
-              const guide = guideText(application)
-              const name = application.post?.itemName ?? ''
-              return (
-                // 入出力項目3: 申請カード（イベント2）
-                <button
-                  key={application.applicationId}
-                  type="button"
-                  className="apply-list-item"
-                  onClick={() => handleSelect(application)}
-                >
-                  {/* 落とし物の画像（結果を未確認なら、左上に NEW マーク） */}
-                  <div className="apply-list-img-wrapper">
-                    <Thumbnail src={application.post?.postImageUrls[0]} alt={name} />
-                    {isNew(application) && <span className="apply-list-new">NEW</span>}
+                <div className="apply-list-info">
+                  <div className="apply-list-name-row">
+                    {/* 申請状況のバッジ */}
+                    {badge && <span className={`apply-list-badge ${badge.className}`}>{badge.label}</span>}
+                    <p className="apply-list-name">{name}</p>
                   </div>
+                  {/* 案内文（承認済み／受け渡し済みで感謝メッセージ未送信のときだけ） */}
+                  {guide && <p className="apply-list-guide">{guide}</p>}
+                  {/* 申請日時 */}
+                  <p className="apply-list-date">{formatDateTime(application.appliedAt)}</p>
+                </div>
 
-                  <div className="apply-list-info">
-                    <div className="apply-list-name-row">
-                      {/* 申請状況のバッジ */}
-                      {badge && <span className={`apply-list-badge ${badge.className}`}>{badge.label}</span>}
-                      <p className="apply-list-name">{name}</p>
-                    </div>
-                    {/* 案内文（承認済み／受け渡し済みで感謝メッセージ未送信のときだけ） */}
-                    {guide && <p className="apply-list-guide">{guide}</p>}
-                    {/* 申請日時 */}
-                    <p className="apply-list-date">{formatDateTime(application.appliedAt)}</p>
-                  </div>
-
-                  <svg className="apply-list-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                    <polyline points="9 6 15 12 9 18"></polyline>
-                  </svg>
-                </button>
-              )
-            })}
-        </div>
-
-        {/* 入出力項目4〜6: 下タブ（共通部品 BottomNav。イベント3〜5: ホーム→G011、投稿→G021、マイページ→G024）。マイページから来る画面なので「マイページ」を選択中にする */}
-        <BottomNav active="mypage" />
+                <svg className="apply-list-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <polyline points="9 6 15 12 9 18"></polyline>
+                </svg>
+              </button>
+            )
+          })}
       </div>
-    </div>
+
+    </ScreenLayout>
   )
 }

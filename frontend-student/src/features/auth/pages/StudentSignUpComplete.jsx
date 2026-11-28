@@ -1,7 +1,7 @@
 import './StudentSignUpComplete.css'
 
 import { useNavigate } from 'react-router-dom'
-import ProgressSteps from '../../../components/ProgressSteps'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 export default function StudentSignUpComplete() {
   const navigate = useNavigate()
@@ -12,15 +12,15 @@ export default function StudentSignUpComplete() {
   }
 
   return (
-    <div className="page signup-complete">
+    <ScreenLayout
+      steps={2}
+      stepsLabel="登録の手順"
+      contentClassName="page signup-complete"
+    >
       <h1 className="signup-complete__header">
         新規登録完了
       </h1>
 
-      {/* 登録の進行状況（見た目は G029 と同じ共通部品 ProgressSteps） */}
-      <div className="signup-complete__steps">
-        <ProgressSteps current={2} label="登録の手順" />
-      </div>
 
       {/* 登録完了メッセージ */}
       <div className="signup-complete__message">
@@ -44,6 +44,6 @@ export default function StudentSignUpComplete() {
           ログイン画面に戻る
         </button>
       </div>
-    </div>
+    </ScreenLayout>
   )
 }

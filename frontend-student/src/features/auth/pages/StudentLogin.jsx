@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 // 【確認用・仮】本来の処理に戻すときは、下の行のコメントを外す
 // import { loginStudent } from '../../../api/auth'
 import './StudentLogin.css'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 // G001 ログイン画面（studentLogin）
 // 外部設計書 第2.0版 G001 の入出力項目・イベントに対応。
@@ -62,7 +63,9 @@ export default function StudentLogin() {
   ---------- 本来の処理（ここまで） ---------- */
 
   return (
-    <main className="page">
+    <ScreenLayout
+      contentClassName="page"
+    >
       <header className="login__header">
         <h1 className="login__title">
           TDU落とし物
@@ -133,6 +136,6 @@ export default function StudentLogin() {
           新規登録
         </button>
       </form>
-    </main>
+    </ScreenLayout>
   )
 }

@@ -1,6 +1,7 @@
 import './StudentResetPasswordRequest.css'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 // G007 既存メールアドレス入力画面（studentResetPasswordRequest）
 
@@ -56,7 +57,9 @@ export default function StudentResetPasswordRequest() {
     //}
 
   return (
-    <div className="page reset-password-request">
+    <ScreenLayout
+      contentClassName="page reset-password-request"
+    >
 
       {/* 戻るボタン */}
       <button
@@ -163,6 +166,6 @@ export default function StudentResetPasswordRequest() {
           </button>
         </div>
       </form>
-    </div>
+    </ScreenLayout>
   )
 }

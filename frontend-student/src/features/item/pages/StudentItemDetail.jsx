@@ -10,6 +10,7 @@ import PhotoSlider from '../../../components/PhotoSlider'
 import { daysUntil, formatDateTime } from '../../../utils/date'
 import { STORAGE_STATUS_LABELS } from '../../../utils/labels'
 import './StudentItemDetail.css'
+import ScreenLayout from '../../../components/ScreenLayout'
 
 // ---------------------------------------------------------------
 // 遷移先のパス（App.jsx のルーティングと同じ）
@@ -78,95 +79,86 @@ export default function StudentItemDetail() {
   const deadlineSoon = deadlineDays !== null && deadlineDays <= DEADLINE_WARNING_DAYS
 
   return (
-    <div className="item-detail-page-wrapper">
-      {/* スマホ枠 */}
-      <div className="item-detail-mobile-container">
-        {/* ヘッダー */}
-        <header className="item-detail-header">
-          <button className="item-detail-back-btn" onClick={handleBack} aria-label="戻る">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="15 18 9 12 15 6"></polyline>
-            </svg>
-          </button>
-          {/* 画面のタイトルは設計書に記載なし（仮。画面名から） */}
-          <h1 className="item-detail-title">落とし物の詳細</h1>
-        </header>
+    <ScreenLayout
+      title="落とし物の詳細"
+      onBack={handleBack}
+      background="gray"
+      footer={
+        !hideReason && (
+          <div className="item-detail-footer">
+            <button type="button" className="item-detail-apply-btn" onClick={() => navigate(ROUTES.apply(item.postId))}>
+              受け取り申請する
+            </button>
+          </div>
+        )
+      }
+    >
+      {loading && <p className="item-detail-message">読み込み中…</p>}
 
-        {loading && <p className="item-detail-message">読み込み中…</p>}
+      {!loading && result.error && (
+        <p className="item-detail-message error" role="alert">{result.error}</p>
+      )}
 
-        {!loading && result.error && (
-          <p className="item-detail-message error" role="alert">{result.error}</p>
-        )}
+      {item && (
+        <>
+          {/* 本文エリア（ここだけスクロールする） */}
+          <div className="item-detail-content">
+            <section className="item-detail-card">
+              {/* key を付けて、別の落とし物を開いたときに写真の位置を1枚目に戻す */}
+              <PhotoSlider key={item.postId} images={item.postImageUrls} alt={item.itemName} />
 
-        {item && (
-          <>
-            {/* 本文エリア（ここだけスクロールする） */}
-            <div className="item-detail-content">
-              <section className="item-detail-card">
-                {/* key を付けて、別の落とし物を開いたときに写真の位置を1枚目に戻す */}
-                <PhotoSlider key={item.postId} images={item.postImageUrls} alt={item.itemName} />
+              <div className="item-detail-body">
+                {/* 入出力項目4: 落とし物名 */}
+                <h2 className="item-detail-item-name">{item.itemName}</h2>
 
-                <div className="item-detail-body">
-                  {/* 入出力項目4: 落とし物名 */}
-                  <h2 className="item-detail-item-name">{item.itemName}</h2>
-
-                  <dl className="item-detail-list">
-                    {/* 入出力項目5: カテゴリー */}
-                    <div className="item-detail-row">
-                      <dt>カテゴリー</dt>
-                      <dd>{item.itemCategory}</dd>
-                    </div>
-                    {/* 入出力項目6: 拾得日時 */}
-                    <div className="item-detail-row">
-                      <dt>拾得日時</dt>
-                      <dd>{formatDateTime(item.foundAt)}</dd>
-                    </div>
-                    {/* 入出力項目7: 拾得場所 */}
-                    <div className="item-detail-row">
-                      <dt>拾得場所</dt>
-                      <dd>{item.foundLocation}</dd>
-                    </div>
-                    {/* 入出力項目8: 保管場所（ステータスと補足欄を併せて表示） */}
-                    <div className="item-detail-row">
-                      <dt>保管場所</dt>
-                      <dd>
-                        <span className={`item-detail-status ${item.itemStatus.toLowerCase()}`}>
-                          {STORAGE_STATUS_LABELS[item.itemStatus]}
-                        </span>
-                        {item.storageLocation && <span className="item-detail-note">{item.storageLocation}</span>}
-                      </dd>
-                    </div>
-                    {/* 入出力項目9: 特徴（未入力なら「特になし」） */}
-                    <div className="item-detail-row">
-                      <dt>特徴</dt>
-                      <dd>{item.itemDescription || '特になし'}</dd>
-                    </div>
-                    {/* 入出力項目10: 保管期限（30日以内は強調） */}
-                    <div className="item-detail-row">
-                      <dt>保管期限</dt>
-                      <dd className={deadlineSoon ? 'item-detail-deadline-soon' : undefined}>
-                        {formatDateTime(item.storageDeadline)} まで
-                      </dd>
-                    </div>
-                  </dl>
-                </div>
-              </section>
-
-              {/* ボタンを出さない理由（設計書は「非表示」とだけ書いてある。理由の文は仮） */}
-              {hideReason && <p className="item-detail-notice">{hideReason}</p>}
-            </div>
-
-            {/* 入出力項目11: 受け取り申請する（イベント3 → G018 studentApply） */}
-            {!hideReason && (
-              <div className="item-detail-footer">
-                <button type="button" className="item-detail-apply-btn" onClick={() => navigate(ROUTES.apply(item.postId))}>
-                  受け取り申請する
-                </button>
+                <dl className="item-detail-list">
+                  {/* 入出力項目5: カテゴリー */}
+                  <div className="item-detail-row">
+                    <dt>カテゴリー</dt>
+                    <dd>{item.itemCategory}</dd>
+                  </div>
+                  {/* 入出力項目6: 拾得日時 */}
+                  <div className="item-detail-row">
+                    <dt>拾得日時</dt>
+                    <dd>{formatDateTime(item.foundAt)}</dd>
+                  </div>
+                  {/* 入出力項目7: 拾得場所 */}
+                  <div className="item-detail-row">
+                    <dt>拾得場所</dt>
+                    <dd>{item.foundLocation}</dd>
+                  </div>
+                  {/* 入出力項目8: 保管場所（ステータスと補足欄を併せて表示） */}
+                  <div className="item-detail-row">
+                    <dt>保管場所</dt>
+                    <dd>
+                      <span className={`item-detail-status ${item.itemStatus.toLowerCase()}`}>
+                        {STORAGE_STATUS_LABELS[item.itemStatus]}
+                      </span>
+                      {item.storageLocation && <span className="item-detail-note">{item.storageLocation}</span>}
+                    </dd>
+                  </div>
+                  {/* 入出力項目9: 特徴（未入力なら「特になし」） */}
+                  <div className="item-detail-row">
+                    <dt>特徴</dt>
+                    <dd>{item.itemDescription || '特になし'}</dd>
+                  </div>
+                  {/* 入出力項目10: 保管期限（30日以内は強調） */}
+                  <div className="item-detail-row">
+                    <dt>保管期限</dt>
+                    <dd className={deadlineSoon ? 'item-detail-deadline-soon' : undefined}>
+                      {formatDateTime(item.storageDeadline)} まで
+                    </dd>
+                  </div>
+                </dl>
               </div>
-            )}
-          </>
-        )}
-      </div>
-    </div>
+            </section>
+
+            {/* ボタンを出さない理由（設計書は「非表示」とだけ書いてある。理由の文は仮） */}
+            {hideReason && <p className="item-detail-notice">{hideReason}</p>}
+          </div>
+
+        </>
+      )}
+    </ScreenLayout>
   )
 }

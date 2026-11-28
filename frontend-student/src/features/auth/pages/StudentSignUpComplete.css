@@ -16,11 +16,6 @@
   color: var(--color-text);
 }
 
-/* 登録の進行状況の配置（見た目は共通部品 ProgressSteps） */
-.signup-complete__steps {
-  width: 100%;
-}
-
 /* 登録完了メッセージ */
 .signup-complete__message {
   margin-top: 100px;
@@ -48,6 +43,3 @@
   padding-top: 48px;
 }
 
-.signup-complete__footer .btn {
-  font-size: 18px;
-}
